@@ -10,7 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.gulfappdeveloper.project2.presentation.MainScreenViewModel
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
 
 @Composable
@@ -18,12 +18,12 @@ fun HomeScreen(
     navHostController: NavHostController,
     onHideKeyBoard: () -> Unit,
     onScanButtonClicked: () -> Unit,
-    mainScreenViewModel: MainScreenViewModel,
+    rootViewModel: RootViewModel,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
-    val productDetails by mainScreenViewModel.productDetails.collectAsState()
-    val clientDetails by mainScreenViewModel.clientDetails.collectAsState()
+    val productDetails by rootViewModel.productDetails.collectAsState()
+    val clientDetails by rootViewModel.clientDetails.collectAsState()
 
     Scaffold(
         scaffoldState = scaffoldState

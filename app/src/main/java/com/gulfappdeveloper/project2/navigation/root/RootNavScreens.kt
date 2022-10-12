@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.navigation
+package com.gulfappdeveloper.project2.navigation.root
 
 sealed class RootNavScreens(val route: String) {
     object SplashScreen : RootNavScreens("splash_screen")

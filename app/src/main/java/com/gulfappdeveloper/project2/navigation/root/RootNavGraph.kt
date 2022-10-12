@@ -1,11 +1,10 @@
-package com.gulfappdeveloper.project2.navigation
+package com.gulfappdeveloper.project2.navigation.root
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.gulfappdeveloper.project2.presentation.MainScreenViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
 
 
@@ -14,7 +13,7 @@ fun RootNavGraph(
     navHostController: NavHostController,
     onHideKeyBoard:()->Unit,
     onScanButtonClicked:()->Unit,
-    mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+    rootViewModel: RootViewModel = hiltViewModel()
 ) {
 
     NavHost(
@@ -27,7 +26,7 @@ fun RootNavGraph(
                 navHostController =navHostController,
                 onHideKeyBoard = onHideKeyBoard,
                 onScanButtonClicked = onScanButtonClicked,
-                mainScreenViewModel = mainScreenViewModel
+                rootViewModel = rootViewModel
             )
         }
 

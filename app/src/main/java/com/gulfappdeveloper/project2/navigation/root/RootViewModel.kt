@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.presentation
+package com.gulfappdeveloper.project2.navigation.root
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val TAG = "MainScreenViewModel"
+private const val TAG = "RootViewModel"
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(
+class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ): ViewModel() {
 
