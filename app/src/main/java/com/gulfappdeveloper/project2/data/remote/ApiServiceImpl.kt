@@ -1,9 +1,11 @@
 package com.gulfappdeveloper.project2.data.remote
 
 import android.util.Log
-import com.gulfappdeveloper.project2.domain.models.ClientDetails
-import com.gulfappdeveloper.project2.domain.models.ProductDetails
-import com.gulfappdeveloper.project2.domain.service.ApiService
+import com.gulfappdeveloper.project2.domain.models.remote.ClientDetails
+import com.gulfappdeveloper.project2.domain.models.remote.Error
+import com.gulfappdeveloper.project2.domain.models.remote.GetDataFromRemote
+import com.gulfappdeveloper.project2.domain.models.remote.ProductDetails
+import com.gulfappdeveloper.project2.domain.services.ApiService
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
@@ -11,198 +13,162 @@ import io.ktor.client.request.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.net.ConnectException
 
 private const val TAG = "ApiServiceImpl"
 
 class ApiServiceImpl(
     private val client: HttpClient
 ) : ApiService {
-    override suspend fun getClientDetails(): Flow<List<ClientDetails>> {
+    override suspend fun getClientDetails(): Flow<GetDataFromRemote<List<ClientDetails>>> {
         return flow {
             try {
                 val httpResponse = client.get(HttpRoutes.GET_CLIENT_DETAILS)
-                when (httpResponse.status.value) {
-                    in 200..299 -> {
-                        Log.d(TAG, "success ")
-                        emit(httpResponse.body())
-                    }
-                    in 300..399 -> {
+                val statusCode = httpResponse.status.value
+                Log.i(TAG, "status code $statusCode")
+
+                when(statusCode){
+                    in 200..299->{
                         emit(
-                            listOf(
-                              ClientDetails(
-                                  clientName = "300 Error",
-                                  clientId = 25,
-                                  taxId = "sdsff"
-                              )
-                            )
+                            GetDataFromRemote.Success<List<ClientDetails>>(httpResponse.body<List<ClientDetails>>())
                         )
-                        Log.w(TAG, "warning ")
                     }
-                    in 400..499 -> {
-                        emit(
-                            listOf(
-                                ClientDetails(
-                                    clientName = "400 Error",
-                                    clientId = 25,
-                                    taxId = "sdsff"
-                                )
-                            )
-                        )
-                        Log.e(TAG, "error ")
+                    in 300..399->{
+                        emit(GetDataFromRemote.Failed(error = Error(
+                            code = statusCode,
+                            message = httpResponse.status.description                        )))
                     }
-                    else -> {
-                        Log.i(TAG, "other")
+                    in 400..499->{
+                        emit(GetDataFromRemote.Failed(error = Error(
+                            code = statusCode,
+                            message = httpResponse.status.description
+                        )))
+                    }
+                    in 500..599->{
+                        emit(GetDataFromRemote.Failed(error = Error(
+                            code = statusCode,
+                            message = httpResponse.status.description
+                        )))
+                    }
+                    else->{
+                        emit(GetDataFromRemote.Failed(error = Error(
+                            code = statusCode,
+                            message = httpResponse.status.description
+                        )))
                     }
                 }
 
-            } catch (e: JsonConvertException) {
-                Log.e(TAG, " bbb  ${e.message} ")
-                emit(
-                    listOf(
-                        ClientDetails(
-                            clientName = "400 JsonConvertException",
-                            clientId = 25,
-                            taxId = "sdsff"
-                        )
-                    )
-                )
             } catch (e: ConnectTimeoutException) {
-                Log.w(TAG, "getProductDetails: connect time out exception")
-                emit(
-                    listOf(
-                        ClientDetails(
-                            clientName = "other ConnectTimeoutException",
-                            clientId = 25,
-                            taxId = "sdsff"
-                        )
-                    )
-                )
+                Log.e(TAG, " ConnectTimeoutException")
+                emit(GetDataFromRemote.Failed(error = Error(
+                    code = 600,
+                    message = "ConnectTimeoutException Server Down"
+                )))
+
             } catch (e: NoTransformationFoundException) {
-                emit(
-                    listOf(
-                        ClientDetails(
-                            clientName = "other NoTransformationFoundException",
-                            clientId = 25,
-                            taxId = "sdsff"
-                        )
-                    )
-                )
+                Log.e(TAG, " NoTransformationFoundException")
+                emit(GetDataFromRemote.Failed(error = Error(
+                    code = 601,
+                    message = "NoTransformationFoundException Server ok. Other problem"
+                )))
+            } catch (e: ConnectException) {
+                Log.e(TAG, " No internet")
+                emit(GetDataFromRemote.Failed(error = Error(
+                    code = 602,
+                    message = "No internet in Mobile"
+                )))
+            } catch (e: JsonConvertException) {
+
+                Log.e(TAG, " ${e.message}")
+                emit(GetDataFromRemote.Failed(error = Error(
+                    code = 603,
+                    message = "Json convert Exception $e"
+                )))
             } catch (e: Exception) {
 
-                emit(
-                    listOf(
-                        ClientDetails(
-                            clientName = "other Error",
-                            clientId = 25,
-                            taxId = "sdsff"
-                        )
-                    )
-                )
+                Log.e(TAG, " ${e.message}")
+                emit(GetDataFromRemote.Failed(error = Error(
+                    code = 604,
+                    message = "Other Exception $e"
+                )))
             }
         }
     }
 
-
-    override suspend fun getProductDetails(): Flow<List<ProductDetails>> {
+    override suspend fun getProductDetails(): Flow<GetDataFromRemote<List<ProductDetails>>> {
         return flow {
-            try {
-                val httpResponse = client.get(HttpRoutes.GET_PRODUCT_DETAILS)
-                when (httpResponse.status.value) {
-                    in 200..299 -> {
-                        Log.d(TAG, "success ")
-                        emit(httpResponse.body())
-                    }
-                    in 300..399 -> {
-                        emit(
-                            listOf(
-                                ProductDetails(
-                                    productId = 1,
-                                    productName = "300 Foundation",
-                                    productRate = 25.5f,
-                                    unit = "Kg",
-                                    stoke = 0f,
-                                    vat = 0f
-                                )
+
+                try {
+                    val httpResponse = client.get(HttpRoutes.GET_PRODUCT_DETAILS)
+                    val statusCode = httpResponse.status.value
+                    Log.i(TAG, "status code $statusCode")
+                    when(statusCode){
+                        in 200..299->{
+                            emit(
+                                GetDataFromRemote.Success<List<ProductDetails>>(httpResponse.body<List<ProductDetails>>())
                             )
-                        )
-                        Log.w(TAG, "warning ")
+                        }
+                        in 300..399->{
+                            emit(GetDataFromRemote.Failed(error = Error(
+                                code = statusCode,
+                                message = httpResponse.status.description
+                            )))
+                        }
+                        in 400..499->{
+                            emit(GetDataFromRemote.Failed(error = Error(
+                                code = statusCode,
+                                message = httpResponse.status.description
+                            )))
+                        }
+                        in 500..599->{
+                            emit(GetDataFromRemote.Failed(error = Error(
+                                code = statusCode,
+                                message = httpResponse.status.description
+                            )))
+                        }
+                        else->{
+                            emit(GetDataFromRemote.Failed(error = Error(
+                                code = statusCode,
+                                message = httpResponse.status.description
+                            )))
+                        }
                     }
-                    in 400..499 -> {
-                        emit(
-                            listOf(
-                                ProductDetails(
-                                    productId = 1,
-                                    productName = "400 Foundation",
-                                    productRate = 25.5f,
-                                    unit = "Kg",
-                                    stoke = 0f,
-                                    vat = 0f
-                                )
-                            )
-                        )
-                        Log.e(TAG, "error ")
-                    }
-                    else -> {
-                        Log.i(TAG, "other")
-                    }
+
+                } catch (e: ConnectTimeoutException) {
+                    Log.e(TAG, " ConnectTimeoutException")
+                    emit(GetDataFromRemote.Failed(error = Error(
+                        code = 600,
+                        message = "ConnectTimeoutException Server Down"
+                    )))
+
+                } catch (e: NoTransformationFoundException) {
+                    Log.e(TAG, " NoTransformationFoundException")
+                    emit(GetDataFromRemote.Failed(error = Error(
+                        code = 601,
+                        message = "NoTransformationFoundException Server ok. other problem"
+                    )))
+                } catch (e: ConnectException) {
+                    Log.e(TAG, " No internet")
+                    emit(GetDataFromRemote.Failed(error = Error(
+                        code = 602,
+                        message = "No internet in mobile "
+                    )))
+                } catch (e: JsonConvertException) {
+
+                    Log.e(TAG, " ${e.message}")
+                    emit(GetDataFromRemote.Failed(error = Error(
+                        code = 603,
+                        message = "Json convert Exception $e"
+                    )))
+                } catch (e: Exception) {
+
+                    Log.e(TAG, " ${e.message}")
+                    emit(GetDataFromRemote.Failed(error = Error(
+                        code = 604,
+                        message = "Other Exception $e"
+                    )))
                 }
-
-            } catch (e: JsonConvertException) {
-                Log.e(TAG, " bbb  ${e.message} ")
-                emit(
-                    listOf(
-                        ProductDetails(
-                            productId = 1,
-                            productName = "JsonConvertException",
-                            productRate = 25.5f,
-                            unit = "Kg",
-                            stoke = 0f,
-                            vat = 0f
-                        )
-                    )
-                )
-            } catch (e: ConnectTimeoutException) {
-                Log.w(TAG, "getProductDetails: connect time out exception")
-                emit(
-                    listOf(
-                        ProductDetails(
-                            productId = 1,
-                            productName = "error ConnectTimeoutException",
-                            productRate = 25.5f,
-                            unit = "Kg",
-                            stoke = 0f,
-                            vat = 0f
-                        )
-                    )
-                )
-            } catch (e: NoTransformationFoundException) {
-                emit(
-                    listOf(
-                        ProductDetails(
-                            productId = 1,
-                            productName = "error NoTransformationFoundException",
-                            productRate = 25.5f,
-                            unit = "Kg",
-                            stoke = 0f,
-                            vat = 0f
-                        )
-                    )
-                )
-            } catch (e: Exception) {
-
-                emit(
-                    listOf(
-                        ProductDetails(
-                            productId = 1,
-                            productName = "error Exception",
-                            productRate = 25.5f,
-                            unit = "Kg",
-                            stoke = 0f,
-                            vat = 0f
-                        )
-                    )
-                )
             }
         }
-    }
+
 }

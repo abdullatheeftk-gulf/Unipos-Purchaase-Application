@@ -1,7 +1,7 @@
 package com.gulfappdeveloper.project2.di
 
 import com.gulfappdeveloper.project2.data.remote.ApiServiceImpl
-import com.gulfappdeveloper.project2.domain.service.ApiService
+import com.gulfappdeveloper.project2.domain.services.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,8 +37,8 @@ object NetWorkModule {
             }
 
             engine {
-                connectTimeout = 100_000
-                socketTimeout = 100_000
+                connectTimeout = 30_000
+                socketTimeout = 30_000
             }
         }
     }
