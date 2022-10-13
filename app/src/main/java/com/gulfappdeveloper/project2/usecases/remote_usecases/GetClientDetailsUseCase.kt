@@ -9,7 +9,7 @@ class GetClientDetailsUseCase(
     private val remoteRepository: RemoteRepository
 ) {
 
-    suspend operator fun invoke():Flow<GetDataFromRemote<List<ClientDetails>>>{
-        return remoteRepository.getClientDetails()
+    suspend operator fun invoke(url:String):Flow<GetDataFromRemote<List<ClientDetails>>>{
+        return remoteRepository.getClientDetails(url = url)
     }
 }

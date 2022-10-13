@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ApiService {
 
-    suspend fun getClientDetails():Flow<GetDataFromRemote<List<ClientDetails>>>
-    suspend fun getProductDetails():Flow<GetDataFromRemote<List<ProductDetails>>>
+    suspend fun getClientDetails(url:String):Flow<GetDataFromRemote<List<ClientDetails>>>
+    suspend fun getProductDetails(url: String):Flow<GetDataFromRemote<List<ProductDetails>>>
 }

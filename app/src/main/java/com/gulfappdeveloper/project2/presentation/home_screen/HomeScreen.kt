@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2.presentation.home_screen
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -24,9 +25,16 @@ fun HomeScreen(
     val scaffoldState = rememberScaffoldState()
     val productDetails by rootViewModel.productDetails.collectAsState()
     val clientDetails by rootViewModel.clientDetails.collectAsState()
+    
+    val operationCount by rootViewModel.operationCount
 
     Scaffold(
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        bottomBar = {
+            BottomAppBar() {
+                Text(text = "$operationCount")
+            }
+        }
     ) {
         it.calculateTopPadding()
 

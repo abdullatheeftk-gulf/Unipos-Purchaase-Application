@@ -20,10 +20,10 @@ private const val TAG = "ApiServiceImpl"
 class ApiServiceImpl(
     private val client: HttpClient
 ) : ApiService {
-    override suspend fun getClientDetails(): Flow<GetDataFromRemote<List<ClientDetails>>> {
+    override suspend fun getClientDetails(url:String): Flow<GetDataFromRemote<List<ClientDetails>>> {
         return flow {
             try {
-                val httpResponse = client.get(HttpRoutes.GET_CLIENT_DETAILS)
+                val httpResponse = client.get(urlString = url)
                 val statusCode = httpResponse.status.value
                 Log.i(TAG, "status code $statusCode")
 
@@ -95,11 +95,11 @@ class ApiServiceImpl(
         }
     }
 
-    override suspend fun getProductDetails(): Flow<GetDataFromRemote<List<ProductDetails>>> {
+    override suspend fun getProductDetails(url:String): Flow<GetDataFromRemote<List<ProductDetails>>> {
         return flow {
 
                 try {
-                    val httpResponse = client.get(HttpRoutes.GET_PRODUCT_DETAILS)
+                    val httpResponse = client.get(urlString = url)
                     val statusCode = httpResponse.status.value
                     Log.i(TAG, "status code $statusCode")
                     when(statusCode){
