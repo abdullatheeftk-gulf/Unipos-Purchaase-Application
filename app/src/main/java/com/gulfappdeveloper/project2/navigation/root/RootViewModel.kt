@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "RootViewModel"
+
 @HiltViewModel
 class RootViewModel @Inject constructor(
     private val useCase: UseCase
