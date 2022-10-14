@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.domain.models.remote
+package com.gulfappdeveloper.project2.domain.models.remote.get
 
 import kotlinx.serialization.Serializable
 
