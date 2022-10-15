@@ -6,13 +6,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
+import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
 
 
 @Composable
 fun RootNavGraph(
     navHostController: NavHostController,
-    onHideKeyBoard: () -> Unit,
+    hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
     rootViewModel: RootViewModel = hiltViewModel()
 ) {
@@ -31,10 +32,18 @@ fun RootNavGraph(
             )
         }
 
+        composable(RootNavScreens.UrlSetScreen.route){
+            SetBaseUrlScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard
+            )
+        }
+
         composable(RootNavScreens.HomeScreen.route) {
             HomeScreen(
                 navHostController = navHostController,
-                onHideKeyBoard = onHideKeyBoard,
+                hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel,
             )

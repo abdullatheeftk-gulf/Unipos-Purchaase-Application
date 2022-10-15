@@ -19,7 +19,7 @@ private const val TAG = "HomeScreen"
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
-    onHideKeyBoard: () -> Unit,
+    hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
     rootViewModel: RootViewModel,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()

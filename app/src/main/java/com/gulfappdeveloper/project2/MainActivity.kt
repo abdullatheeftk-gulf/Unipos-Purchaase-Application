@@ -1,6 +1,8 @@
 package com.gulfappdeveloper.project2
 
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,12 +29,21 @@ class MainActivity : ComponentActivity() {
 
                     RootNavGraph(
                         navHostController = navHostController,
-                        onHideKeyBoard = { TODO() },
+                        hideKeyboard = {
+                            hideSoftKeyBoard()
+                        },
                         onScanButtonClicked = { TODO() }
                     )
 
                 }
             }
+        }
+    }
+
+    private fun hideSoftKeyBoard() {
+        this.currentFocus?.let { view ->
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

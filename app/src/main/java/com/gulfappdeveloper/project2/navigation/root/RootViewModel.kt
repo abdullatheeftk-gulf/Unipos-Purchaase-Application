@@ -84,7 +84,6 @@ class RootViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = baseUrl.value).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
                     message.value = result.data.message
-                    sendSplashScreenEvent(SplashScreenEvent.CloseProgressBar)
                     getProductDetails()
                     getClientDetails()
                 }

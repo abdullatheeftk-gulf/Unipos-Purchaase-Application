@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -88,11 +89,11 @@ fun SplashScreen(
         if (showProgressBar) {
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
 
@@ -105,12 +106,13 @@ fun SplashScreen(
                 Button(
                     onClick = {
                         showSetBaseUrlButton = false
-                        /*TODO*/
+                        navHostController.popBackStack()
+                        navHostController.navigate(RootNavScreens.UrlSetScreen.route)
                     }
                 ) {
                     Text(text = "Set Base Url")
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
