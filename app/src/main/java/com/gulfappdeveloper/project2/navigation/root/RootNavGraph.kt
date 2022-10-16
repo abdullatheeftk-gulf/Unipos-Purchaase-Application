@@ -21,7 +21,7 @@ fun RootNavGraph(
 
     NavHost(
         navController = navHostController,
-        startDestination = RootNavScreens.SplashScreen.route
+        startDestination = RootNavScreens.HomeScreen.route
     ) {
 
 
@@ -32,7 +32,7 @@ fun RootNavGraph(
             )
         }
 
-        composable(RootNavScreens.UrlSetScreen.route){
+        composable(RootNavScreens.UrlSetScreen.route) {
             SetBaseUrlScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
