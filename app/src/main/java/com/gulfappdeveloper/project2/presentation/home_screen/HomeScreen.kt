@@ -2,18 +2,22 @@ package com.gulfappdeveloper.project2.presentation.home_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
+import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.keyboardAsState
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "HomeScreen"
 
@@ -28,9 +32,69 @@ fun HomeScreen(
     val scaffoldState = rememberScaffoldState()
 
 
-    val operationCount by rootViewModel.operationCount
-    val baseUrl by rootViewModel.baseUrl
-    val clientDetailsList = rootViewModel.clientDetails.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+
+    val listState = rememberLazyListState()
+
+    val isKeyBoardOpen by keyboardAsState()
+
+    var showCalendar by remember {
+        mutableStateOf(false)
+    }
+
+    var showAddClientDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if (showAddClientDialog){
+        AddClientDialog(
+            rootViewModel = rootViewModel,
+            onDismissRequest = {
+                showAddClientDialog = false
+            }
+        )
+    }
+
+    LaunchedEffect(key1 = true) {
+        homeScreenViewModel.uiEvent.collectLatest { value ->
+            when (value) {
+                is UiEvent.AnimateWithKeyBoard -> {
+                    // Log.d(TAG, "event: AnimateWithKeyBoard ")
+                    listState.animateScrollToItem(2)
+                }
+                is UiEvent.AnimateBackWithKeyBoard -> {
+                    // Log.e(TAG, "event: AnimateBackWithKeyBoard ")
+                    listState.animateScrollToItem(0)
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = isKeyBoardOpen,
+        block = {
+            if (isKeyBoardOpen.name == "Closed") {
+                listState.scrollToItem(0)
+            }
+        }
+    )
+
+
+    // Log.d(TAG, "HomeScreen: ${isKeyBoardOpen.name}")
+
+
+    if (showCalendar) {
+        CalendarDialog(
+            rootViewModel = rootViewModel,
+            onDismissRequest = {
+                showCalendar = false
+            }
+        )
+
+
+    }
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -39,43 +103,85 @@ fun HomeScreen(
         }
     ) {
         it.calculateTopPadding()
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            state = listState
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(color = 0x93F1ECEC)),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Text(
-                    text = "Enter purchase details :",
+            item {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 4.dp),
-                    color = MaterialTheme.colors.error
+                        .background(Color(color = 0x93F1ECEC)),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    Text(
+                        text = "Enter purchase details :",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 4.dp),
+                        color = MaterialTheme.colors.error
+                    )
+                }
+
+            }
+
+            item {
+                FirstThreeRows(
+                    rootViewModel = rootViewModel,
+                    hideKeyboard = hideKeyboard,
+                    onSelectDateClicked = {
+                        showCalendar = true
+                    },
+                    navHostController = navHostController,
+                    onAddClientClicked = {
+                        showAddClientDialog = true
+                    }
                 )
             }
-
-            FirstThreeRows(onSelectDateClicked = {
-
-            })
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            ProductListTitle()
-            ProductList()
-            ItemSelectionRows()
-            ProductButtonRow()
-            ProductPriceColumn()
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "Submit")
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
             }
+            item {
+                ProductListTitle()
+            }
+            item {
+                ProductList()
+            }
+            item {
+                ItemSelectionRows(
+                    homeScreenViewModel = homeScreenViewModel,
+                    onFocusOnBasicTextField = { focused ->
+                        if (focused) {
+                            navHostController.navigate(RootNavScreens.ProductListScreen.route)
+                        }
+
+                    },
+                    rootViewModel = rootViewModel,
+                    hideKeyboard = hideKeyboard,
+                    navHostController = navHostController
+                )
+            }
+            item {
+                ProductButtonRow()
+            }
+            item {
+                ProductPriceColumn()
+            }
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            item {
+                Button(onClick = {
 
 
+                }) {
+                    Text(text = "Submit")
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(300.dp))
+            }
         }
 
 

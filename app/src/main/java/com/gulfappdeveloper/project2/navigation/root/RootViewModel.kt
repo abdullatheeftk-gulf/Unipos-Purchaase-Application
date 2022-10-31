@@ -1,6 +1,8 @@
 package com.gulfappdeveloper.project2.navigation.root
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +10,7 @@ import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.ProductDetails
+import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +20,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "RootViewModel"
@@ -38,13 +43,26 @@ class RootViewModel @Inject constructor(
     var message = mutableStateOf("")
         private set
 
-    private val _productDetails: MutableStateFlow<List<ProductDetails>> =
-        MutableStateFlow(emptyList())
-    val productDetails: StateFlow<List<ProductDetails>> = _productDetails
+    var billNo = mutableStateOf("")
+        private set
 
-    private val _clientDetails: MutableStateFlow<List<ClientDetails>> =
-        MutableStateFlow(emptyList())
-    val clientDetails: StateFlow<List<ClientDetails>> = _clientDetails
+    var selectedDate = mutableStateOf(Date())
+        private set
+
+    var selectedClient:MutableState<ClientDetails?> = mutableStateOf(null)
+        private set
+
+    var poNo = mutableStateOf("")
+        private set
+
+    var payMode = mutableStateOf(PayMode.Cash)
+        private set
+
+     val productDetailsList = mutableStateListOf<ProductDetails>()
+
+    val selectedProduct:MutableState<ProductDetails?> = mutableStateOf(null)
+
+    val clientDetailsList = mutableStateListOf<ClientDetails>()
 
 
     init {
@@ -98,12 +116,20 @@ class RootViewModel @Inject constructor(
     }
 
     private fun getProductDetails() {
+        try {
+            productDetailsList.removeAll{
+                true
+            }
+        }catch (e:Exception){
+            Log.e(TAG, "getProductDetails: ${e.message}", )
+        }
         viewModelScope.launch {
             useCase.getProductDetailsUseCase(url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS)
                 .collectLatest { result ->
                     Log.w(TAG, "getProductDetails: $result")
                     if (result is GetDataFromRemote.Success) {
-                        _productDetails.value = result.data
+                        productDetailsList.addAll(result.data)
+
                     }
                     if (result is GetDataFromRemote.Failed) {
                         Log.e(
@@ -116,12 +142,20 @@ class RootViewModel @Inject constructor(
     }
 
     private fun getClientDetails() {
+
+        try {
+            clientDetailsList.removeAll {
+                true
+            }
+        }catch (e:Exception){
+            Log.e(TAG, "getClientDetails: ${e.message}", )
+        }
         viewModelScope.launch {
             useCase.getClientDetailsUseCase(url = baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS)
                 .collectLatest { result ->
                     Log.i(TAG, "getClientDetails: $result")
                     if (result is GetDataFromRemote.Success) {
-                        _clientDetails.value = result.data
+                        clientDetailsList.addAll(result.data)
                     }
                     if (result is GetDataFromRemote.Failed) {
                         Log.e(
@@ -131,6 +165,30 @@ class RootViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun setDate(date: Date){
+        selectedDate.value = date
+    }
+
+    fun setBillNo(value:String){
+        billNo.value = value
+    }
+
+    fun setClientDetails(value: ClientDetails){
+        selectedClient.value = value
+    }
+
+    fun setPoNo(value:String){
+        poNo.value = value
+    }
+
+    fun setPayMode(value:PayMode){
+        payMode.value = value
+    }
+
+    fun setSelectedProduct(productDetails: ProductDetails){
+        selectedProduct.value = productDetails
     }
 
 

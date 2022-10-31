@@ -9,5 +9,6 @@ data class ProductDetails(
     val productRate:Float,
     val unit:String,
     val stoke:Float,
+    val barcode:String,
     val vat:Float
 )

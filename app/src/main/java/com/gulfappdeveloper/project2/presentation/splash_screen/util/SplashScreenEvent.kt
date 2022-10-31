@@ -5,4 +5,5 @@ sealed class SplashScreenEvent{
     object CloseProgressBar:SplashScreenEvent()
     object ShowSetBaseUrlButton:SplashScreenEvent()
     data class ShowToast(val message:String):SplashScreenEvent()
+
 }

@@ -5,7 +5,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.gulfappdeveloper.project2.presentation.client_screen.ClientListScreen
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
+import com.gulfappdeveloper.project2.presentation.product_screen.ProductListScreen
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
 
@@ -46,6 +48,20 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel,
+            )
+        }
+
+        composable(route = RootNavScreens.ProductListScreen.route) {
+            ProductListScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController
+            )
+        }
+
+        composable(route = RootNavScreens.ClientListScreen.route) {
+            ClientListScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController
             )
         }
 

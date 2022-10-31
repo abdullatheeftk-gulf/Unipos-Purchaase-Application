@@ -1,0 +1,64 @@
+package com.gulfappdeveloper.project2.presentation.client_screen
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+
+@Composable
+fun ClientListScreen(
+    rootViewModel: RootViewModel,
+    navHostController: NavHostController
+) {
+    val scaffoldState = rememberScaffoldState()
+
+    val clientList = rootViewModel.clientDetailsList
+
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Client Details")
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navHostController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+
+                }
+            )
+        }
+    ) {
+        it.calculateTopPadding()
+
+        LazyColumn {
+            items(clientList) { client ->
+                Card(modifier = Modifier
+                    .padding(10.dp)
+                    .clickable {
+                        rootViewModel.setClientDetails(client)
+                        navHostController.popBackStack()
+                    }) {
+                    Text(
+                        text = client.clientName,
+                        modifier = Modifier.padding(all = 10.dp)
+                    )
+                }
+            }
+        }
+
+    }
+}
