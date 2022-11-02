@@ -12,14 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
 @Composable
-fun ProductButtonRow() {
+fun ProductButtonRow(
+    rootViewModel: RootViewModel
+) {
     Row(
         modifier = Modifier.padding(horizontal = 10.dp)
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                      rootViewModel.addToProductList()
+            },
             contentPadding = PaddingValues(
                 horizontal = 2.dp
             ),
@@ -70,8 +75,9 @@ fun ProductButtonRow() {
     }
 }
 
+/*
 @Preview
 @Composable
 fun ProductButtonRowPrev() {
     ProductButtonRow()
-}
+}*/

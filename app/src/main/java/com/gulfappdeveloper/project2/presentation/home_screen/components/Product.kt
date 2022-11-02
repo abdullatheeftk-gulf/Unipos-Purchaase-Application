@@ -16,9 +16,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 
 @Composable
-fun Product() {
+fun Product(
+    productSelected: ProductSelected,
+    count:Int
+) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -29,13 +33,13 @@ fun Product() {
         ) {
 
             Text(
-                text = "1",
+                text = (count+1).toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = "Hyderabad Biriyani 1/2 Kilogram",
+                text = productSelected.productName,
                 textAlign = TextAlign.Start,
                 fontSize = 10.sp,
                 maxLines = 2,
@@ -43,37 +47,37 @@ fun Product() {
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "2",
+                text = productSelected.qty.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1.5f)
             )
             Text(
-                text = "Nos",
+                text = productSelected.unit,
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1.5f)
             )
             Text(
-                text = "10.5",
+                text = productSelected.productRate.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1.5f)
             )
             Text(
-                text = "0.0",
+                text = productSelected.disc.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1.5f)
             )
             Text(
-                text = "0.0",
+                text = productSelected.vat.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1.5f)
             )
             Text(
-                text = "24.5",
+                text = productSelected.net.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 modifier = Modifier.weight(1.5f)

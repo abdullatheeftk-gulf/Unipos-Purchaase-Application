@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -47,7 +46,7 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
-    if (showAddClientDialog){
+    if (showAddClientDialog) {
         AddClientDialog(
             rootViewModel = rootViewModel,
             onDismissRequest = {
@@ -146,24 +145,36 @@ fun HomeScreen(
                 ProductListTitle()
             }
             item {
-                ProductList()
+                ProductList(rootViewModel = rootViewModel)
             }
             item {
-                ItemSelectionRows(
-                    homeScreenViewModel = homeScreenViewModel,
-                    onFocusOnBasicTextField = { focused ->
-                        if (focused) {
-                            navHostController.navigate(RootNavScreens.ProductListScreen.route)
-                        }
+                /* ItemSelectionRows(
+                     homeScreenViewModel = homeScreenViewModel,
+                     onFocusOnBasicTextField = { focused ->
+                         if (focused) {
+                             navHostController.navigate(RootNavScreens.ProductListScreen.route)
+                         }
 
-                    },
+                     },
+                     rootViewModel = rootViewModel,
+                     hideKeyboard = hideKeyboard,
+                     navHostController = navHostController
+                 )*/
+
+                ItemSelectionRows2(
                     rootViewModel = rootViewModel,
+                    navHostController = navHostController,
                     hideKeyboard = hideKeyboard,
-                    navHostController = navHostController
+                    onAddProductClicked = { /*TODO*/ },
+                    onQrScanClicked = {
+
+                    }
                 )
             }
             item {
-                ProductButtonRow()
+                ProductButtonRow(
+                    rootViewModel = rootViewModel
+                )
             }
             item {
                 ProductPriceColumn()

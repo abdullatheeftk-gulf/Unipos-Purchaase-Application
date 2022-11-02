@@ -48,7 +48,7 @@ fun ProductListTitle() {
                 modifier = Modifier.weight(1.5f)
             )
             Text(
-                text = "ProductUnit",
+                text = "Unit",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,

@@ -10,13 +10,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -24,17 +24,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
-import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreenViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
 
 private const val TAG = "ItemSelectionRows"
+
 @Composable
 fun ItemSelectionRows(
     onFocusOnBasicTextField: (Boolean) -> Unit,
@@ -90,24 +91,24 @@ fun ItemSelectionRows(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            OutlinedTextField(
-                value = selectedProduct?.productName ?: "",
-                onValueChange = {
+            /* OutlinedTextField(
+                 value = selectedProduct?.productName ?: "",
+                 onValueChange = {
 
-                },
-                placeholder = {
-                    Text(text = "Item")
-                },
-                modifier = Modifier
-                    .weight(2.5f)
-                    .padding(horizontal = 4.dp)
-                    .onFocusEvent {
-                        // homeScreenViewModel.onFocused(it.isFocused)
+                 },
+                 placeholder = {
+                     Text(text = "Item")
+                 },
+                 modifier = Modifier
+                     .weight(2.5f)
+                     .padding(horizontal = 4.dp)
+                     .onFocusEvent {
+                         // homeScreenViewModel.onFocused(it.isFocused)
 
-                        /*onFocusOnBasicTextField(it.isFocused)
+                         *//*onFocusOnBasicTextField(it.isFocused)
                     if (it.hasFocus) {
                         focusManager.clearFocus()
-                    }*/
+                    }*//*
                     },
                 trailingIcon = {
 
@@ -121,21 +122,86 @@ fun ItemSelectionRows(
                         )
                     }
                 }
-            )
-
-            OutlinedTextField(value = selectedProduct?.barcode ?: "", onValueChange = {
-
-            }, trailingIcon = {
+            )*/
+            Row(
+                modifier = Modifier
+                    .height(60.dp)
+                    .weight(2f)
+                    .padding(all = 4.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = MaterialTheme.shapes.medium
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Product name",
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .weight(5f)
+                        .padding(horizontal = 10.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_qr_code_scanner_24),
+                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.error
+                )
+                Icon(
+                    imageVector = Icons.Filled.Add,
                     contentDescription = null,
                 )
-            }, placeholder = {
-                Text(text = "QR code")
-            }, modifier = Modifier
-                .weight(1.2f)
-                .padding(horizontal = 4.dp)
-            )
+            }
+
+            Row(
+                modifier = Modifier
+                    .height(60.dp)
+                    .weight(1f)
+                    .padding(all = 4.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = MaterialTheme.shapes.medium
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "QR Code", fontSize = 16.sp,
+                    modifier = Modifier
+                        .weight(2f)
+                        .padding(horizontal = 4.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Icon(
+                    painterResource(id = R.drawable.ic_baseline_qr_code_scanner_24),
+                    contentDescription = null,
+                    modifier = Modifier.weight(
+                        1f
+                    )
+                )
+            }
+
+            /*  OutlinedTextField(
+                  value = selectedProduct?.barcode ?: "",
+                  onValueChange = {
+
+                  },
+                  trailingIcon = {
+                      Icon(
+                          painter = painterResource(id = R.drawable.ic_baseline_qr_code_scanner_24),
+                          contentDescription = null,
+                      )
+                  },
+                  placeholder = {
+                      Text(text = "QR code")
+                  },
+                  modifier = Modifier
+                      .weight(1.2f)
+                      .padding(horizontal = 4.dp)
+              )*/
         }
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -362,9 +428,10 @@ fun ItemSelectionRows(
                     )
             ) {
                 try {
-                    net = ((qty.toFloat() *selectedProduct?.productRate!!)+(qty.toFloat() *selectedProduct?.productRate!!)*selectedProduct?.vat!!/100-disc.toFloat()).toString()
+                    net =
+                        ((qty.toFloat() * selectedProduct?.productRate!!) + (qty.toFloat() * selectedProduct?.productRate!!) * selectedProduct?.vat!! / 100 - disc.toFloat()).toString()
                     Log.i(TAG, "ItemSelectionRows: $net")
-                }catch (e:Exception){
+                } catch (e: Exception) {
 
                 }
                 BasicTextField(

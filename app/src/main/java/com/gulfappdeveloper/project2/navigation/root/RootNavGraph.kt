@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.gulfappdeveloper.project2.presentation.add_product_screen.AddProductScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.ClientListScreen
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
 import com.gulfappdeveloper.project2.presentation.product_screen.ProductListScreen
@@ -62,6 +63,15 @@ fun RootNavGraph(
             ClientListScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController
+            )
+        }
+
+        composable(route = RootNavScreens.AddProductScreen.route){
+            AddProductScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard
+
             )
         }
 
