@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
+import com.gulfappdeveloper.project2.domain.models.remote.get.ProductDetails
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
@@ -61,6 +62,7 @@ fun ItemSelectionRows2(
     var showDropDownMenu by remember {
         mutableStateOf(false)
     }
+
 
 
 

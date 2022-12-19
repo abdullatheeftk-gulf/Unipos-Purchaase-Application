@@ -30,7 +30,7 @@ fun ProductListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Product Details")
+                    Text(text = "Products List")
                 },
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {

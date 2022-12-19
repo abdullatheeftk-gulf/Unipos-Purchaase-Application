@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
+import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
 @Composable
@@ -83,6 +84,7 @@ fun AddClientDialog(
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
+
 
 
                 Button(onClick = {
