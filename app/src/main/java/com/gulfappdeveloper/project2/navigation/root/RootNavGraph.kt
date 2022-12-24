@@ -62,7 +62,8 @@ fun RootNavGraph(
         composable(route = RootNavScreens.ClientListScreen.route) {
             ClientListScreen(
                 rootViewModel = rootViewModel,
-                navHostController = navHostController
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard
             )
         }
 

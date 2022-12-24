@@ -22,6 +22,10 @@ class RemoteRepository @Inject constructor(
         return apiService.getClientDetails(url = url)
     }
 
+    suspend fun searchClientDetails(url: String): Flow<GetDataFromRemote<List<ClientDetails>>> {
+        return apiService.searchClientDetails(url = url)
+    }
+
     suspend fun getProductDetails(url:String):Flow<GetDataFromRemote<List<ProductDetails>>>{
         return apiService.getProductDetails(url = url)
     }

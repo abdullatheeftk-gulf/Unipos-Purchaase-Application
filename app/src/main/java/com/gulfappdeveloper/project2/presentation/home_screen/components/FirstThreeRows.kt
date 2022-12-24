@@ -39,7 +39,7 @@ fun FirstThreeRows(
     rootViewModel: RootViewModel,
     navHostController: NavHostController,
     onSelectDateClicked: () -> Unit,
-    onAddClientClicked:()->Unit,
+    onAddClientClicked: () -> Unit,
     hideKeyboard: () -> Unit
 ) {
 
@@ -166,7 +166,8 @@ fun FirstThreeRows(
             )
             IconButton(
                 onClick = {
-                   navHostController.navigate(route = RootNavScreens.ClientListScreen.route)
+                    rootViewModel.getClientDetails()
+                    navHostController.navigate(route = RootNavScreens.ClientListScreen.route)
                 },
                 modifier = Modifier.weight(1f)
             ) {

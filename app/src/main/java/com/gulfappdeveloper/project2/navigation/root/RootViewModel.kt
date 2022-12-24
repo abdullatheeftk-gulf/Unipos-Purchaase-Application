@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2.navigation.root
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,8 +13,10 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.ProductDetails
 import com.gulfappdeveloper.project2.domain.models.util.PayMode
+import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenUIEvent
 import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -31,64 +34,73 @@ class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ) : ViewModel() {
 
+    private var isInitialLoadingFinished = false
+
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
 
-    var operationCount = mutableStateOf(0)
-        private set
+    private val _clientScreenEvent = Channel<ClientScreenUIEvent>()
+    val clientScreenEvent = _clientScreenEvent.receiveAsFlow()
 
-    var baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
-        private set
+    private val _operationCount = mutableStateOf(0)
+    private val operationCount: State<Int> = _operationCount
 
-    var message = mutableStateOf("")
-        private set
 
-    var billNo = mutableStateOf("")
-        private set
+    private val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
+    val baseUrl: State<String> = _baseUrl
 
-    var selectedDate = mutableStateOf(Date())
-        private set
+    private val _message = mutableStateOf("")
+    val message: State<String> = _message
 
-    var selectedClient: MutableState<ClientDetails?> = mutableStateOf(null)
-        private set
+    private val _billNo = mutableStateOf("")
+    val billNo: State<String> = _billNo
 
-    var poNo = mutableStateOf("")
-        private set
+    private val _selectedDate = mutableStateOf(Date())
+    val selectedDate: State<Date> = _selectedDate
 
-    var payMode = mutableStateOf(PayMode.Cash)
-        private set
+    private val _selectedClient: MutableState<ClientDetails?> = mutableStateOf(null)
+    val selectedClient: State<ClientDetails?> = _selectedClient
+
+    private val _poNo = mutableStateOf("")
+    val poNo: State<String> = _poNo
+
+    private val _payMode = mutableStateOf(PayMode.Cash)
+    val payMode: State<PayMode> = _payMode
 
     val productDetailsList = mutableStateListOf<ProductDetails>()
 
-    var selectedProduct: MutableState<ProductDetails?> = mutableStateOf(null)
-        private set
+    private val _selectedProduct: MutableState<ProductDetails?> = mutableStateOf(null)
+    val selectedProduct: State<ProductDetails?> = _selectedProduct
 
-    var productId = mutableStateOf(0)
-        private set
+    private val _productId = mutableStateOf(0)
+    private val productId: State<Int> = _productId
 
-    var productName = mutableStateOf("")
-        private set
+    private val _productName = mutableStateOf("")
+    val productName: State<String> = _productName
 
-    var qrCode = mutableStateOf("")
-        private set
+    private val _qrCode = mutableStateOf("")
+    val qrCode: State<String> = _qrCode
 
-    var qty = mutableStateOf("")
-        private set
+    private val _qty = mutableStateOf("")
+    val qty: State<String> = _qty
 
-    var unit = mutableStateOf(ProductUnit.Kg)
-        private set
+    private val _unit = mutableStateOf(ProductUnit.Kg)
+    val unit: State<ProductUnit> = _unit
 
-    var rate = mutableStateOf("")
-        private set
+    private val _rate = mutableStateOf("")
+    val rate: State<String> = _rate
 
-    var disc = mutableStateOf("")
-        private set
+    private val _disc = mutableStateOf("")
+    val disc: State<String> = _disc
 
-    var tax = mutableStateOf("")
-        private set
+    private val _tax = mutableStateOf("")
+    val tax: State<String> = _tax
 
-    var net = mutableStateOf(0f)
-        private set
+    private val _net = mutableStateOf(0f)
+    val net:State<Float> = _net
+
+    private val _clientSearchText = mutableStateOf("")
+    val clientSearchText:State<String> = _clientSearchText
 
     val clientDetailsList = mutableStateListOf<ClientDetails>()
 
@@ -98,6 +110,7 @@ class RootViewModel @Inject constructor(
     init {
         sendSplashScreenEvent(SplashScreenEvent.ShowProgressBar)
         saveOperationCount()
+        readBaseUrl()
     }
 
     private fun saveOperationCount() {
@@ -111,8 +124,7 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collectLatest {
                 Log.d(TAG, "readOperationCount: $it")
-                operationCount.value = it
-                readBaseUrl()
+                _operationCount.value = it
             }
         }
     }
@@ -121,21 +133,28 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collectLatest {
                 Log.i(TAG, "readBaseUrl: $it")
-                baseUrl.value = it
-                getWelcomeMessage()
+                _baseUrl.value = it
+                if (!isInitialLoadingFinished) {
+                    getWelcomeMessage()
+                   // getClientDetails()
+                   // getProductDetails()
+                    isInitialLoadingFinished = true
+                }
+
             }
         }
     }
 
     private fun getWelcomeMessage() {
         viewModelScope.launch {
-            useCase.getWelcomeMessageUseCase(url = baseUrl.value).collectLatest { result ->
+            val url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE
+            useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
-                    message.value = result.data.message
-                    getProductDetails()
-                    getClientDetails()
+                    _message.value = result.data.message
+                    Log.d(TAG, "getWelcomeMessage: ${message.value}")
                 }
                 if (result is GetDataFromRemote.Failed) {
+                    isInitialLoadingFinished = false
                     sendSplashScreenEvent(SplashScreenEvent.CloseProgressBar)
                     sendSplashScreenEvent(SplashScreenEvent.ShowToast(message = "Server with ${baseUrl.value} down, Change server"))
                     sendSplashScreenEvent(SplashScreenEvent.ShowSetBaseUrlButton)
@@ -171,94 +190,72 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    private fun getClientDetails() {
 
-        try {
-            clientDetailsList.removeAll {
-                true
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "getClientDetails: ${e.message}")
-        }
-        viewModelScope.launch {
-            useCase.getClientDetailsUseCase(url = baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS)
-                .collectLatest { result ->
-                    Log.i(TAG, "getClientDetails: $result")
-                    if (result is GetDataFromRemote.Success) {
-                        clientDetailsList.addAll(result.data)
-                    }
-                    if (result is GetDataFromRemote.Failed) {
-                        Log.e(
-                            TAG,
-                            "getClientDetails: ${result.error.code}, ${result.error.message}"
-                        )
-                    }
-                }
-        }
-    }
 
     fun setDate(date: Date) {
-        selectedDate.value = date
+        _selectedDate.value = date
     }
 
     fun setBillNo(value: String) {
-        billNo.value = value
+        _billNo.value = value
     }
 
     fun setClientDetails(value: ClientDetails) {
-        selectedClient.value = value
+        _selectedClient.value = value
     }
 
     fun setPoNo(value: String) {
-        poNo.value = value
+        _poNo.value = value
     }
 
     fun setPayMode(value: PayMode) {
-        payMode.value = value
+        _payMode.value = value
     }
 
     fun setSelectedProduct(productDetails: ProductDetails) {
-        selectedProduct.value = productDetails
-        productName.value = productDetails.productName
-        unit.value = ProductUnit.valueOf(productDetails.unit)
-        rate.value = productDetails.productRate.toString()
-        tax.value = productDetails.vat.toString()
-        productId.value = productDetails.productId
+        _selectedProduct.value = productDetails
+        _productName.value = productDetails.productName
+        _unit.value = ProductUnit.valueOf(productDetails.unit)
+        _rate.value = productDetails.productRate.toString()
+        _tax.value = productDetails.vat.toString()
+        _productId.value = productDetails.productId
     }
 
     fun setProductName(value: String) {
-        productName.value = value
+        _productName.value = value
     }
 
     fun setQrCode(value: String) {
-        qrCode.value = value
+        _qrCode.value = value
     }
 
     fun setQty(value: String) {
-        qty.value = value
+        _qty.value = value
         if (qty.value.isNotEmpty() || qty.value.isNotBlank()) {
             calculateNet()
         }
     }
 
     fun setUnit(value: ProductUnit) {
-        unit.value = value
+        _unit.value = value
     }
 
     fun setRate(value: String) {
-        rate.value = value
+        _rate.value = value
     }
 
     fun setDisc(value: String) {
-        disc.value = value
+        _disc.value = value
         if (disc.value.isNotEmpty() || disc.value.isNotBlank()) {
             calculateNet()
         }
     }
 
     fun setTax(value: String) {
-        tax.value = value
+        _tax.value = value
     }
+
+
 
     fun calculateNet() {
         try {
@@ -274,7 +271,7 @@ class RootViewModel @Inject constructor(
             }
             total -= discount
             total = (total.roundToInt() * 100) / 100f
-            net.value = total
+            _net.value = total
         } catch (e: Exception) {
             Log.e(TAG, "calculateNet: ${e.message}")
         }
@@ -304,5 +301,85 @@ class RootViewModel @Inject constructor(
             selectedProductList.add(productSelected)
         }
     }
+
+
+    fun setClientSearchText(value: String) {
+        _clientSearchText.value = value
+    }
+
+   // get client details
+   fun getClientDetails() {
+        sendClientScreenEvent(UiEvent.ShowProgressBar)
+        val url = baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS
+        try {
+            clientDetailsList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getClientDetails: ${e.message}")
+        }
+        viewModelScope.launch {
+            useCase.getClientDetailsUseCase(url = url)
+                .collectLatest { result ->
+                    Log.i(TAG, "getClientDetails: $result")
+                    sendClientScreenEvent(UiEvent.CloseProgressBar)
+                    if (result is GetDataFromRemote.Success) {
+                        if (result.data.isEmpty()){
+                            sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
+                        }else {
+                            clientDetailsList.addAll(result.data)
+                            sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
+                        }
+                    }
+                    if (result is GetDataFromRemote.Failed) {
+                        sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
+                        sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
+                        isInitialLoadingFinished = false
+                        Log.e(TAG, "getClientDetails: ${result.error.code}, ${result.error.message}")
+                    }
+                }
+        }
+    }
+
+    // Client search
+    fun clientSearch() {
+        sendClientScreenEvent(UiEvent.ShowProgressBar)
+        val url = HttpRoutes.BASE_URL+HttpRoutes.SEARCH_CLIENT_DETAILS+_clientSearchText.value
+        try {
+            clientDetailsList.removeAll{
+                true
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+
+        viewModelScope.launch {
+            useCase.searchClentDetailsUseCase(url = url).collectLatest { result->
+                Log.w(TAG, "clientSearch: $result")
+                sendClientScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    if (result.data.isEmpty()){
+                        sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
+                    }else {
+                        clientDetailsList.addAll(result.data)
+                        sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
+                    }
+                }
+                if (result is GetDataFromRemote.Failed){
+                    sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
+                    sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
+                    Log.e(TAG, "clientSearch: $url, code:- ${result.error.code}, error: ${result.error.message}", )
+                }
+            }
+        }
+    }
+
+
+    private fun sendClientScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _clientScreenEvent.send(ClientScreenUIEvent(uiEvent = uiEvent))
+        }
+    }
+
 
 }

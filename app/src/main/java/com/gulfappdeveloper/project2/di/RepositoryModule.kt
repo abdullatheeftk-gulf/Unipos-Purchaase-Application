@@ -10,6 +10,7 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_cou
 import com.gulfappdeveloper.project2.usecases.remote_usecases.GetClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecases.GetProductDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecases.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecases.client.SearchClientDetailsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +31,10 @@ object RepositoryModule {
         return UseCase(
 
             getWelcomeMessageUseCase = GetWelcomeMessageUseCase(remoteRepository = remoteRepository),
+
             getClientDetailsUseCase = GetClientDetailsUseCase(remoteRepository = remoteRepository),
+            searchClentDetailsUseCase = SearchClientDetailsUseCase(repository = remoteRepository),
+
             getProductDetailsUseCase = GetProductDetailsUseCase(remoteRepository = remoteRepository),
 
 

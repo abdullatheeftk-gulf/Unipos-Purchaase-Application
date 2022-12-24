@@ -92,9 +92,9 @@ fun AddClientDialog(
 
                         rootViewModel.setClientDetails(
                             value = ClientDetails(
+                                // ToDo
                                 clientId = -1,
                                 clientName = clientName,
-                                taxId = taxId
                             )
                         )
                     }

@@ -8,7 +8,7 @@ sealed class UiEvent{
     object ShowAlertDialog:UiEvent()
     object CloseAlertDialog:UiEvent()
     data class ShowToastMessage(val message:String):UiEvent()
-    object ShowEmptyList:UiEvent()
+    data class ShowEmptyList(val value:Boolean):UiEvent()
     data class ShowSnackBar(val message:String,val action:(()->Unit)? = null):UiEvent()
     data class Navigate(val route:String):UiEvent()
     object AnimateWithKeyBoard: UiEvent()

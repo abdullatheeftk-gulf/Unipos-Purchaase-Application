@@ -65,9 +65,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+    /*override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         Log.e(TAG, "onKeyDown: ", )
         return super.onKeyDown(keyCode, event)
-    }
+    }*/
 }
 

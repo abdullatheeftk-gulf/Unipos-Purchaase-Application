@@ -28,6 +28,9 @@ fun SplashScreen(
 
     val localContext = LocalContext.current
 
+
+
+
     val welcomeMessage by rootViewModel.message
 
     val scaffoldState = rememberScaffoldState()
