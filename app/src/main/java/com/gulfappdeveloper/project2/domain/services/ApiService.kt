@@ -2,7 +2,7 @@ package com.gulfappdeveloper.project2.domain.services
 
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project2.domain.models.remote.get.ProductDetails
+import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +12,9 @@ interface ApiService {
     suspend fun getClientDetails(url:String):Flow<GetDataFromRemote<List<ClientDetails>>>
     suspend fun searchClientDetails(url:String):Flow<GetDataFromRemote<List<ClientDetails>>>
 
-    suspend fun getProductDetails(url: String):Flow<GetDataFromRemote<List<ProductDetails>>>
+    suspend fun getProductDetailsByName(url: String):Flow<GetDataFromRemote<List<Product>>>
+    suspend fun getProductDetailByBarcode(url: String):Flow<GetDataFromRemote<Product?>>
+
+
 
 }

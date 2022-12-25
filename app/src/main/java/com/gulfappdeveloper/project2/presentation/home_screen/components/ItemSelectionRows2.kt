@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
-import com.gulfappdeveloper.project2.domain.models.remote.get.ProductDetails
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
@@ -39,9 +37,13 @@ fun ItemSelectionRows2(
     onAddProductClicked: () -> Unit,
     onQrScanClicked: () -> Unit
 ) {
-    val productName by rootViewModel.productName
+    val productSearchMode by rootViewModel.productSearchMode
 
-    val barcode by rootViewModel.qrCode
+    val productSearchText by rootViewModel.productSearchText
+
+   // val productName by rootViewModel.productName
+
+    val barcode by rootViewModel.barCode
 
     val qty by rootViewModel.qty
 
@@ -68,27 +70,32 @@ fun ItemSelectionRows2(
 
 
     Column() {
-
+        // First row include product name and barcode.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 8.dp),
         ) {
+            // Product name
             Box(
                 modifier = Modifier
                     .weight(2f)
                     .padding(end = 4.dp)
             ) {
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = productName,
+                    value = productSearchText,
                     innerTextField = {
                         BasicTextField(
-                            value = productName,
-                            onValueChange = {
-
+                            value = productSearchText,
+                            onValueChange = {value->
+                                rootViewModel.setProductSearchText(value)
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = true
+                            readOnly = !productSearchMode,
+                            maxLines = 1,
+                            textStyle = TextStyle(
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                            )
                         )
                     },
                     enabled = true,
@@ -102,7 +109,7 @@ fun ItemSelectionRows2(
                         start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
                     ),
                     trailingIcon = {
-                        Row {
+                        /*Row {
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowRight,
                                 contentDescription = null,
@@ -110,7 +117,7 @@ fun ItemSelectionRows2(
                                 modifier = Modifier.clickable {
                                     navHostController.navigate(RootNavScreens.ProductListScreen.route)
                                 }
-                            )
+                            )*/
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = null,
@@ -119,12 +126,13 @@ fun ItemSelectionRows2(
                                     navHostController.navigate(RootNavScreens.AddProductScreen.route)
                                 }
                             )
-                        }
+                       // }
                     }
 
                 )
             }
 
+            // Barcode. Read only
             Box(
                 modifier = Modifier
                     .weight(1.2f)
@@ -147,7 +155,7 @@ fun ItemSelectionRows2(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     label = {
-                        Text(text = "QR Code", fontSize = 14.sp)
+                        Text(text = "Barcode", fontSize = 14.sp)
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
@@ -171,12 +179,13 @@ fun ItemSelectionRows2(
         }
 
 
-
+        // Product details row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 0.dp),
         ) {
+            // Product Quantity box
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -204,7 +213,7 @@ fun ItemSelectionRows2(
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center
                             ),
-                            readOnly = !(productName.isNotEmpty() && productName.isNotBlank())
+                            readOnly = !(productSearchText.isNotEmpty() && productSearchText.isNotBlank())
                         )
                     },
                     enabled = true,
@@ -223,7 +232,7 @@ fun ItemSelectionRows2(
                 )
             }
 
-
+            // Product Unit box
             Box(
                 modifier = Modifier
                     .weight(1.5f)
@@ -232,7 +241,7 @@ fun ItemSelectionRows2(
                     )
             ) {
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = unit.name,
+                    value = unit,
                     innerTextField = {
 
                         Row(
@@ -241,7 +250,7 @@ fun ItemSelectionRows2(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = unit.name,
+                                text = unit,
                                 modifier = Modifier.weight(1f),
                                 fontSize = 14.sp
                             )
@@ -252,7 +261,7 @@ fun ItemSelectionRows2(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickable {
-                                        if (productName.isNotEmpty() || productName.isNotBlank()) {
+                                        if (productSearchText.isNotEmpty() || productSearchText.isNotBlank()) {
                                             showDropDownMenu = true
                                         }
                                     }
@@ -291,7 +300,7 @@ fun ItemSelectionRows2(
                 }
             }
 
-
+            // Rate box
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -329,6 +338,7 @@ fun ItemSelectionRows2(
                 )
             }
 
+            // Discount box
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -356,7 +366,7 @@ fun ItemSelectionRows2(
                                     hideKeyboard()
                                 }
                             ),
-                            readOnly = !(productName.isNotEmpty() && productName.isNotBlank())
+                            readOnly = !(productSearchText.isNotEmpty() && productSearchText.isNotBlank())
                         )
                     },
                     enabled = true,
@@ -375,6 +385,7 @@ fun ItemSelectionRows2(
                 )
             }
 
+            // Tax percentage box. read only
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -415,6 +426,7 @@ fun ItemSelectionRows2(
                 )
             }
 
+            // net amount box. read only
             Box(
                 modifier = Modifier
                     .weight(1.5f)

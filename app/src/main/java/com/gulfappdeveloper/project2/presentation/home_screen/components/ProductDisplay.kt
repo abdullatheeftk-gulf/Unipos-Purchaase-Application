@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 
 @Composable
-fun Product(
+fun ProductDisplay(
     productSelected: ProductSelected,
     count:Int
 ) {

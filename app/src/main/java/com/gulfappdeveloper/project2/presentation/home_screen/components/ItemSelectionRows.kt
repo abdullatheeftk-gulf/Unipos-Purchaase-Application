@@ -288,7 +288,7 @@ fun ItemSelectionRows(
 
                     }
                     Text(
-                        text = selectedProduct?.unit ?: unit,
+                        text = selectedProduct?.unitName ?: unit,
                         fontSize = 14.sp,
                         modifier = Modifier
                             .weight(3f)
@@ -321,7 +321,7 @@ fun ItemSelectionRows(
                     )
             ) {
                 BasicTextField(
-                    value = if (selectedProduct == null) "Rate" else selectedProduct?.productRate.toString(),
+                    value = if (selectedProduct == null) "Rate" else selectedProduct?.rate.toString(),
                     onValueChange = {
 
                     },
@@ -385,7 +385,7 @@ fun ItemSelectionRows(
                         shape = MaterialTheme.shapes.medium
                     )
             ) {
-                val value = if (selectedProduct == null) tax else "${selectedProduct?.vat}%"
+                val value = if (selectedProduct == null) tax else "${selectedProduct?.vatPercentage}%"
                 BasicTextField(value = value,
                     onValueChange = { typedValue ->
                         tax = typedValue
@@ -429,10 +429,10 @@ fun ItemSelectionRows(
             ) {
                 try {
                     net =
-                        ((qty.toFloat() * selectedProduct?.productRate!!) + (qty.toFloat() * selectedProduct?.productRate!!) * selectedProduct?.vat!! / 100 - disc.toFloat()).toString()
+                        ((qty.toFloat() * selectedProduct?.rate!!) + (qty.toFloat() * selectedProduct?.rate!!) * selectedProduct?.vatPercentage!! / 100 - disc.toFloat()).toString()
                     Log.i(TAG, "ItemSelectionRows: $net")
                 } catch (e: Exception) {
-
+                    e.printStackTrace()
                 }
                 BasicTextField(
                     value = net,

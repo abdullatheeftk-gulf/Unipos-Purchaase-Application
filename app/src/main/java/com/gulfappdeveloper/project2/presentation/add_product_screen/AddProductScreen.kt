@@ -427,7 +427,7 @@ fun AddProductScreen(
 
             Button(
                 onClick = {
-                    rootViewModel.setProductName(productName)
+                   // rootViewModel.setProductName(productName)
                     rootViewModel.setQrCode(qrCode)
                     rootViewModel.setQty(qty)
                     rootViewModel.setUnit(unit)

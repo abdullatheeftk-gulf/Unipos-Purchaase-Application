@@ -11,6 +11,6 @@ object HttpRoutes {
     const val SEARCH_CLIENT_DETAILS = "/api/account/"
 
 
-    const val GET_PRODUCT_DETAILS = "/api/productList"
+    const val GET_PRODUCT_DETAILS = "/api/productnamesearch/"
 
 }

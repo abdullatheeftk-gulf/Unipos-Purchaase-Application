@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -78,6 +79,19 @@ fun HomeScreen(
             }
         }
     )
+
+    LaunchedEffect(key1 = true){
+        rootViewModel.homeScreenEvent.collectLatest { value ->
+            val event = value.uiEvent
+            when(event){
+                is UiEvent.Navigate->{
+                   navHostController.navigate(route =event.route)
+                }
+                else->Unit
+            }
+
+        }
+    }
 
 
     // Log.d(TAG, "HomeScreen: ${isKeyBoardOpen.name}")

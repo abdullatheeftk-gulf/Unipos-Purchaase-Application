@@ -2,7 +2,7 @@ package com.gulfappdeveloper.project2.repositories
 
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
-import com.gulfappdeveloper.project2.domain.models.remote.get.ProductDetails
+import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import com.gulfappdeveloper.project2.domain.services.ApiService
 import kotlinx.coroutines.flow.Flow
@@ -26,8 +26,12 @@ class RemoteRepository @Inject constructor(
         return apiService.searchClientDetails(url = url)
     }
 
-    suspend fun getProductDetails(url:String):Flow<GetDataFromRemote<List<ProductDetails>>>{
-        return apiService.getProductDetails(url = url)
+    suspend fun getProductDetailsByName(url:String):Flow<GetDataFromRemote<List<Product>>>{
+        return apiService.getProductDetailsByName(url = url)
+    }
+
+    suspend fun getProductDetailByBarcode(url: String): Flow<GetDataFromRemote<Product?>> {
+        return apiService.getProductDetailByBarcode(url = url)
     }
 
 }

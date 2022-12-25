@@ -23,7 +23,7 @@ fun ProductList(
         contentPadding = PaddingValues(vertical = 4.dp)
     ) {
         items(selectedProductList.size){count->
-            Product(
+            ProductDisplay(
                 productSelected = selectedProductList[count],
                 count = count
             )

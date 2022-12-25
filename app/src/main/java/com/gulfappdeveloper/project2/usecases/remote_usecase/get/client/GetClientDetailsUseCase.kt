@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.usecases.remote_usecases
+package com.gulfappdeveloper.project2.usecases.remote_usecase.get.client
 
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote

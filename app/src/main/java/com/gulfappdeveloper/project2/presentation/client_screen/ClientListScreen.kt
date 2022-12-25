@@ -16,7 +16,7 @@ import com.gulfappdeveloper.project2.presentation.client_screen.components.Norma
 import com.gulfappdeveloper.project2.presentation.client_screen.components.SearchTopBar
 import com.gulfappdeveloper.project2.presentation.client_screen.components.show_client_list.EmptyScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.components.show_client_list.ShowList
-import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenUIEvent
+import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -43,7 +43,7 @@ fun ClientListScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        rootViewModel.clientScreenEvent.collectLatest { value: ClientScreenUIEvent ->
+        rootViewModel.clientScreenEvent.collectLatest { value: ClientScreenEvent ->
             when (val event = value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
