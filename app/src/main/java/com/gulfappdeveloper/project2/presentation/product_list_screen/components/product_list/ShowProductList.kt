@@ -51,10 +51,10 @@ fun ShowProductList(
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp, vertical = 6.dp)
                     .clickable {
+                        rootViewModel.setProductListEvent(UiEvent.Navigate(""))
                         rootViewModel.setProductSearchMode(false)
                         rootViewModel.setProductSearchText(product.productName)
                         rootViewModel.setSelectedProduct(product)
-                        rootViewModel.setProductListEvent(UiEvent.Navigate(""))
                     },
                 shape = RoundedCornerShape(35),
                 border = BorderStroke(width = 1.dp, color = categoryColor)

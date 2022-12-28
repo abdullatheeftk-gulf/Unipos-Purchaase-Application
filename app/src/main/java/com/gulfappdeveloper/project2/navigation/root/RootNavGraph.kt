@@ -18,7 +18,7 @@ fun RootNavGraph(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
-    rootViewModel: RootViewModel = hiltViewModel()
+    rootViewModel:RootViewModel
 ) {
 
 

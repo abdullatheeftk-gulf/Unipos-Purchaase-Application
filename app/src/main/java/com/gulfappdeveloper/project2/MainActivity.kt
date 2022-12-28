@@ -3,38 +3,57 @@ package com.gulfappdeveloper.project2
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imeNestedScroll
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.navigation.compose.rememberNavController
 import com.gulfappdeveloper.project2.navigation.root.RootNavGraph
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.Project2Theme
+import com.journeyapps.barcodescanner.CaptureActivity
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity"
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val rootViewModel by viewModels<RootViewModel>()
+
 
         setContent {
 
             Project2Theme {
-                // A surface container using the 'background' color from the theme
+
+                val launcher =
+                    rememberLauncherForActivityResult(contract = ScanContract(), onResult = {
+                        if (it.contents != null) {
+                            try {
+                                Log.w(TAG, "onCreate: ${it.contents}")
+                                Toast.makeText(this, it.contents, Toast.LENGTH_LONG).show()
+                                it.contents?.let {value->
+                                    rootViewModel.searchProductByQrCode(value)
+                                }
+                            } catch (e: Exception) {
+                                // Log.e(TAG, "onCreate: ${e.message}", )
+                                Toast.makeText(this, "Error in Scanning", Toast.LENGTH_LONG).show()
+                            }
+
+                        }
+                    })
+
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -47,7 +66,17 @@ class MainActivity : ComponentActivity() {
                         hideKeyboard = {
                             hideSoftKeyboard()
                         },
-                        onScanButtonClicked = { TODO() }
+                        onScanButtonClicked = {
+                            val scanOption = ScanOptions().apply {
+                                setPrompt("Scan for the Invoice")
+                                setBeepEnabled(true)
+                                setOrientationLocked(true)
+                                captureActivity = CaptureAct::class.java
+                            }
+
+                            launcher.launch(scanOption)
+                        },
+                        rootViewModel = rootViewModel
                     )
 
                 }
@@ -69,5 +98,9 @@ class MainActivity : ComponentActivity() {
         Log.e(TAG, "onKeyDown: ", )
         return super.onKeyDown(keyCode, event)
     }*/
+}
+
+class CaptureAct : CaptureActivity() {
+
 }
 

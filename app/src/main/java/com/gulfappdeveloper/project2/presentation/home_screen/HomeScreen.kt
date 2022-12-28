@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -35,11 +34,15 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
 
 
+
     val listState = rememberLazyListState()
 
     val isKeyBoardOpen by keyboardAsState()
 
     var showCalendar by remember {
+        mutableStateOf(false)
+    }
+    var showProgressBar by remember {
         mutableStateOf(false)
     }
 
@@ -80,14 +83,23 @@ fun HomeScreen(
         }
     )
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         rootViewModel.homeScreenEvent.collectLatest { value ->
             val event = value.uiEvent
-            when(event){
-                is UiEvent.Navigate->{
-                   navHostController.navigate(route =event.route)
+            when (event) {
+                is UiEvent.ShowProgressBar -> {
+                    showProgressBar = true
                 }
-                else->Unit
+                is UiEvent.CloseProgressBar -> {
+                    showProgressBar = false
+                }
+                is UiEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                }
+                is UiEvent.Navigate -> {
+                    navHostController.navigate(route = event.route)
+                }
+                else -> Unit
             }
 
         }
@@ -109,6 +121,7 @@ fun HomeScreen(
     }
 
 
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -116,6 +129,15 @@ fun HomeScreen(
         }
     ) {
         it.calculateTopPadding()
+
+        if (showProgressBar) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,9 +202,7 @@ fun HomeScreen(
                     navHostController = navHostController,
                     hideKeyboard = hideKeyboard,
                     onAddProductClicked = { /*TODO*/ },
-                    onQrScanClicked = {
-
-                    }
+                    onQrScanClicked = onScanButtonClicked
                 )
             }
             item {

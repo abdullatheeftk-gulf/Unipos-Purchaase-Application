@@ -41,7 +41,7 @@ fun ItemSelectionRows2(
 
     val productSearchText by rootViewModel.productSearchText
 
-   // val productName by rootViewModel.productName
+    // val productName by rootViewModel.productName
 
     val barcode by rootViewModel.barCode
 
@@ -87,7 +87,7 @@ fun ItemSelectionRows2(
                     innerTextField = {
                         BasicTextField(
                             value = productSearchText,
-                            onValueChange = {value->
+                            onValueChange = { value ->
                                 rootViewModel.setProductSearchText(value)
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -118,15 +118,15 @@ fun ItemSelectionRows2(
                                     navHostController.navigate(RootNavScreens.ProductListScreen.route)
                                 }
                             )*/
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.clickable {
-                                    navHostController.navigate(RootNavScreens.AddProductScreen.route)
-                                }
-                            )
-                       // }
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.clickable {
+                                navHostController.navigate(RootNavScreens.AddProductScreen.route)
+                            }
+                        )
+                        // }
                     }
 
                 )
@@ -147,7 +147,10 @@ fun ItemSelectionRows2(
 
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = true
+                            readOnly = true,
+                            textStyle = TextStyle(
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                            )
                         )
                     },
                     enabled = true,
@@ -161,12 +164,14 @@ fun ItemSelectionRows2(
                         start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
                     ),
                     trailingIcon = {
-                        Row() {
+                        Row(modifier = Modifier.padding(top = 8.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_qr_code_scanner_24),
                                 contentDescription = null,
                                 tint = MaterialTheme.colors.error,
                                 modifier = Modifier.clickable {
+                                    rootViewModel.setProductSearchMode(false)
+                                    rootViewModel.resetSelectedProduct()
                                     onQrScanClicked()
                                 }
                             )
@@ -211,7 +216,8 @@ fun ItemSelectionRows2(
                                 }
                             ),
                             textStyle = TextStyle(
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
                             readOnly = !(productSearchText.isNotEmpty() && productSearchText.isNotBlank())
                         )
@@ -221,7 +227,12 @@ fun ItemSelectionRows2(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     label = {
-                        Text(text = "Qty", fontSize = 10.sp)
+                        Text(
+                            text = "Qty",
+                            fontSize = 10.sp,
+                            textAlign = if (qty.isEmpty()) TextAlign.Center else TextAlign.Start,
+                            modifier = if (qty.isEmpty()) Modifier.fillMaxWidth() else Modifier
+                        )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = if (qty.isEmpty()) 8.dp else 2.dp,
@@ -252,7 +263,8 @@ fun ItemSelectionRows2(
                             Text(
                                 text = unit,
                                 modifier = Modifier.weight(1f),
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             )
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowDown,
@@ -317,7 +329,8 @@ fun ItemSelectionRows2(
 
                             },
                             textStyle = TextStyle(
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
                             readOnly = true
                         )
@@ -327,7 +340,10 @@ fun ItemSelectionRows2(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     label = {
-                        Text(text = "Rate", fontSize = 10.sp)
+                        Text(
+                            text = "Rate",
+                            fontSize = 10.sp,
+                        )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = if (rate.isEmpty()) 8.dp else 2.dp,
@@ -355,7 +371,8 @@ fun ItemSelectionRows2(
                                 rootViewModel.setDisc(value)
                             },
                             textStyle = TextStyle(
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
@@ -402,7 +419,8 @@ fun ItemSelectionRows2(
 
                             },
                             textStyle = TextStyle(
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
                             readOnly = true
                         )
@@ -456,11 +474,11 @@ fun ItemSelectionRows2(
                         Text(
                             text = "Net",
                             fontSize = 10.sp,
-                            color = MaterialTheme.colors.error
+                            color = MaterialTheme.colors.error,
                         )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
-                        start = 2.dp,
+                        start = 8.dp,
                         top = 8.dp,
                         bottom = 8.dp,
                         end = 2.dp,

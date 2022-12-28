@@ -21,6 +21,7 @@ import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScree
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -32,29 +33,29 @@ import kotlin.math.roundToInt
 private const val TAG = "RootViewModel"
 
 @HiltViewModel
-class RootViewModel @Inject constructor(
+open class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ) : ViewModel() {
 
-    private var isInitialLoadingFinished = false
+    protected var isInitialLoadingFinished = false
 
-    private val _splashScreenEvent = Channel<SplashScreenEvent>()
+    protected val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
 
-    private val _clientScreenEvent = Channel<ClientScreenEvent>()
+    protected val _clientScreenEvent = Channel<ClientScreenEvent>()
     val clientScreenEvent = _clientScreenEvent.receiveAsFlow()
 
-    private val _homeScreenEvent = Channel<HomeScreenEvent>()
+    protected val _homeScreenEvent = Channel<HomeScreenEvent>()
     val homeScreenEvent = _homeScreenEvent.receiveAsFlow()
 
-    private val _productListScreenEvent = Channel<ProductListScreenEvent>()
+    protected val _productListScreenEvent = Channel<ProductListScreenEvent>()
     val productListScreenEvent = _productListScreenEvent.receiveAsFlow()
 
-    private val _operationCount = mutableStateOf(0)
-    private val operationCount: State<Int> = _operationCount
+    protected val _operationCount = mutableStateOf(0)
+    protected val operationCount: State<Int> = _operationCount
 
 
-    private val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
+    protected val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
     val baseUrl: State<String> = _baseUrl
 
     // Welcome message
@@ -62,14 +63,14 @@ class RootViewModel @Inject constructor(
     val message: State<String> = _message
 
     /*
-           First Three rows items
+       First Three rows items
     */
     // Bill no
-    private val _billNo = mutableStateOf("")
+    protected val _billNo = mutableStateOf("")
     val billNo: State<String> = _billNo
 
     // Selected date
-    private val _selectedDate = mutableStateOf(Date())
+    protected val _selectedDate = mutableStateOf(Date())
     val selectedDate: State<Date> = _selectedDate
 
     // selected Client
@@ -104,8 +105,8 @@ class RootViewModel @Inject constructor(
     private val _productId = mutableStateOf(0)
     private val productId: State<Int> = _productId
 
-   /* private val _productName = mutableStateOf("")
-    val productName: State<String> = _productName*/
+    /* private val _productName = mutableStateOf("")
+     val productName: State<String> = _productName*/
 
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
@@ -215,15 +216,25 @@ class RootViewModel @Inject constructor(
         _payMode.value = value
     }
 
-     fun setSelectedProduct(product: Product) {
-         _selectedProduct.value = product
-         _unit.value = product.unitName
-         _barCode.value = product.barcode
-         _rate.value = product.rate.toString()
-         _tax.value = product.vatPercentage.toString()
-         _productId.value = product.productId
-         _disc.value = product.purchaseDiscount.toString()
-     }
+    fun setSelectedProduct(product: Product) {
+        _selectedProduct.value = product
+        _unit.value = product.unitName
+        _barCode.value = product.barcode
+        _rate.value = product.rate.toString()
+        _tax.value = product.vatPercentage.toString()
+        _productId.value = product.productId
+        _disc.value = product.purchaseDiscount.toString()
+    }
+
+    fun resetSelectedProduct() {
+        _selectedProduct.value = null
+        _unit.value = ""
+        _barCode.value =""
+        _rate.value = ""
+        _tax.value = ""
+        _productId.value = 0
+        _disc.value = ""
+    }
 
     /*fun setProductName(value: String) {
         _productName.value = value
@@ -445,6 +456,30 @@ class RootViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    fun searchProductByQrCode(value: String) {
+        sendHomeScreenEvent(UiEvent.ShowProgressBar)
+        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest {result->
+                sendHomeScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success){
+                    Log.e(TAG, "searchProductByQrCode: ${result.data}", )
+                    result.data?.let {product->
+                        _productSearchText.value = product.productName
+                        setSelectedProduct(product)
+                        return@collectLatest
+                    }
+                    sendHomeScreenEvent(UiEvent.ShowSnackBar("No item with barcode $value"))
+                }
+                if (result is GetDataFromRemote.Failed){
+                    sendHomeScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
+                    Log.e(TAG, "searchProductByQrCode: ${result.error}", )
+                }
+            }
+
         }
     }
 

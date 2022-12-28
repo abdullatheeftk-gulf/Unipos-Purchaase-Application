@@ -12,5 +12,6 @@ object HttpRoutes {
 
 
     const val GET_PRODUCT_DETAILS = "/api/productnamesearch/"
+    const val PRODUCT_SEARCH_BY_BARCODE = "/api/productbarcodesearch/"
 
 }
