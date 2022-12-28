@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.product_list.EmptyList
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.product_list.ShowProductList
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.topbar.SearchTopBar
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun ProductListScreen(
     rootViewModel: RootViewModel,
     hideKeyboard: () -> Unit,
+    rootViewModel2: RootViewModel2,
     navHostController: NavHostController
 ) {
 
@@ -63,12 +65,13 @@ fun ProductListScreen(
         topBar = {
             SearchTopBar(
                 rootViewModel = rootViewModel,
+                rootViewModel2 = rootViewModel2,
                 onClearButtonClicked = {
-                    rootViewModel.setProductSearchText("")
+                    rootViewModel2.setProductSearchText("")
                 },
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {
-                   rootViewModel.setProductListEvent(UiEvent.Navigate(""))
+                   rootViewModel2.setProductListEvent(UiEvent.Navigate(""))
                 }
             )
         }
@@ -89,6 +92,7 @@ fun ProductListScreen(
         } else {
             ShowProductList(
                 rootViewModel = rootViewModel,
+                rootViewModel2 = rootViewModel2
             )
         }
 

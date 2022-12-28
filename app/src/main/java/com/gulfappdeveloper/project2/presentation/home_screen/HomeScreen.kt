@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.keyboardAsState
@@ -26,6 +27,7 @@ fun HomeScreen(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
     rootViewModel: RootViewModel,
+    rootViewModel2: RootViewModel2,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -202,7 +204,8 @@ fun HomeScreen(
                     navHostController = navHostController,
                     hideKeyboard = hideKeyboard,
                     onAddProductClicked = { /*TODO*/ },
-                    onQrScanClicked = onScanButtonClicked
+                    onQrScanClicked = onScanButtonClicked,
+                    rootViewModel2 = rootViewModel2
                 )
             }
             item {

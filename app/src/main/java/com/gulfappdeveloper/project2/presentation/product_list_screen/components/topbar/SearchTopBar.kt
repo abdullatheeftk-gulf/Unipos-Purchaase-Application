@@ -23,10 +23,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 
 @Composable
 fun SearchTopBar(
     rootViewModel: RootViewModel,
+    rootViewModel2: RootViewModel2,
     onClearButtonClicked: () -> Unit,
     onBackButtonClicked: () -> Unit,
     hideKeyboard: () -> Unit,
@@ -47,7 +49,7 @@ fun SearchTopBar(
             BasicTextField(
                 value = productSearchText,
                 onValueChange = { value ->
-                    rootViewModel.setProductSearchText(value = value)
+                    rootViewModel2.setProductSearchText(value = value)
                 },
                 keyboardActions = KeyboardActions(
                     onSearch = {

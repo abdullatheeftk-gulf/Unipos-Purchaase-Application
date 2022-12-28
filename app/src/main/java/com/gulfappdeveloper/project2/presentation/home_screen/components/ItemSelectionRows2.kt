@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -34,6 +35,7 @@ fun ItemSelectionRows2(
     rootViewModel: RootViewModel,
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
+    rootViewModel2: RootViewModel2,
     onAddProductClicked: () -> Unit,
     onQrScanClicked: () -> Unit
 ) {
@@ -88,7 +90,7 @@ fun ItemSelectionRows2(
                         BasicTextField(
                             value = productSearchText,
                             onValueChange = { value ->
-                                rootViewModel.setProductSearchText(value)
+                                rootViewModel2.setProductSearchText(value)
                             },
                             modifier = Modifier.fillMaxWidth(),
                             readOnly = !productSearchMode,
@@ -170,7 +172,7 @@ fun ItemSelectionRows2(
                                 contentDescription = null,
                                 tint = MaterialTheme.colors.error,
                                 modifier = Modifier.clickable {
-                                    rootViewModel.setProductSearchMode(false)
+                                    rootViewModel2.setProductSearchMode(false)
                                     rootViewModel.resetSelectedProduct()
                                     onQrScanClicked()
                                 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.gulfappdeveloper.project2.navigation.root.RootNavGraph
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 import com.gulfappdeveloper.project2.ui.theme.Project2Theme
 import com.journeyapps.barcodescanner.CaptureActivity
 import com.journeyapps.barcodescanner.ScanContract
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val rootViewModel by viewModels<RootViewModel>()
+        val rootViewModel2 by viewModels<RootViewModel2>()
 
 
         setContent {
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
                                 Log.w(TAG, "onCreate: ${it.contents}")
                                 Toast.makeText(this, it.contents, Toast.LENGTH_LONG).show()
                                 it.contents?.let {value->
-                                    rootViewModel.searchProductByQrCode(value)
+                                    rootViewModel2.searchProductByQrCode(value)
                                 }
                             } catch (e: Exception) {
                                 // Log.e(TAG, "onCreate: ${e.message}", )
@@ -76,7 +78,8 @@ class MainActivity : ComponentActivity() {
 
                             launcher.launch(scanOption)
                         },
-                        rootViewModel = rootViewModel
+                        rootViewModel = rootViewModel,
+                        rootViewModel2 = rootViewModel2
                     )
 
                 }

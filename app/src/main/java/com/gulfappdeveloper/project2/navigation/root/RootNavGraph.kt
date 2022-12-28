@@ -18,7 +18,8 @@ fun RootNavGraph(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
-    rootViewModel:RootViewModel
+    rootViewModel:RootViewModel,
+    rootViewModel2: RootViewModel2
 ) {
 
 
@@ -49,6 +50,7 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel,
+                rootViewModel2 = rootViewModel2
             )
         }
 
@@ -56,7 +58,8 @@ fun RootNavGraph(
             ProductListScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
-                hideKeyboard = hideKeyboard
+                hideKeyboard = hideKeyboard,
+                rootViewModel2 = rootViewModel2
             )
         }
 

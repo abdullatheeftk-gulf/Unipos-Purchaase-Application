@@ -21,7 +21,6 @@ import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScree
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -48,10 +47,10 @@ open class RootViewModel @Inject constructor(
     protected val _homeScreenEvent = Channel<HomeScreenEvent>()
     val homeScreenEvent = _homeScreenEvent.receiveAsFlow()
 
-    protected val _productListScreenEvent = Channel<ProductListScreenEvent>()
+    private val _productListScreenEvent = Channel<ProductListScreenEvent>()
     val productListScreenEvent = _productListScreenEvent.receiveAsFlow()
 
-    protected val _operationCount = mutableStateOf(0)
+    private val _operationCount = mutableStateOf(0)
     protected val operationCount: State<Int> = _operationCount
 
 
@@ -66,11 +65,11 @@ open class RootViewModel @Inject constructor(
        First Three rows items
     */
     // Bill no
-    protected val _billNo = mutableStateOf("")
+    private val _billNo = mutableStateOf("")
     val billNo: State<String> = _billNo
 
     // Selected date
-    protected val _selectedDate = mutableStateOf(Date())
+    private val _selectedDate = mutableStateOf(Date())
     val selectedDate: State<Date> = _selectedDate
 
     // selected Client
@@ -88,11 +87,11 @@ open class RootViewModel @Inject constructor(
     /* Product selection addition rows*/
 
     // product search text to search products
-    private val _productSearchText = mutableStateOf("")
+    protected val _productSearchText = mutableStateOf("")
     val productSearchText: State<String> = _productSearchText
 
     // Product search mode. which used in product name box
-    private val _productSearchMode = mutableStateOf(true)
+    protected val _productSearchMode = mutableStateOf(true)
     val productSearchMode: State<Boolean> = _productSearchMode
 
     // Product  list
@@ -229,7 +228,7 @@ open class RootViewModel @Inject constructor(
     fun resetSelectedProduct() {
         _selectedProduct.value = null
         _unit.value = ""
-        _barCode.value =""
+        _barCode.value = ""
         _rate.value = ""
         _tax.value = ""
         _productId.value = 0
@@ -398,7 +397,6 @@ open class RootViewModel @Inject constructor(
     /*
      Product List codes
     */
-
     fun setProductSearchMode(value: Boolean) {
         _productSearchMode.value = value
     }
@@ -417,78 +415,8 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    private fun searchProductListByName() {
-        sendProductListScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productSearchText.value
-        try {
-            productList.removeAll {
-                true
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "getProductDetails: ${e.message}")
-        }
-        viewModelScope.launch {
-            useCase.getProductDetailsUseCase(url = url)
-                .collectLatest { result ->
-                    sendProductListScreenEvent(UiEvent.CloseProgressBar)
-                    Log.w(TAG, "getProductDetails: $result")
-                    if (result is GetDataFromRemote.Success) {
-                        if (result.data.isEmpty()) {
-                            sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
-                        } else {
-                            try {
-                                productList.removeAll {
-                                    true
-                                }
-                            } catch (e: Exception) {
-                                Log.e(TAG, "getProductDetails: ${e.message}")
-                            }
-                            productList.addAll(result.data)
-                            sendProductListScreenEvent(UiEvent.ShowEmptyList(value = false))
-                        }
-                    }
-                    if (result is GetDataFromRemote.Failed) {
-                        sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
-                        sendProductListScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
-                        Log.e(
-                            TAG,
-                            "getProductDetails: ${result.error.code}, ${result.error.message} "
-                        )
-                    }
-                }
-        }
-    }
 
-    fun searchProductByQrCode(value: String) {
-        sendHomeScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
-        viewModelScope.launch(Dispatchers.IO) {
-            useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest {result->
-                sendHomeScreenEvent(UiEvent.CloseProgressBar)
-                if (result is GetDataFromRemote.Success){
-                    Log.e(TAG, "searchProductByQrCode: ${result.data}", )
-                    result.data?.let {product->
-                        _productSearchText.value = product.productName
-                        setSelectedProduct(product)
-                        return@collectLatest
-                    }
-                    sendHomeScreenEvent(UiEvent.ShowSnackBar("No item with barcode $value"))
-                }
-                if (result is GetDataFromRemote.Failed){
-                    sendHomeScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
-                    Log.e(TAG, "searchProductByQrCode: ${result.error}", )
-                }
-            }
-
-        }
-    }
-
-    fun setProductListEvent(event: UiEvent) {
-        sendProductListScreenEvent(uiEvent = event)
-    }
-
-
-    private fun sendHomeScreenEvent(uiEvent: UiEvent) {
+    protected fun sendHomeScreenEvent(uiEvent: UiEvent) {
         viewModelScope.launch {
             _homeScreenEvent.send(HomeScreenEvent(uiEvent = uiEvent))
         }
@@ -501,7 +429,7 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    private fun sendProductListScreenEvent(uiEvent: UiEvent) {
+    protected fun sendProductListScreenEvent(uiEvent: UiEvent) {
         viewModelScope.launch {
             _productListScreenEvent.send(ProductListScreenEvent(uiEvent = uiEvent))
         }
