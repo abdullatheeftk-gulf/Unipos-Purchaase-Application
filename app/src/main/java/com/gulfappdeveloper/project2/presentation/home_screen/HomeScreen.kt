@@ -13,11 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
-import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.keyboardAsState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 private const val TAG = "HomeScreen"
 
@@ -27,14 +27,14 @@ fun HomeScreen(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: () -> Unit,
     rootViewModel: RootViewModel,
-    rootViewModel2: RootViewModel2,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
+    val lazyColumState = rememberLazyListState()
 
+    val selectedProductList = rootViewModel.selectedProductList
 
     val coroutineScope = rememberCoroutineScope()
-
 
 
     val listState = rememberLazyListState()
@@ -183,7 +183,10 @@ fun HomeScreen(
                 ProductListTitle()
             }
             item {
-                ProductList(rootViewModel = rootViewModel)
+                ProductList(
+                    rootViewModel = rootViewModel,
+                    lazyColumnState = lazyColumState
+                )
             }
             item {
                 /* ItemSelectionRows(
@@ -205,12 +208,18 @@ fun HomeScreen(
                     hideKeyboard = hideKeyboard,
                     onAddProductClicked = { /*TODO*/ },
                     onQrScanClicked = onScanButtonClicked,
-                    rootViewModel2 = rootViewModel2
                 )
             }
             item {
                 ProductButtonRow(
-                    rootViewModel = rootViewModel
+                    rootViewModel = rootViewModel,
+                    onProductAdded = {
+                        coroutineScope.launch {
+                            if (selectedProductList.size>3) {
+                                lazyColumState.scrollToItem(selectedProductList.size - 1)
+                            }
+                        }
+                    }
                 )
             }
             item {

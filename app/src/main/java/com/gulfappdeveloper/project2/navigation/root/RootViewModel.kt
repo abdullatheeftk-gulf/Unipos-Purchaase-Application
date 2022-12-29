@@ -21,6 +21,7 @@ import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScree
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -36,15 +37,15 @@ open class RootViewModel @Inject constructor(
     private val useCase: UseCase
 ) : ViewModel() {
 
-    protected var isInitialLoadingFinished = false
+    private var isInitialLoadingFinished = false
 
-    protected val _splashScreenEvent = Channel<SplashScreenEvent>()
+    private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
 
-    protected val _clientScreenEvent = Channel<ClientScreenEvent>()
+    private val _clientScreenEvent = Channel<ClientScreenEvent>()
     val clientScreenEvent = _clientScreenEvent.receiveAsFlow()
 
-    protected val _homeScreenEvent = Channel<HomeScreenEvent>()
+    private val _homeScreenEvent = Channel<HomeScreenEvent>()
     val homeScreenEvent = _homeScreenEvent.receiveAsFlow()
 
     private val _productListScreenEvent = Channel<ProductListScreenEvent>()
@@ -54,7 +55,7 @@ open class RootViewModel @Inject constructor(
     protected val operationCount: State<Int> = _operationCount
 
 
-    protected val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
+    private val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
     val baseUrl: State<String> = _baseUrl
 
     // Welcome message
@@ -87,11 +88,11 @@ open class RootViewModel @Inject constructor(
     /* Product selection addition rows*/
 
     // product search text to search products
-    protected val _productSearchText = mutableStateOf("")
+    private val _productSearchText = mutableStateOf("")
     val productSearchText: State<String> = _productSearchText
 
     // Product search mode. which used in product name box
-    protected val _productSearchMode = mutableStateOf(true)
+    private val _productSearchMode = mutableStateOf(true)
     val productSearchMode: State<Boolean> = _productSearchMode
 
     // Product  list
@@ -215,25 +216,6 @@ open class RootViewModel @Inject constructor(
         _payMode.value = value
     }
 
-    fun setSelectedProduct(product: Product) {
-        _selectedProduct.value = product
-        _unit.value = product.unitName
-        _barCode.value = product.barcode
-        _rate.value = product.rate.toString()
-        _tax.value = product.vatPercentage.toString()
-        _productId.value = product.productId
-        _disc.value = product.purchaseDiscount.toString()
-    }
-
-    fun resetSelectedProduct() {
-        _selectedProduct.value = null
-        _unit.value = ""
-        _barCode.value = ""
-        _rate.value = ""
-        _tax.value = ""
-        _productId.value = 0
-        _disc.value = ""
-    }
 
     /*fun setProductName(value: String) {
         _productName.value = value
@@ -270,49 +252,9 @@ open class RootViewModel @Inject constructor(
     }
 
 
-    fun calculateNet() {
-        try {
-            val qty = qty.value.toFloat()
-            val rate = rate.value.toFloat()
-            var total = qty * rate
-            val tax = tax.value.toFloat()
-            total += total * (tax / 100)
-            val discount = if (disc.value.isEmpty() || disc.value.isBlank()) {
-                0f
-            } else {
-                disc.value.toFloat()
-            }
-            total -= discount
-            total = (total.roundToInt() * 100) / 100f
-            _net.value = total
-        } catch (e: Exception) {
-            Log.e(TAG, "calculateNet: ${e.message}")
-        }
-
-    }
-
-
     private fun sendSplashScreenEvent(splashScreenEvent: SplashScreenEvent) {
         viewModelScope.launch {
             _splashScreenEvent.send(splashScreenEvent)
-        }
-    }
-
-    fun addToProductList() {
-        if (net.value > 0f) {
-            val productSelected = ProductSelected(
-                productId = productId.value,
-                //productName = productName.value,
-                productName = "",
-                qty = if (qty.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
-                productRate = if (rate.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
-                vat = if (tax.value.isNotBlank() || tax.value.isNotEmpty()) tax.value.toFloat() else 0f,
-                barcode = barCode.value,
-                unit = "",
-                disc = if (tax.value.isNotBlank() || tax.value.isNotEmpty()) tax.value.toFloat() else 0f,
-                net = net.value
-            )
-            selectedProductList.add(productSelected)
         }
     }
 
@@ -415,8 +357,146 @@ open class RootViewModel @Inject constructor(
         }
     }
 
+    private fun searchProductListByName() {
+        sendProductListScreenEvent(UiEvent.ShowProgressBar)
+        val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productSearchText.value
+        try {
+            productList.removeAll {
+                true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getProductDetails: ${e.message}")
+        }
+        viewModelScope.launch {
+            useCase.getProductDetailsUseCase(url = url)
+                .collectLatest { result ->
+                    sendProductListScreenEvent(UiEvent.CloseProgressBar)
+                    Log.w(TAG, "getProductDetails: $result")
+                    if (result is GetDataFromRemote.Success) {
+                        if (result.data.isEmpty()) {
+                            sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
+                        } else {
+                            try {
+                                productList.removeAll {
+                                    true
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "getProductDetails: ${e.message}")
+                            }
+                            productList.addAll(result.data)
+                            sendProductListScreenEvent(UiEvent.ShowEmptyList(value = false))
+                        }
+                    }
+                    if (result is GetDataFromRemote.Failed) {
+                        sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
+                        sendProductListScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
+                        Log.e(
+                            TAG,
+                            "getProductDetails: ${result.error.code}, ${result.error.message} "
+                        )
+                    }
+                }
+        }
+    }
 
-    protected fun sendHomeScreenEvent(uiEvent: UiEvent) {
+    fun searchProductByQrCode(value: String) {
+        sendHomeScreenEvent(UiEvent.ShowProgressBar)
+        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
+                sendHomeScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    Log.e(TAG, "searchProductByQrCode: ${result.data}")
+                    result.data?.let { product ->
+                        _productSearchText.value = product.productName
+                        setSelectedProduct(product)
+                        return@collectLatest
+                    }
+                    sendHomeScreenEvent(UiEvent.ShowSnackBar("No item with barcode $value"))
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendHomeScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
+                    Log.e(TAG, "searchProductByQrCode: ${result.error}")
+                }
+            }
+
+        }
+    }
+
+    fun setProductListEvent(event: UiEvent) {
+        sendProductListScreenEvent(uiEvent = event)
+    }
+
+
+    // Calcultate net value of a product
+    fun calculateNet() {
+        try {
+            val qty = qty.value.toFloat()
+            val rate = rate.value.toFloat()
+            var total = qty * rate
+            val tax = tax.value.toFloat()
+            total += total * (tax / 100)
+            val discount = if (disc.value.isEmpty() || disc.value.isBlank()) {
+                0f
+            } else {
+                disc.value.toFloat()
+            }
+            total -= discount
+            total = (total.roundToInt() * 100) / 100f
+            _net.value = total
+        } catch (e: Exception) {
+            Log.e(TAG, "calculateNet: ${e.message}")
+        }
+
+    }
+
+    // Add Product to the product list
+    fun addToProductList() {
+        if(qty.value.isNotEmpty()){
+            val productSelected = ProductSelected(
+                productId = productId.value,
+                productName = _productSearchText.value,
+                qty = if (qty.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
+                productRate = if (rate.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
+                vat = if (tax.value.isNotBlank() || tax.value.isNotEmpty()) tax.value.toFloat() else 0f,
+                barcode = barCode.value,
+                unit = _unit.value,
+                disc = if (tax.value.isNotBlank() || tax.value.isNotEmpty()) tax.value.toFloat() else 0f,
+                net = net.value
+            )
+            selectedProductList.add(productSelected)
+            resetSelectedProduct()
+        }else{
+            sendHomeScreenEvent(UiEvent.ShowSnackBar("Qty is not Added"))
+        }
+    }
+
+    fun setSelectedProduct(product: Product) {
+        _selectedProduct.value = product
+        _unit.value = product.unitName
+        _barCode.value = product.barcode
+        _rate.value = product.rate.toString()
+        _tax.value = product.vatPercentage.toString()
+        _productId.value = product.productId
+        _disc.value = product.purchaseDiscount.toString()
+    }
+
+    fun resetSelectedProduct() {
+        setProductSearchMode(true)
+        _selectedProduct.value = null
+        _productSearchText.value = ""
+        _unit.value = ""
+        _barCode.value = ""
+        _rate.value = ""
+        _tax.value = ""
+        _productId.value = 0
+        _disc.value = ""
+        _qty.value = ""
+        _net.value = 0f
+    }
+
+
+    private fun sendHomeScreenEvent(uiEvent: UiEvent) {
         viewModelScope.launch {
             _homeScreenEvent.send(HomeScreenEvent(uiEvent = uiEvent))
         }
@@ -429,7 +509,7 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    protected fun sendProductListScreenEvent(uiEvent: UiEvent) {
+    private fun sendProductListScreenEvent(uiEvent: UiEvent) {
         viewModelScope.launch {
             _productListScreenEvent.send(ProductListScreenEvent(uiEvent = uiEvent))
         }

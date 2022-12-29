@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,56 +32,64 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Item",
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(6f)
+                modifier = Modifier.weight(6f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Qty",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Unit",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Rate",
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Dis",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "vat",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Net",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f),
+                textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "",

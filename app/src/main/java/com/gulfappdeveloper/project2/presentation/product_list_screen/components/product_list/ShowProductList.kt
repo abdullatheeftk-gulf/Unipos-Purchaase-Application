@@ -13,16 +13,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
-import com.gulfappdeveloper.project2.navigation.root.RootViewModel2
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.*
 
 @Composable
 fun ShowProductList(
     rootViewModel: RootViewModel,
-    rootViewModel2: RootViewModel2
 ) {
     val productList = rootViewModel.productList
 
@@ -53,9 +50,9 @@ fun ShowProductList(
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp, vertical = 6.dp)
                     .clickable {
-                        rootViewModel2.setProductListEvent(UiEvent.Navigate(""))
-                        rootViewModel2.setProductSearchMode(false)
-                        rootViewModel2.setProductSearchText(product.productName)
+                        rootViewModel.setProductListEvent(UiEvent.Navigate(""))
+                        rootViewModel.setProductSearchMode(false)
+                        rootViewModel.setProductSearchText(product.productName)
                         rootViewModel.setSelectedProduct(product)
                     },
                 shape = RoundedCornerShape(35),
