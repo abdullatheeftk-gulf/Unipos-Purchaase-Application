@@ -12,6 +12,7 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchCl
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailByBarcodeUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,6 +39,9 @@ object RepositoryModule {
 
             getProductDetailsUseCase = GetProductDetailsByNameUseCase(remoteRepository = remoteRepository),
             getProductDetailByBarcodeUseCase = GetProductDetailByBarcodeUseCase(remoteRepository = remoteRepository),
+
+            //post
+            addClientUseCase = AddClientUseCase(remoteRepository = remoteRepository),
 
 
             updateOperationCountUseCase = UpdateOperationCountUseCase(dataStoreRepository = dataStoreRepository),

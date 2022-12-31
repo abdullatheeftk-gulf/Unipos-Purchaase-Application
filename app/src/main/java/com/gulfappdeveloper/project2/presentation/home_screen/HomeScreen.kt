@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -172,7 +173,8 @@ fun HomeScreen(
                     },
                     navHostController = navHostController,
                     onAddClientClicked = {
-                        showAddClientDialog = true
+                        //showAddClientDialog = true
+                        navHostController.navigate(route = RootNavScreens.AddClientScreen.route)
                     }
                 )
             }

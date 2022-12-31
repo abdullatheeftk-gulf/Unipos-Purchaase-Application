@@ -29,7 +29,7 @@ object NetWorkModule {
                     contentType = ContentType.Application.Json,
                     json = Json {
                         encodeDefaults = true
-                        ignoreUnknownKeys = true
+                        ignoreUnknownKeys = false
                     }
                 )
             }

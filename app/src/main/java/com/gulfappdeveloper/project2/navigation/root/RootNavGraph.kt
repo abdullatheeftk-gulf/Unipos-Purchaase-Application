@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.gulfappdeveloper.project2.presentation.add_client_screen.AddClientScreen
 import com.gulfappdeveloper.project2.presentation.add_product_screen.AddProductScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.ClientListScreen
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
@@ -48,6 +49,14 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel,
+            )
+        }
+
+        composable(RootNavScreens.AddClientScreen.route) {
+            AddClientScreen(
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard,
+                navHostController = navHostController
             )
         }
 

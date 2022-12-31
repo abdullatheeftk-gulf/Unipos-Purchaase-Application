@@ -166,11 +166,8 @@ open class RootViewModel @Inject constructor(
                 _baseUrl.value = it
                 if (!isInitialLoadingFinished) {
                     getWelcomeMessage()
-                    // getClientDetails()
-                    // getProductDetails()
                     isInitialLoadingFinished = true
                 }
-
             }
         }
     }

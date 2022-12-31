@@ -9,6 +9,7 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchCl
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailByBarcodeUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
 
 data class UseCase(
     val getWelcomeMessageUseCase: GetWelcomeMessageUseCase,
@@ -19,10 +20,14 @@ data class UseCase(
     val getProductDetailsUseCase: GetProductDetailsByNameUseCase,
     val getProductDetailByBarcodeUseCase: GetProductDetailByBarcodeUseCase,
 
+    // post
+    val addClientUseCase: AddClientUseCase,
 
     val updateOperationCountUseCase: UpdateOperationCountUseCase,
     val saveBaseUrlUseCase: SaveBaseUrlUseCase,
 
     val readOperationCountUseCase: ReadOperationCountUseCase,
-    val readBaseUrlUseCase: ReadBaseUrlUseCase
+    val readBaseUrlUseCase: ReadBaseUrlUseCase,
+
+
 )

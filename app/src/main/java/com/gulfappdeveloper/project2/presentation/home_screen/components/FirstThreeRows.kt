@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -102,6 +103,9 @@ fun FirstThreeRows(
                     onDone = {
                         hideKeyboard()
                     }
+                ),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.primary
                 )
             )
 
@@ -133,7 +137,10 @@ fun FirstThreeRows(
                     .focusRequester(focusRequester),
                 readOnly = true,
                 shape = MaterialTheme.shapes.medium,
-                maxLines = 1
+                maxLines = 1,
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.primary
+                )
             )
         }
 
@@ -193,7 +200,7 @@ fun FirstThreeRows(
 
         //Third Row
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+       /* Row(modifier = Modifier.fillMaxWidth()) {
 
             OutlinedTextField(
                 value = poNo,
@@ -273,7 +280,7 @@ fun FirstThreeRows(
             }
 
 
-        }
+        }*/
     }
 
 

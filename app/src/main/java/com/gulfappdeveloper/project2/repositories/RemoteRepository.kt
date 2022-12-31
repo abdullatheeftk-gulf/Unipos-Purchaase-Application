@@ -4,6 +4,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
+import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.services.ApiService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -14,11 +15,11 @@ class RemoteRepository @Inject constructor(
     private val apiService: ApiService
 ) {
 
-    suspend fun getWelcomeMessage(url: String):Flow<GetDataFromRemote<WelcomeMessage>>{
+    suspend fun getWelcomeMessage(url: String): Flow<GetDataFromRemote<WelcomeMessage>> {
         return apiService.getWelcomeMessage(url = url)
     }
 
-    suspend fun getClientDetails(url:String):Flow<GetDataFromRemote<List<ClientDetails>>>{
+    suspend fun getClientDetails(url: String): Flow<GetDataFromRemote<List<ClientDetails>>> {
         return apiService.getClientDetails(url = url)
     }
 
@@ -26,7 +27,7 @@ class RemoteRepository @Inject constructor(
         return apiService.searchClientDetails(url = url)
     }
 
-    suspend fun getProductDetailsByName(url:String):Flow<GetDataFromRemote<List<Product>>>{
+    suspend fun getProductDetailsByName(url: String): Flow<GetDataFromRemote<List<Product>>> {
         return apiService.getProductDetailsByName(url = url)
     }
 
@@ -34,4 +35,12 @@ class RemoteRepository @Inject constructor(
         return apiService.getProductDetailByBarcode(url = url)
     }
 
+
+    // Post remote repositories
+    suspend fun addClientDetails(
+        url: String,
+        addClient: AddClient
+    ): Flow<GetDataFromRemote<AddClient>> {
+        return apiService.addClientDetails(url = url, addClient = addClient)
+    }
 }
