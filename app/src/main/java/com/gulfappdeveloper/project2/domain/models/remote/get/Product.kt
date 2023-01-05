@@ -4,11 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Product(
-    val productId:Int,
-    val productName:String,
-    val rate:Float,
-    val unitName:String,
-    val barcode:String,
-    val vatPercentage:Float,
-    val purchaseDiscount:Float = 0f
+    val barcode: String,
+    val productId: Int,
+    val productName: String,
+    val purchaseDiscount: Float,
+    val rate: Float,
+    val unitId: Int,
+    val unitName: String,
+    val vatPercentage: Float
 )

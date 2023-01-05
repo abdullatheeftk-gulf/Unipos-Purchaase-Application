@@ -41,8 +41,8 @@ fun ProductButtonRow(
             )
             Text(text = "Add to list")
         }
-        Button(
-            onClick = { /*TODO*/ },
+   /*     Button(
+            onClick = { *//*TODO*//* },
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 4.dp),
@@ -54,9 +54,9 @@ fun ProductButtonRow(
                 imageVector = Icons.Default.Add,
                 contentDescription = null
             )
-            Text(text = "Add to item")
+            Text(text = "Add to productItem")
 
-        }
+        }*/
         Column(
             modifier = Modifier
                 //.fillMaxWidth()

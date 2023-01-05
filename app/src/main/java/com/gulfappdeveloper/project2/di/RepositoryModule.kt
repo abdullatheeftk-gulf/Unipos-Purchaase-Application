@@ -7,12 +7,17 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_cases.SaveBaseUrlUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_counter_use_cases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_counter_use_cases.UpdateOperationCountUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllTaxCategoriesUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllUnitsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetProductGroupsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.SearchProductGroupsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.GetClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailByBarcodeUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_peoduct.AddProductUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,8 +45,16 @@ object RepositoryModule {
             getProductDetailsUseCase = GetProductDetailsByNameUseCase(remoteRepository = remoteRepository),
             getProductDetailByBarcodeUseCase = GetProductDetailByBarcodeUseCase(remoteRepository = remoteRepository),
 
-            //post
+            // Add product
+            getProductGroupsUseCase = GetProductGroupsUseCase(remoteRepository = remoteRepository),
+            searchProductGroupsUseCase = SearchProductGroupsUseCase(remoteRepository = remoteRepository),
+            getAllTaxCategoriesUseCase = GetAllTaxCategoriesUseCase(remoteRepository = remoteRepository),
+            getAllUnitsUseCase = GetAllUnitsUseCase(remoteRepository = remoteRepository),
+
+
+            // post
             addClientUseCase = AddClientUseCase(remoteRepository = remoteRepository),
+            addProductUseCase = AddProductUseCase(remoteRepository = remoteRepository),
 
 
             updateOperationCountUseCase = UpdateOperationCountUseCase(dataStoreRepository = dataStoreRepository),

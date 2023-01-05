@@ -31,15 +31,15 @@ fun ProductListTitle() {
                 text = "SI",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
-                text = "Item",
+                text = "ProductItem",
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(6f),
                 textDecoration = TextDecoration.Underline
             )
@@ -47,7 +47,7 @@ fun ProductListTitle() {
                 text = "Qty",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 textDecoration = TextDecoration.Underline
             )
@@ -55,14 +55,14 @@ fun ProductListTitle() {
                 text = "Unit",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Rate",
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1.5f),
                 textDecoration = TextDecoration.Underline
@@ -71,7 +71,7 @@ fun ProductListTitle() {
                 text = "Dis",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 textDecoration = TextDecoration.Underline
             )
@@ -79,7 +79,7 @@ fun ProductListTitle() {
                 text = "vat",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 textDecoration = TextDecoration.Underline
             )
@@ -87,14 +87,14 @@ fun ProductListTitle() {
                 text = "Net",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "",
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1f)
             )
 

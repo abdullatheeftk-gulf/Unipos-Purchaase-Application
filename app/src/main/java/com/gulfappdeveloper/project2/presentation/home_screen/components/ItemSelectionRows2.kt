@@ -112,24 +112,16 @@ fun ItemSelectionRows2(
                         start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
                     ),
                     trailingIcon = {
-                        /*Row {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowRight,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.error,
-                                modifier = Modifier.clickable {
-                                    navHostController.navigate(RootNavScreens.ProductListScreen.route)
-                                }
-                            )*/
+
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = null,
                             tint = Color.Black,
                             modifier = Modifier.clickable {
-                                navHostController.navigate(RootNavScreens.AddProductScreen.route)
+                                navHostController.navigate(RootNavScreens.AddProductMainScreen.route)
                             }
                         )
-                        // }
+
                     }
 
                 )

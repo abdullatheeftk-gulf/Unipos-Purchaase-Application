@@ -117,6 +117,9 @@ open class RootViewModel @Inject constructor(
     private val _unit = mutableStateOf("")
     val unit: State<String> = _unit
 
+    private val _unitId = mutableStateOf(0)
+   // val unitId:State<Int> = _unitId
+
     private val _rate = mutableStateOf("")
     val rate: State<String> = _rate
 
@@ -409,7 +412,7 @@ open class RootViewModel @Inject constructor(
                         setSelectedProduct(product)
                         return@collectLatest
                     }
-                    sendHomeScreenEvent(UiEvent.ShowSnackBar("No item with barcode $value"))
+                    sendHomeScreenEvent(UiEvent.ShowSnackBar("No productItem with barcode $value"))
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendHomeScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
@@ -425,7 +428,7 @@ open class RootViewModel @Inject constructor(
     }
 
 
-    // Calcultate net value of a product
+    // Calculate net value of a product
     fun calculateNet() {
         try {
             val qty = qty.value.toFloat()
@@ -453,12 +456,13 @@ open class RootViewModel @Inject constructor(
             val productSelected = ProductSelected(
                 productId = productId.value,
                 productName = _productSearchText.value,
-                qty = if (qty.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
+                qty = _qty.value.toFloat(),
                 productRate = if (rate.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
-                vat = if (tax.value.isNotBlank() || tax.value.isNotEmpty()) tax.value.toFloat() else 0f,
+                vat = if (_tax.value.isNotBlank() || _tax.value.isNotEmpty()) _tax.value.toFloat() else 0f,
                 barcode = barCode.value,
                 unit = _unit.value,
-                disc = if (tax.value.isNotBlank() || tax.value.isNotEmpty()) tax.value.toFloat() else 0f,
+                unitId = _unitId.value,
+                disc = if (_disc.value.isNotBlank() || _disc.value.isNotEmpty()) _disc.value.toFloat() else 0f,
                 net = net.value
             )
             selectedProductList.add(productSelected)
@@ -470,7 +474,9 @@ open class RootViewModel @Inject constructor(
 
     fun setSelectedProduct(product: Product) {
         _selectedProduct.value = product
+        _productSearchText.value = product.productName
         _unit.value = product.unitName
+        _unitId.value = product.unitId
         _barCode.value = product.barcode
         _rate.value = product.rate.toString()
         _tax.value = product.vatPercentage.toString()
@@ -483,6 +489,7 @@ open class RootViewModel @Inject constructor(
         _selectedProduct.value = null
         _productSearchText.value = ""
         _unit.value = ""
+        _unitId.value = 0
         _barCode.value = ""
         _rate.value = ""
         _tax.value = ""

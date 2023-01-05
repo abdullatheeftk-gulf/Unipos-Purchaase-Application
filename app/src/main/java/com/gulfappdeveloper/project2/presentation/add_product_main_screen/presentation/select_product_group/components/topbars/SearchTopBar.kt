@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.presentation.client_screen.components.appbars
+package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.select_product_group.components.topbars
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,15 +22,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainViewModel
 
 @Composable
 fun SearchTopBar(
-    rootViewModel: RootViewModel,
     onClearButtonClicked: () -> Unit,
     hideKeyboard: () -> Unit,
+    addProductViewModel: AddProductMainViewModel,
 ) {
-    val searchText by rootViewModel.clientSearchText
+
+    val searchText by addProductViewModel.searchText
 
     TopAppBar {
 
@@ -40,12 +41,10 @@ fun SearchTopBar(
         ) {
             BasicTextField(
                 value = searchText,
-                onValueChange = {
-                    rootViewModel.setClientSearchText(it)
-                },
+                onValueChange = addProductViewModel::setSearchText,
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                        rootViewModel.clientSearch()
+                        addProductViewModel.searchProductGroups()
                         hideKeyboard()
                     }
                 ),
@@ -60,7 +59,6 @@ fun SearchTopBar(
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
-
                         if (searchText.isEmpty()) {
                             Text(
                                 text = "Search",
@@ -71,7 +69,6 @@ fun SearchTopBar(
                         }
                         it()
                     }
-
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -87,10 +84,13 @@ fun SearchTopBar(
 
             )
             IconButton(onClick = {
-                rootViewModel.clientSearch()
+                addProductViewModel.searchProductGroups()
                 hideKeyboard()
             }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null
+                )
             }
             IconButton(onClick = {
                 onClearButtonClicked()

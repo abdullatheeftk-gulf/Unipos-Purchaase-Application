@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ fun ProductList(
     lazyColumnState: LazyListState
 ) {
     val selectedProductList = rootViewModel.selectedProductList
+
 
     LazyColumn(
         modifier = Modifier

@@ -97,7 +97,7 @@ fun ItemSelectionRows(
 
                  },
                  placeholder = {
-                     Text(text = "Item")
+                     Text(text = "ProductItem")
                  },
                  modifier = Modifier
                      .weight(2.5f)

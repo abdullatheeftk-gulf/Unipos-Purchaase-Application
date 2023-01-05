@@ -191,18 +191,6 @@ fun HomeScreen(
                 )
             }
             item {
-                /* ItemSelectionRows(
-                     homeScreenViewModel = homeScreenViewModel,
-                     onFocusOnBasicTextField = { focused ->
-                         if (focused) {
-                             navHostController.navigate(RootNavScreens.ProductListScreen.route)
-                         }
-
-                     },
-                     rootViewModel = rootViewModel,
-                     hideKeyboard = hideKeyboard,
-                     navHostController = navHostController
-                 )*/
 
                 ItemSelectionRows2(
                     rootViewModel = rootViewModel,

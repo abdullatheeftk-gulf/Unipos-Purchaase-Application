@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
-import com.gulfappdeveloper.project2.presentation.client_screen.components.NormalTopBar
-import com.gulfappdeveloper.project2.presentation.client_screen.components.SearchTopBar
+import com.gulfappdeveloper.project2.presentation.client_screen.components.appbars.NormalTopBar
+import com.gulfappdeveloper.project2.presentation.client_screen.components.appbars.SearchTopBar
 import com.gulfappdeveloper.project2.presentation.client_screen.components.show_client_list.EmptyScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.components.show_client_list.ShowList
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
@@ -21,6 +21,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "ClientListScreen"
+
 @Composable
 fun ClientListScreen(
     rootViewModel: RootViewModel,
@@ -63,7 +64,7 @@ fun ClientListScreen(
     }
 
     BackHandler(true) {
-        Log.e(TAG, "ClientListScreen: $normalAndSearchTobBarToggle", )
+       // Log.e(TAG, "ClientListScreen: $normalAndSearchTobBarToggle")
         if (normalAndSearchTobBarToggle) {
             navHostController.popBackStack()
         } else {

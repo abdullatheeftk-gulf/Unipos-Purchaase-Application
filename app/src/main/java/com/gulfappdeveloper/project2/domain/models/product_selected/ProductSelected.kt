@@ -5,6 +5,7 @@ data class ProductSelected(
     val productName: String,
     val productRate: Float,
     val unit: String,
+    val unitId:Int,
     val barcode: String?,
     val vat: Float,
     val qty: Float,

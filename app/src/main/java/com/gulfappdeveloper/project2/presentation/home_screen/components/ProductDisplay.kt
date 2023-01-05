@@ -38,14 +38,14 @@ fun ProductDisplay(
             Text(
                 text = (count + 1).toString() + ",",
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1f),
                 color = Color(0xFFC2185B)
             )
             Text(
                 text = productSelected.productName,
                 textAlign = TextAlign.Start,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 maxLines = 2,
                 modifier = Modifier.weight(6f),
                 overflow = TextOverflow.Ellipsis,
@@ -54,42 +54,42 @@ fun ProductDisplay(
             Text(
                 text = productSelected.qty.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.unit,
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.productRate.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.disc.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.vat.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.net.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colors.primary
             )

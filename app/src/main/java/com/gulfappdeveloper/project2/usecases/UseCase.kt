@@ -4,12 +4,17 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_cases.SaveBaseUrlUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_counter_use_cases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_counter_use_cases.UpdateOperationCountUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllTaxCategoriesUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllUnitsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetProductGroupsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.SearchProductGroupsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.GetClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailByBarcodeUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_peoduct.AddProductUseCase
 
 data class UseCase(
     val getWelcomeMessageUseCase: GetWelcomeMessageUseCase,
@@ -20,8 +25,15 @@ data class UseCase(
     val getProductDetailsUseCase: GetProductDetailsByNameUseCase,
     val getProductDetailByBarcodeUseCase: GetProductDetailByBarcodeUseCase,
 
+    // add product group
+    val getProductGroupsUseCase: GetProductGroupsUseCase,
+    val searchProductGroupsUseCase: SearchProductGroupsUseCase,
+    val getAllUnitsUseCase: GetAllUnitsUseCase,
+    val getAllTaxCategoriesUseCase: GetAllTaxCategoriesUseCase,
+
     // post
     val addClientUseCase: AddClientUseCase,
+    val addProductUseCase: AddProductUseCase,
 
     val updateOperationCountUseCase: UpdateOperationCountUseCase,
     val saveBaseUrlUseCase: SaveBaseUrlUseCase,
@@ -30,4 +42,6 @@ data class UseCase(
     val readBaseUrlUseCase: ReadBaseUrlUseCase,
 
 
-)
+
+
+    )

@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.presentation.client_screen.components.appbars
+package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.select_product_group.components.topbars
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -14,7 +14,6 @@ fun NormalTopBar(
     onBackButtonClicked: () -> Unit,
     onSearchButtonClicked: () -> Unit,
 ) {
-
     TopAppBar(
         title = {
             Text(text = "Client Details")
