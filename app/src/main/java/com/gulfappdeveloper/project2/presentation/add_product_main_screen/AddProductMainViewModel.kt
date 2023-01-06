@@ -272,7 +272,7 @@ class AddProductMainViewModel @Inject constructor(
                     }
                     is GetDataFromRemote.Failed -> {
                         val error = "Error:- ${result.error.code}, ${result.error.message}, $url"
-                        Log.e(TAG, "getAllUnits: $error ")
+                        //Log.e(TAG, "getAllUnits: $error ")
                         sendAddProductEvent(UiEvent.ShowSnackBar(error))
                     }
                     else -> Unit

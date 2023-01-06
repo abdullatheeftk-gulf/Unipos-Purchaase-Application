@@ -47,7 +47,7 @@ fun UnitBlock(
 
         Column(modifier = Modifier.weight(1f)) {
             OutlinedTextField(
-                value = selectedUnits?.unitName ?: "Pcs",
+                value = selectedUnits?.unitName ?: "",
                 textStyle = TextStyle(
                     color = if (selectedUnits != null) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                 ),

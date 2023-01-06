@@ -1,6 +1,7 @@
 package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -99,7 +100,7 @@ fun AddProductHomeScreen(
         mutableStateOf(false)
     }
 
-    var showProgressBar by remember{
+    var showProgressBar by remember {
         mutableStateOf(false)
     }
 
@@ -114,7 +115,8 @@ fun AddProductHomeScreen(
                 is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
                 }
-                is UiEvent.AddedProduct->{
+                is UiEvent.AddedProduct -> {
+                    rootViewModel.setProductSearchMode(false)
                     rootViewModel.setSelectedProduct(event.product)
                 }
                 is UiEvent.Navigate -> {
@@ -129,7 +131,7 @@ fun AddProductHomeScreen(
     }
 
     BackHandler(true) {
-        if (!showProgressBar){
+        if (!showProgressBar) {
             navHostController.popBackStack()
         }
     }
@@ -145,7 +147,7 @@ fun AddProductHomeScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            if (!showProgressBar){
+                            if (!showProgressBar) {
                                 navHostController.popBackStack()
                             }
                         }
@@ -235,7 +237,13 @@ fun AddProductHomeScreen(
                 value = productGroup?.pGroupName ?: "",
                 onValueChange = {
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        showProductGroupError = false
+                        addProductMainViewModel.getProductGroups()
+                        addProductNavHostController.navigate(route = AddProductScreens.SelectProductGroupScreen.route)
+                    },
                 maxLines = 1,
                 label = {
                     Row() {
@@ -443,23 +451,23 @@ fun AddProductHomeScreen(
                         showProductGroupError = true
                         errors = true
                     }
-                    if (barcode.isEmpty()){
+                    if (barcode.isEmpty()) {
                         showBarcodeError = true
                         errors = true
                     }
-                    if (purchasePrice.isEmpty()){
+                    if (purchasePrice.isEmpty()) {
                         showPurchasePriceError = true
                         errors = true
                     }
-                    if (taxCategory ==null){
+                    if (taxCategory == null) {
                         showTaxCategoryError = true
                         errors = true
                     }
-                    if (productUnit == null){
+                    if (productUnit == null) {
                         showUnitError = true
                         errors = true
                     }
-                    if (errors){
+                    if (errors) {
                         return@Button
                     }
                     addProductMainViewModel.addProduct()
@@ -472,7 +480,7 @@ fun AddProductHomeScreen(
 
         }
 
-        if (showProgressBar){
+        if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

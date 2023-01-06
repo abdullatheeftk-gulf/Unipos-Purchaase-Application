@@ -12,6 +12,7 @@ import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelec
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
+import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
 import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.home_screen.util.HomeScreenEvent
@@ -88,8 +89,8 @@ open class RootViewModel @Inject constructor(
     /* Product selection addition rows*/
 
     // product search text to search products
-    private val _productSearchText = mutableStateOf("")
-    val productSearchText: State<String> = _productSearchText
+    private val _productName = mutableStateOf("")
+    val productName: State<String> = _productName
 
     // Product search mode. which used in product name box
     private val _productSearchMode = mutableStateOf(true)
@@ -98,15 +99,11 @@ open class RootViewModel @Inject constructor(
     // Product  list
     val productList = mutableStateListOf<Product>()
 
-
     private val _selectedProduct: MutableState<Product?> = mutableStateOf(null)
     val selectedProduct: State<Product?> = _selectedProduct
 
     private val _productId = mutableStateOf(0)
     private val productId: State<Int> = _productId
-
-    /* private val _productName = mutableStateOf("")
-     val productName: State<String> = _productName*/
 
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
@@ -118,7 +115,6 @@ open class RootViewModel @Inject constructor(
     val unit: State<String> = _unit
 
     private val _unitId = mutableStateOf(0)
-   // val unitId:State<Int> = _unitId
 
     private val _rate = mutableStateOf("")
     val rate: State<String> = _rate
@@ -169,6 +165,7 @@ open class RootViewModel @Inject constructor(
                 _baseUrl.value = it
                 if (!isInitialLoadingFinished) {
                     getWelcomeMessage()
+                    getAllUnits()
                     isInitialLoadingFinished = true
                 }
             }
@@ -232,9 +229,7 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun setUnit(value: ProductUnit) {
-        //_unit.value = value
-    }
+
 
     fun setRate(value: String) {
         _rate.value = value
@@ -242,7 +237,7 @@ open class RootViewModel @Inject constructor(
 
     fun setDisc(value: String) {
         _disc.value = value
-        if (disc.value.isNotEmpty() || disc.value.isNotBlank()) {
+        if (_disc.value.isNotEmpty() || _disc.value.isNotBlank()) {
             calculateNet()
         }
     }
@@ -343,15 +338,43 @@ open class RootViewModel @Inject constructor(
         _productSearchMode.value = value
     }
 
+    // Get all units
+
+    val unitsList = mutableStateListOf<Units>()
+
+    private fun getAllUnits() {
+        val url = _baseUrl.value + HttpRoutes.GET_ALL_UNITS
+        viewModelScope.launch {
+            useCase.getAllUnitsUseCase(url = url).collectLatest { result ->
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        unitsList.addAll(result.data)
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        val error = "Error:- ${result.error.code}, ${result.error.message}, $url"
+                        Log.e(TAG, "getAllUnits: $error", )
+                        sendHomeScreenEvent(UiEvent.ShowSnackBar(error))
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    fun setUnit(value:Units){
+        _unit.value = value.unitName
+        _unitId.value = value.unitId
+    }
+
     fun setProductSearchText(value: String) {
-        _productSearchText.value = value
-        if (_productSearchText.value.isEmpty()) {
+        _productName.value = value
+        if (_productName.value.isEmpty()) {
             productList.removeAll {
                 true
             }
             sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
         }
-        if (_productSearchText.value.length >= 3 && _productSearchMode.value) {
+        if (_productName.value.length >= 3 && _productSearchMode.value) {
             searchProductListByName()
             sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
         }
@@ -359,7 +382,7 @@ open class RootViewModel @Inject constructor(
 
     private fun searchProductListByName() {
         sendProductListScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productSearchText.value
+        val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productName.value
         try {
             productList.removeAll {
                 true
@@ -408,8 +431,9 @@ open class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
                     Log.e(TAG, "searchProductByQrCode: ${result.data}")
                     result.data?.let { product ->
-                        _productSearchText.value = product.productName
+                        _productName.value = product.productName
                         setSelectedProduct(product)
+                        setProductSearchMode(false)
                         return@collectLatest
                     }
                     sendHomeScreenEvent(UiEvent.ShowSnackBar("No productItem with barcode $value"))
@@ -431,18 +455,18 @@ open class RootViewModel @Inject constructor(
     // Calculate net value of a product
     fun calculateNet() {
         try {
-            val qty = qty.value.toFloat()
-            val rate = rate.value.toFloat()
+            val qty = _qty.value.toFloat()
+            val rate = _rate.value.toFloat()
             var total = qty * rate
             val tax = tax.value.toFloat()
             total += total * (tax / 100)
-            val discount = if (disc.value.isEmpty() || disc.value.isBlank()) {
+            val discount = if (_disc.value.isEmpty() || _disc.value.isBlank()) {
                 0f
             } else {
-                disc.value.toFloat()
+                _disc.value.toFloat()
             }
             total -= discount
-            total = (total.roundToInt() * 100) / 100f
+            total = (total * 100) / 100f
             _net.value = total
         } catch (e: Exception) {
             Log.e(TAG, "calculateNet: ${e.message}")
@@ -455,7 +479,7 @@ open class RootViewModel @Inject constructor(
         if(qty.value.isNotEmpty()){
             val productSelected = ProductSelected(
                 productId = productId.value,
-                productName = _productSearchText.value,
+                productName = _productName.value,
                 qty = _qty.value.toFloat(),
                 productRate = if (rate.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
                 vat = if (_tax.value.isNotBlank() || _tax.value.isNotEmpty()) _tax.value.toFloat() else 0f,
@@ -474,7 +498,7 @@ open class RootViewModel @Inject constructor(
 
     fun setSelectedProduct(product: Product) {
         _selectedProduct.value = product
-        _productSearchText.value = product.productName
+        _productName.value = product.productName
         _unit.value = product.unitName
         _unitId.value = product.unitId
         _barCode.value = product.barcode
@@ -482,12 +506,13 @@ open class RootViewModel @Inject constructor(
         _tax.value = product.vatPercentage.toString()
         _productId.value = product.productId
         _disc.value = product.purchaseDiscount.toString()
+        calculateNet()
     }
 
     fun resetSelectedProduct() {
         setProductSearchMode(true)
         _selectedProduct.value = null
-        _productSearchText.value = ""
+        _productName.value = ""
         _unit.value = ""
         _unitId.value = 0
         _barCode.value = ""

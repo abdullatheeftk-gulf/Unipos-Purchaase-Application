@@ -31,7 +31,7 @@ fun SearchTopBar(
     onBackButtonClicked: () -> Unit,
     hideKeyboard: () -> Unit,
 ) {
-    val productSearchText by rootViewModel.productSearchText
+    val productSearchText by rootViewModel.productName
     TopAppBar {
 
         Row(

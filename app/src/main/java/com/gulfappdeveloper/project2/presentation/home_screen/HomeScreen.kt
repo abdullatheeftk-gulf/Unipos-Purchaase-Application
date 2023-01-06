@@ -17,6 +17,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.keyboardAsState
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -50,6 +51,14 @@ fun HomeScreen(
     }
 
     var showAddClientDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showProductNameError by remember {
+        mutableStateOf(false)
+    }
+
+    var showQuantityError by remember {
         mutableStateOf(false)
     }
 
@@ -88,8 +97,7 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = true) {
         rootViewModel.homeScreenEvent.collectLatest { value ->
-            val event = value.uiEvent
-            when (event) {
+            when (val event = value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
                 }
@@ -133,14 +141,7 @@ fun HomeScreen(
     ) {
         it.calculateTopPadding()
 
-        if (showProgressBar) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
+
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -158,7 +159,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp, horizontal = 4.dp),
-                        color = MaterialTheme.colors.error
+                        color = MaterialTheme.colors.OrangeColor
                     )
                 }
 
@@ -192,22 +193,44 @@ fun HomeScreen(
             }
             item {
 
-                ItemSelectionRows2(
+                ItemSelectionRows(
                     rootViewModel = rootViewModel,
                     navHostController = navHostController,
                     hideKeyboard = hideKeyboard,
-                    onAddProductClicked = { /*TODO*/ },
                     onQrScanClicked = onScanButtonClicked,
+                    showProductNameError = showProductNameError,
+                    showQuantityError = showQuantityError,
+                    onProductNameError = {
+                        showProductNameError = false
+                    },
+                    onQuantityError = {
+                        showQuantityError = false
+                    },
                 )
             }
             item {
                 ProductButtonRow(
                     rootViewModel = rootViewModel,
                     onProductAdded = {
+                        rootViewModel.addToProductList()
                         coroutineScope.launch {
-                            if (selectedProductList.size>3) {
+                            if (selectedProductList.size > 3) {
                                 lazyColumState.scrollToItem(selectedProductList.size - 1)
                             }
+                        }
+                    },
+                    onProductNameError = {
+                        showProductNameError = true
+                        coroutineScope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
+                        }
+                    },
+                    onQuantityError = {
+                        showQuantityError = true
+                    },
+                    onBarcodeError = {
+                        coroutineScope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
                         }
                     }
                 )
@@ -228,6 +251,15 @@ fun HomeScreen(
             }
             item {
                 Spacer(modifier = Modifier.height(300.dp))
+            }
+        }
+
+        if (showProgressBar) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
 

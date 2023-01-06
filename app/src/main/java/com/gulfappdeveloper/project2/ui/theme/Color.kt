@@ -12,6 +12,7 @@ val LightGreen = Color(0xFF62B43A)
 val LightYellowGreen = Color(0xFFB4B42F)
 val LightPink = Color(0xFFBB4C71)
 val LightBlue = Color(0xFF3558C1)
+val Orange = Color(0xFFF57C00)
 
 val Colors.Color1
     @Composable
@@ -32,3 +33,8 @@ val Colors.Color4
 val Colors.Color5
     @Composable
     get() = if (isLight) LightBlue else LightBlue
+
+val Colors.OrangeColor
+    @Composable
+    get() = if (isLight) Orange else Orange
+

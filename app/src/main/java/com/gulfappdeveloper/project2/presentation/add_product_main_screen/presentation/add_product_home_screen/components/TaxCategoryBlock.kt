@@ -44,7 +44,7 @@ fun TaxCategoryBlock(
 
         Column(modifier = Modifier.weight(1f)) {
             OutlinedTextField(
-                value = selectedTaxCategory?.tCategoryName ?: "GST5",
+                value = selectedTaxCategory?.tCategoryName ?: "",
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false,

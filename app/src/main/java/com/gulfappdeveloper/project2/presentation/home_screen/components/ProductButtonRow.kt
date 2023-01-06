@@ -4,19 +4,28 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
 fun ProductButtonRow(
     rootViewModel: RootViewModel,
     onProductAdded: () -> Unit,
-    //onMoreButtonClicked: () -> Unit
+    onProductNameError: (Boolean) -> Unit,
+    onQuantityError: (Boolean) -> Unit,
+    onBarcodeError: (Boolean) -> Unit
 ) {
+    val productName by rootViewModel.productName
+    val qty by rootViewModel.qty
+    val barcode by rootViewModel.barCode
+
     var showDropDownMenu by remember {
         mutableStateOf(false)
     }
@@ -25,7 +34,18 @@ fun ProductButtonRow(
     ) {
         Button(
             onClick = {
-                rootViewModel.addToProductList()
+                if (productName.isEmpty()) {
+                    onProductNameError(true)
+                    return@Button
+                }
+                if (qty.isEmpty()) {
+                    onQuantityError(true)
+                    return@Button
+                }
+                if (barcode.isEmpty()) {
+                    onBarcodeError(true)
+                    return@Button
+                }
                 onProductAdded()
             },
             contentPadding = PaddingValues(
@@ -39,27 +59,32 @@ fun ProductButtonRow(
                 imageVector = Icons.Default.Add,
                 contentDescription = null
             )
-            Text(text = "Add to list")
+            Text(text = "Add")
         }
-   /*     Button(
-            onClick = { *//*TODO*//* },
+        Button(
+            onClick = {
+                rootViewModel.resetSelectedProduct()
+            },
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 4.dp),
             contentPadding = PaddingValues(
                 horizontal = 2.dp
+            ),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.OrangeColor
             )
         ) {
             Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null
+                imageVector = Icons.Default.Delete,
+                contentDescription = null,
+                modifier = Modifier.scale(0.8f)
             )
-            Text(text = "Add to productItem")
+            Text(text = "Clear")
 
-        }*/
+        }
         Column(
             modifier = Modifier
-                //.fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -82,19 +107,6 @@ fun ProductButtonRow(
                     showDropDownMenu = false
                 }
             ) {
-                DropdownMenuItem(
-                    onClick = { showDropDownMenu = false }
-                ) {
-                    Button(
-                        onClick = {
-                            rootViewModel.resetSelectedProduct()
-                            showDropDownMenu = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Clear Product")
-                    }
-                }
                 DropdownMenuItem(
                     onClick = { showDropDownMenu = false }
                 ) {

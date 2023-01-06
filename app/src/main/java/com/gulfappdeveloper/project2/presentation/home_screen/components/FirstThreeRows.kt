@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -160,7 +161,7 @@ fun FirstThreeRows(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Person,
-                tint = MaterialTheme.colors.error,
+                tint = MaterialTheme.colors.OrangeColor,
                 contentDescription = null,
                 modifier = Modifier.weight(1f)
             )
@@ -181,7 +182,7 @@ fun FirstThreeRows(
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.error,
+                    tint = MaterialTheme.colors.OrangeColor,
                 )
             }
             IconButton(
