@@ -26,7 +26,6 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
-import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -95,7 +94,7 @@ fun ItemSelectionRows(
                                 onProductNameError()
                                 // if length is more than 3 it will call
                                 if (value.length <=3) {
-                                    rootViewModel.setProductSearchText(value)
+                                    rootViewModel.setProductName(value, isItFromHomeScreem = true)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),

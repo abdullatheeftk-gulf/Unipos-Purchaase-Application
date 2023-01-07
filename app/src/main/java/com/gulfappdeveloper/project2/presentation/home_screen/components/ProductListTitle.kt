@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,7 @@ fun ProductListTitle() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp)
+                .padding(horizontal = 2.dp)
         ) {
 
             Text(
@@ -40,7 +41,7 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(6f),
+                modifier = Modifier.weight(5.5f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
@@ -48,7 +49,7 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
@@ -56,15 +57,17 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
-                textDecoration = TextDecoration.Underline
+                modifier = Modifier.weight(1.4f),
+                textDecoration = TextDecoration.Underline,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = "Rate",
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(2f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
@@ -80,7 +83,7 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
@@ -88,14 +91,14 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(2.5f),
                 textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "",
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(0.85f)
             )
 
         }
@@ -103,7 +106,7 @@ fun ProductListTitle() {
         Divider(
             color = Color.Black,
             thickness = Dp.Hairline,
-            modifier = Modifier.padding(horizontal = 14.dp),
+            modifier = Modifier.padding(horizontal = 2.dp),
             startIndent = 0.dp
         )
 

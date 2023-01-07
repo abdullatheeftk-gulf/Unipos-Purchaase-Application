@@ -47,7 +47,7 @@ fun SearchTopBar(
             BasicTextField(
                 value = productSearchText,
                 onValueChange = { value ->
-                    rootViewModel.setProductSearchText(value = value)
+                    rootViewModel.setProductName(value = value, isItFromHomeScreem = false)
                 },
                 keyboardActions = KeyboardActions(
                     onSearch = {

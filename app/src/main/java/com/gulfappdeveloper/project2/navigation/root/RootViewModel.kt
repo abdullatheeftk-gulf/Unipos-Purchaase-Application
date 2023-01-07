@@ -16,7 +16,6 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Un
 import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.home_screen.util.HomeScreenEvent
-import com.gulfappdeveloper.project2.presentation.home_screen.util.ProductUnit
 import com.gulfappdeveloper.project2.presentation.product_list_screen.util.ProductListScreenEvent
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -24,12 +23,12 @@ import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 private const val TAG = "RootViewModel"
 
@@ -99,8 +98,8 @@ open class RootViewModel @Inject constructor(
     // Product  list
     val productList = mutableStateListOf<Product>()
 
-    private val _selectedProduct: MutableState<Product?> = mutableStateOf(null)
-    val selectedProduct: State<Product?> = _selectedProduct
+  /*  private val _selectedProduct: MutableState<Product?> = mutableStateOf(null)
+    val selectedProduct: State<Product?> = _selectedProduct*/
 
     private val _productId = mutableStateOf(0)
     private val productId: State<Int> = _productId
@@ -152,7 +151,7 @@ open class RootViewModel @Inject constructor(
     private fun readOperationCount() {
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collectLatest {
-                Log.d(TAG, "readOperationCount: $it")
+                // Log.d(TAG, "readOperationCount: $it")
                 _operationCount.value = it
             }
         }
@@ -161,7 +160,7 @@ open class RootViewModel @Inject constructor(
     private fun readBaseUrl() {
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collectLatest {
-                Log.i(TAG, "readBaseUrl: $it")
+                // Log.i(TAG, "readBaseUrl: $it")
                 _baseUrl.value = it
                 if (!isInitialLoadingFinished) {
                     getWelcomeMessage()
@@ -179,14 +178,14 @@ open class RootViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 if (result is GetDataFromRemote.Success) {
                     _message.value = result.data.message
-                    Log.d(TAG, "getWelcomeMessage: ${message.value}")
+                    //  Log.d(TAG, "getWelcomeMessage: ${message.value}")
                 }
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
                     sendSplashScreenEvent(SplashScreenEvent.CloseProgressBar)
                     sendSplashScreenEvent(SplashScreenEvent.ShowToast(message = "Server with ${baseUrl.value} down, Change server"))
                     sendSplashScreenEvent(SplashScreenEvent.ShowSetBaseUrlButton)
-                    Log.e(TAG, "getWelcomeMessage: ${result.error.code} ${result.error.message}")
+                    // Log.e(TAG, "getWelcomeMessage: ${result.error.code} ${result.error.message}")
                 }
             }
         }
@@ -205,22 +204,22 @@ open class RootViewModel @Inject constructor(
         _selectedClient.value = value
     }
 
-    fun setPoNo(value: String) {
-        _poNo.value = value
-    }
+    /* fun setPoNo(value: String) {
+         _poNo.value = value
+     }
 
-    fun setPayMode(value: PayMode) {
-        _payMode.value = value
-    }
+     fun setPayMode(value: PayMode) {
+         _payMode.value = value
+     }*/
 
 
     /*fun setProductName(value: String) {
         _productName.value = value
     }*/
 
-    fun setQrCode(value: String) {
+    /*fun setQrCode(value: String) {
         _barCode.value = value
-    }
+    }*/
 
     fun setQty(value: String) {
         _qty.value = value
@@ -230,10 +229,9 @@ open class RootViewModel @Inject constructor(
     }
 
 
-
-    fun setRate(value: String) {
+    /*fun setRate(value: String) {
         _rate.value = value
-    }
+    }*/
 
     fun setDisc(value: String) {
         _disc.value = value
@@ -242,9 +240,9 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun setTax(value: String) {
-        _tax.value = value
-    }
+    /* fun setTax(value: String) {
+         _tax.value = value
+     }*/
 
 
     private fun sendSplashScreenEvent(splashScreenEvent: SplashScreenEvent) {
@@ -267,12 +265,12 @@ open class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getClientDetails: ${e.message}")
+            // Log.e(TAG, "getClientDetails: ${e.message}")
         }
         viewModelScope.launch {
             useCase.getClientDetailsUseCase(url = url)
                 .collectLatest { result ->
-                    Log.i(TAG, "getClientDetails: $result")
+                    //Log.i(TAG, "getClientDetails: $result")
                     sendClientScreenEvent(UiEvent.CloseProgressBar)
                     if (result is GetDataFromRemote.Success) {
                         if (result.data.isEmpty()) {
@@ -286,10 +284,10 @@ open class RootViewModel @Inject constructor(
                         sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                         sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
                         isInitialLoadingFinished = false
-                        Log.e(
+                        /*Log.e(
                             TAG,
                             "getClientDetails: ${result.error.code}, ${result.error.message}"
-                        )
+                        )*/
                     }
                 }
         }
@@ -309,7 +307,7 @@ open class RootViewModel @Inject constructor(
 
         viewModelScope.launch {
             useCase.searchClientDetailsUseCase(url = url).collectLatest { result ->
-                Log.w(TAG, "clientSearch: $result")
+                // Log.w(TAG, "clientSearch: $result")
                 sendClientScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     if (result.data.isEmpty()) {
@@ -322,10 +320,10 @@ open class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                     sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
-                    Log.e(
+                    /*Log.e(
                         TAG,
                         "clientSearch: $url, code:- ${result.error.code}, error: ${result.error.message}",
-                    )
+                    )*/
                 }
             }
         }
@@ -352,7 +350,7 @@ open class RootViewModel @Inject constructor(
                     }
                     is GetDataFromRemote.Failed -> {
                         val error = "Error:- ${result.error.code}, ${result.error.message}, $url"
-                        Log.e(TAG, "getAllUnits: $error", )
+                        // Log.e(TAG, "getAllUnits: $error")
                         sendHomeScreenEvent(UiEvent.ShowSnackBar(error))
                     }
                     else -> Unit
@@ -361,12 +359,12 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun setUnit(value:Units){
+    fun setUnit(value: Units) {
         _unit.value = value.unitName
         _unitId.value = value.unitId
     }
 
-    fun setProductSearchText(value: String) {
+    fun setProductName(value: String,isItFromHomeScreem:Boolean) {
         _productName.value = value
         if (_productName.value.isEmpty()) {
             productList.removeAll {
@@ -375,8 +373,11 @@ open class RootViewModel @Inject constructor(
             sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
         }
         if (_productName.value.length >= 3 && _productSearchMode.value) {
+            Log.i(TAG, "setProductName: ${_productName.value} ")
             searchProductListByName()
-            sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
+            if (isItFromHomeScreem) {
+                sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
+            }
         }
     }
 
@@ -388,13 +389,13 @@ open class RootViewModel @Inject constructor(
                 true
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getProductDetails: ${e.message}")
+            // Log.e(TAG, "getProductDetails: ${e.message}")
         }
         viewModelScope.launch {
             useCase.getProductDetailsUseCase(url = url)
                 .collectLatest { result ->
                     sendProductListScreenEvent(UiEvent.CloseProgressBar)
-                    Log.w(TAG, "getProductDetails: $result")
+                    // Log.w(TAG, "getProductDetails: $result")
                     if (result is GetDataFromRemote.Success) {
                         if (result.data.isEmpty()) {
                             sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
@@ -404,7 +405,7 @@ open class RootViewModel @Inject constructor(
                                     true
                                 }
                             } catch (e: Exception) {
-                                Log.e(TAG, "getProductDetails: ${e.message}")
+                                //  Log.e(TAG, "getProductDetails: ${e.message}")
                             }
                             productList.addAll(result.data)
                             sendProductListScreenEvent(UiEvent.ShowEmptyList(value = false))
@@ -413,10 +414,10 @@ open class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Failed) {
                         sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
                         sendProductListScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
-                        Log.e(
-                            TAG,
-                            "getProductDetails: ${result.error.code}, ${result.error.message} "
-                        )
+                        /* Log.e(
+                             TAG,
+                             "getProductDetails: ${result.error.code}, ${result.error.message} "
+                         )*/
                     }
                 }
         }
@@ -447,13 +448,18 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun setProductListEvent(event: UiEvent) {
-        sendProductListScreenEvent(uiEvent = event)
+
+    fun onProductListItemClicked(product: Product) {
+        viewModelScope.launch {
+            sendProductListScreenEvent(UiEvent.Navigate(""))
+            setSelectedProduct(product = product)
+            setProductSearchMode(false)
+        }
     }
 
 
     // Calculate net value of a product
-    fun calculateNet() {
+    private fun calculateNet() {
         try {
             val qty = _qty.value.toFloat()
             val rate = _rate.value.toFloat()
@@ -469,14 +475,14 @@ open class RootViewModel @Inject constructor(
             total = (total * 100) / 100f
             _net.value = total
         } catch (e: Exception) {
-            Log.e(TAG, "calculateNet: ${e.message}")
+            //Log.e(TAG, "calculateNet: ${e.message}")
         }
 
     }
 
     // Add Product to the product list
     fun addToProductList() {
-        if(qty.value.isNotEmpty()){
+        if (qty.value.isNotEmpty()) {
             val productSelected = ProductSelected(
                 productId = productId.value,
                 productName = _productName.value,
@@ -491,13 +497,13 @@ open class RootViewModel @Inject constructor(
             )
             selectedProductList.add(productSelected)
             resetSelectedProduct()
-        }else{
+        } else {
             sendHomeScreenEvent(UiEvent.ShowSnackBar("Qty is not Added"))
         }
     }
 
     fun setSelectedProduct(product: Product) {
-        _selectedProduct.value = product
+        //_selectedProduct.value = product
         _productName.value = product.productName
         _unit.value = product.unitName
         _unitId.value = product.unitId
@@ -511,7 +517,7 @@ open class RootViewModel @Inject constructor(
 
     fun resetSelectedProduct() {
         setProductSearchMode(true)
-        _selectedProduct.value = null
+        //_selectedProduct.value = null
         _productName.value = ""
         _unit.value = ""
         _unitId.value = 0

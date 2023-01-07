@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.product_list_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
@@ -15,6 +16,8 @@ import com.gulfappdeveloper.project2.presentation.product_list_screen.components
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.topbar.SearchTopBar
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
+
+private const val TAG = "ProductListScreen"
 
 @Composable
 fun ProductListScreen(
@@ -45,6 +48,7 @@ fun ProductListScreen(
                     showEmptyList = event.value
                 }
                 is UiEvent.Navigate -> {
+                    Log.e(TAG, "ProductListScreen:")
                     navHostController.popBackStack()
                 }
                 is UiEvent.ShowSnackBar -> {
@@ -64,11 +68,11 @@ fun ProductListScreen(
             SearchTopBar(
                 rootViewModel = rootViewModel,
                 onClearButtonClicked = {
-                    rootViewModel.setProductSearchText("")
+                    rootViewModel.setProductName("", isItFromHomeScreem = false)
                 },
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {
-                    rootViewModel.setProductListEvent(UiEvent.Navigate(""))
+                    navHostController.popBackStack()
                 }
             )
         }

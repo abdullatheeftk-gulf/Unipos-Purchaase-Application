@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 private const val TAG = "ProductDisplay"
 
@@ -31,7 +32,7 @@ fun ProductDisplay(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp),
+                .padding(horizontal = 2.dp),
             verticalAlignment = Alignment.Top
         ) {
 
@@ -40,14 +41,14 @@ fun ProductDisplay(
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(1f),
-                color = Color(0xFFC2185B)
+                color = MaterialTheme.colors.OrangeColor
             )
             Text(
                 text = productSelected.productName,
                 textAlign = TextAlign.Start,
                 fontSize = 11.sp,
                 maxLines = 2,
-                modifier = Modifier.weight(6f),
+                modifier = Modifier.weight(5.5f),
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colors.primary
             )
@@ -55,21 +56,21 @@ fun ProductDisplay(
                 text = productSelected.qty.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.unit,
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.4f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.productRate.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(2f),
                 color = MaterialTheme.colors.primary
             )
             Text(
@@ -83,23 +84,23 @@ fun ProductDisplay(
                 text = productSelected.vat.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1f),
                 color = MaterialTheme.colors.primary
             )
             Text(
                 text = productSelected.net.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(2.5f),
                 color = MaterialTheme.colors.primary
             )
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = null,
-                tint = MaterialTheme.colors.error,
+                tint = MaterialTheme.colors.OrangeColor,
                 modifier = Modifier
                     .height(18.dp)
-                    .weight(1f)
+                    .weight(0.85f)
                     .clickable {
                         Log.i(TAG, "ProductDisplay: rfr")
                     }
