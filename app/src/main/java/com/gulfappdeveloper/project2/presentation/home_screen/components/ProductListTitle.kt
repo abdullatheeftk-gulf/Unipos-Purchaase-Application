@@ -29,7 +29,7 @@ fun ProductListTitle() {
         ) {
 
             Text(
-                text = "SI",
+                text = "Si",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
@@ -37,7 +37,7 @@ fun ProductListTitle() {
                 textDecoration = TextDecoration.Underline
             )
             Text(
-                text = "ProductItem",
+                text = "Product Item",
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
@@ -79,7 +79,7 @@ fun ProductListTitle() {
                 textDecoration = TextDecoration.Underline
             )
             Text(
-                text = "vat",
+                text = "Vat",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
@@ -103,21 +103,21 @@ fun ProductListTitle() {
 
         }
 
-        Divider(
+       /* Divider(
             color = Color.Black,
             thickness = Dp.Hairline,
             modifier = Modifier.padding(horizontal = 2.dp),
             startIndent = 0.dp
-        )
+        )*/
 
     }
 
 }
 
-@Preview
+/*@Preview
 @Composable
 fun Test() {
     ProductListTitle()
-}
+}*/
 
 

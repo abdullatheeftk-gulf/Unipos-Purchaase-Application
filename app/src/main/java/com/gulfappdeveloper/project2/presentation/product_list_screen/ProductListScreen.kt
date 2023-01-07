@@ -36,6 +36,7 @@ fun ProductListScreen(
     }
 
     LaunchedEffect(key1 = true) {
+        rootViewModel.resetNavCounter()
         rootViewModel.productListScreenEvent.collectLatest { value ->
             when (val event = value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -68,7 +69,7 @@ fun ProductListScreen(
             SearchTopBar(
                 rootViewModel = rootViewModel,
                 onClearButtonClicked = {
-                    rootViewModel.setProductName("", isItFromHomeScreem = false)
+                    rootViewModel.setProductName("", isItFromHomeScreen = false)
                 },
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {

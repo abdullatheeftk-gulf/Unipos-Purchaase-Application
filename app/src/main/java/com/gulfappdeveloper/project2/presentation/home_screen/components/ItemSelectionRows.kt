@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.home_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -28,6 +29,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
+private const val TAG = "ItemSelectionRows"
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemSelectionRows(
@@ -92,9 +94,10 @@ fun ItemSelectionRows(
                             value = productName,
                             onValueChange = { value ->
                                 onProductNameError()
-                                // if length is more than 3 it will call
+                                // if length is less than or equal to 3, it will call
                                 if (value.length <=3) {
-                                    rootViewModel.setProductName(value, isItFromHomeScreem = true)
+                                    Log.e(TAG, "ItemSelectionRows: ${value.length}", )
+                                    rootViewModel.setProductName(value, isItFromHomeScreen = true)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),

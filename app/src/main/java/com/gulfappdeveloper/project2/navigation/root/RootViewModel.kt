@@ -23,7 +23,6 @@ import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -98,8 +97,8 @@ open class RootViewModel @Inject constructor(
     // Product  list
     val productList = mutableStateListOf<Product>()
 
-  /*  private val _selectedProduct: MutableState<Product?> = mutableStateOf(null)
-    val selectedProduct: State<Product?> = _selectedProduct*/
+    /*  private val _selectedProduct: MutableState<Product?> = mutableStateOf(null)
+      val selectedProduct: State<Product?> = _selectedProduct*/
 
     private val _productId = mutableStateOf(0)
     private val productId: State<Int> = _productId
@@ -261,9 +260,7 @@ open class RootViewModel @Inject constructor(
         sendClientScreenEvent(UiEvent.ShowProgressBar)
         val url = baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS
         try {
-            clientDetailsList.removeAll {
-                true
-            }
+            clientDetailsList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "getClientDetails: ${e.message}")
         }
@@ -298,9 +295,7 @@ open class RootViewModel @Inject constructor(
         sendClientScreenEvent(UiEvent.ShowProgressBar)
         val url = HttpRoutes.BASE_URL + HttpRoutes.SEARCH_CLIENT_DETAILS + _clientSearchText.value
         try {
-            clientDetailsList.removeAll {
-                true
-            }
+            clientDetailsList.clear()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -337,7 +332,6 @@ open class RootViewModel @Inject constructor(
     }
 
     // Get all units
-
     val unitsList = mutableStateListOf<Units>()
 
     private fun getAllUnits() {
@@ -364,30 +358,33 @@ open class RootViewModel @Inject constructor(
         _unitId.value = value.unitId
     }
 
-    fun setProductName(value: String,isItFromHomeScreem:Boolean) {
+    // Set product name and search
+    private var navCounter = 0
+    fun setProductName(value: String, isItFromHomeScreen: Boolean) {
         _productName.value = value
         if (_productName.value.isEmpty()) {
-            productList.removeAll {
-                true
-            }
+            productList.clear()
             sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
         }
         if (_productName.value.length >= 3 && _productSearchMode.value) {
             Log.i(TAG, "setProductName: ${_productName.value} ")
             searchProductListByName()
-            if (isItFromHomeScreem) {
+            if (isItFromHomeScreen && navCounter<1) {
                 sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
+                navCounter++
             }
         }
+    }
+
+    fun resetNavCounter(){
+        navCounter = 0
     }
 
     private fun searchProductListByName() {
         sendProductListScreenEvent(UiEvent.ShowProgressBar)
         val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productName.value
         try {
-            productList.removeAll {
-                true
-            }
+            productList.clear()
         } catch (e: Exception) {
             // Log.e(TAG, "getProductDetails: ${e.message}")
         }
@@ -401,9 +398,7 @@ open class RootViewModel @Inject constructor(
                             sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
                         } else {
                             try {
-                                productList.removeAll {
-                                    true
-                                }
+                                productList.clear()
                             } catch (e: Exception) {
                                 //  Log.e(TAG, "getProductDetails: ${e.message}")
                             }
@@ -454,6 +449,7 @@ open class RootViewModel @Inject constructor(
             sendProductListScreenEvent(UiEvent.Navigate(""))
             setSelectedProduct(product = product)
             setProductSearchMode(false)
+            resetNavCounter()
         }
     }
 
@@ -484,22 +480,54 @@ open class RootViewModel @Inject constructor(
     fun addToProductList() {
         if (qty.value.isNotEmpty()) {
             val productSelected = ProductSelected(
-                productId = productId.value,
+                productId = _productId.value,
                 productName = _productName.value,
                 qty = _qty.value.toFloat(),
-                productRate = if (rate.value.isNotBlank() || rate.value.isNotEmpty()) rate.value.toFloat() else 0f,
+                productRate = if (_rate.value.isNotBlank() || _rate.value.isNotEmpty()) _rate.value.toFloat() else 0f,
                 vat = if (_tax.value.isNotBlank() || _tax.value.isNotEmpty()) _tax.value.toFloat() else 0f,
-                barcode = barCode.value,
+                barcode = _barCode.value,
                 unit = _unit.value,
                 unitId = _unitId.value,
                 disc = if (_disc.value.isNotBlank() || _disc.value.isNotEmpty()) _disc.value.toFloat() else 0f,
-                net = net.value
+                net = _net.value,
             )
-            selectedProductList.add(productSelected)
+            if (_selectedProductListIndex.value<0) {
+                selectedProductList.add(productSelected)
+            }else{
+                selectedProductList[_selectedProductListIndex.value] = productSelected
+            }
             resetSelectedProduct()
         } else {
             sendHomeScreenEvent(UiEvent.ShowSnackBar("Qty is not Added"))
         }
+    }
+
+
+    private val _selectedProductListIndex = mutableStateOf(-1)
+
+    fun setAProductForEditFromList(
+        count: Int,
+        productSelected: ProductSelected
+    ) {
+        _selectedProductListIndex.value = count
+
+        _barCode.value = productSelected.barcode
+        _productId.value = productSelected.productId
+        _productName.value = productSelected.productName
+        _disc.value = productSelected.disc.toString()
+        _rate.value = productSelected.productRate.toString()
+        _unitId.value = productSelected.unitId
+        _unit.value = productSelected.unit
+        _tax.value = productSelected.vat.toString()
+
+        _qty.value = productSelected.qty.toString()
+        _net.value = productSelected.net
+
+        setProductSearchMode(false)
+    }
+
+    fun deleteAProductFromSelectedProductList(index:Int){
+        selectedProductList.removeAt(index)
     }
 
     fun setSelectedProduct(product: Product) {

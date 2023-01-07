@@ -19,4 +19,6 @@ object HttpRoutes {
     const val GET_ALL_TAX_CATEGORIES = "/api/tcategory"
     const val ADD_PRODUCT = "/api/product"
 
+    const val SUBMIT_PRODUCT = "/api/purchase"
+
 }

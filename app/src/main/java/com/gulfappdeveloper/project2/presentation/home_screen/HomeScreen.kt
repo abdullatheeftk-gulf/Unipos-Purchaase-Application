@@ -2,7 +2,6 @@ package com.gulfappdeveloper.project2.presentation.home_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
@@ -52,9 +52,9 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
-    var showAddClientDialog by remember {
-        mutableStateOf(false)
-    }
+    /* var showAddClientDialog by remember {
+         mutableStateOf(false)
+     }*/
 
     var showProductNameError by remember {
         mutableStateOf(false)
@@ -64,14 +64,18 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
-    if (showAddClientDialog) {
-        AddClientDialog(
-            rootViewModel = rootViewModel,
-            onDismissRequest = {
-                showAddClientDialog = false
-            }
-        )
+    var showListEditAlertDialog by remember {
+        mutableStateOf(false)
     }
+
+    var productSelectedForList: ProductSelected? by remember {
+        mutableStateOf(null)
+    }
+
+    var countSelectedForList by remember {
+        mutableStateOf(-1)
+    }
+
 
     LaunchedEffect(key1 = true) {
         homeScreenViewModel.uiEvent.collectLatest { value ->
@@ -129,8 +133,21 @@ fun HomeScreen(
                 showCalendar = false
             }
         )
+    }
 
-
+    if (showListEditAlertDialog) {
+        productSelectedForList?.let {
+            if (countSelectedForList>=0) {
+                ListEditAlertDialog(
+                    rootViewModel = rootViewModel,
+                    productSelected = it,
+                    onDismissRequest = {
+                        showListEditAlertDialog = false
+                    },
+                    count = countSelectedForList
+                )
+            }
+        }
     }
 
 
@@ -152,119 +169,124 @@ fun HomeScreen(
                 )
         ) {
 
-                Box(
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(color = 0x93F1ECEC)),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Text(
+                    text = "Enter purchase details :",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(color = 0x93F1ECEC)),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    Text(
-                        text = "Enter purchase details :",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp, horizontal = 4.dp),
-                        color = MaterialTheme.colors.OrangeColor
+                        .padding(vertical = 4.dp, horizontal = 4.dp),
+                    color = MaterialTheme.colors.OrangeColor
+                )
+            }
+
+
+
+
+            FirstThreeRows(
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard,
+                onSelectDateClicked = {
+                    showCalendar = true
+                },
+                navHostController = navHostController,
+                onAddClientClicked = {
+                    //showAddClientDialog = true
+                    navHostController.navigate(route = RootNavScreens.AddClientScreen.route)
+                }
+            )
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .padding(horizontal = 12.dp),
+                elevation = 4.dp
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ProductListTitle()
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ProductList(
+                        rootViewModel = rootViewModel,
+                        onProductListItemClicked = { i, productSelected ->
+                            productSelectedForList = productSelected
+                            countSelectedForList = i
+                            showListEditAlertDialog = true
+                        }
                     )
                 }
+            }
 
 
 
+            Spacer(modifier = Modifier.height(8.dp))
 
-                FirstThreeRows(
-                    rootViewModel = rootViewModel,
-                    hideKeyboard = hideKeyboard,
-                    onSelectDateClicked = {
-                        showCalendar = true
-                    },
-                    navHostController = navHostController,
-                    onAddClientClicked = {
-                        //showAddClientDialog = true
-                        navHostController.navigate(route = RootNavScreens.AddClientScreen.route)
+
+            ItemSelectionRows(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard,
+                onQrScanClicked = onScanButtonClicked,
+                showProductNameError = showProductNameError,
+                showQuantityError = showQuantityError,
+                onProductNameError = {
+                    showProductNameError = false
+                },
+                onQuantityError = {
+                    showQuantityError = false
+                    showProductNameError = false
+                },
+            )
+
+
+            ProductButtonRow(
+                rootViewModel = rootViewModel,
+                onProductAdded = {
+                    rootViewModel.addToProductList()
+                    coroutineScope.launch {
+                        if (selectedProductList.size > 3) {
+                            lazyColumState.scrollToItem(selectedProductList.size - 1)
+                        }
                     }
-                )
-
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .padding(horizontal = 12.dp),
-                    elevation = 4.dp
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        ProductListTitle()
-                        Spacer(modifier = Modifier.height(4.dp))
-                        ProductList(
-                            rootViewModel = rootViewModel,
-                           // lazyColumnState = lazyColumState
-                        ) 
+                },
+                onProductNameError = {
+                    showProductNameError = true
+                    coroutineScope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
+                    }
+                },
+                onQuantityError = {
+                    showQuantityError = true
+                },
+                onBarcodeError = {
+                    coroutineScope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
                     }
                 }
+            )
 
 
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-
-                ItemSelectionRows(
-                    rootViewModel = rootViewModel,
-                    navHostController = navHostController,
-                    hideKeyboard = hideKeyboard,
-                    onQrScanClicked = onScanButtonClicked,
-                    showProductNameError = showProductNameError,
-                    showQuantityError = showQuantityError,
-                    onProductNameError = {
-                        showProductNameError = false
-                    },
-                    onQuantityError = {
-                        showQuantityError = false
-                    },
-                )
+            ProductPriceColumn()
 
 
-                ProductButtonRow(
-                    rootViewModel = rootViewModel,
-                    onProductAdded = {
-                        rootViewModel.addToProductList()
-                        coroutineScope.launch {
-                            if (selectedProductList.size > 3) {
-                                lazyColumState.scrollToItem(selectedProductList.size - 1)
-                            }
-                        }
-                    },
-                    onProductNameError = {
-                        showProductNameError = true
-                        coroutineScope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
-                        }
-                    },
-                    onQuantityError = {
-                        showQuantityError = true
-                    },
-                    onBarcodeError = {
-                        coroutineScope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
-                        }
-                    }
-                )
+            Spacer(modifier = Modifier.height(10.dp))
 
 
-                ProductPriceColumn()
+            Button(onClick = {
+                // ToDo
+            }) {
+                Text(text = "Submit")
+            }
 
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-
-                Button(onClick = {
-
-                }) {
-                    Text(text = "Submit")
-                }
-
-                Spacer(modifier = Modifier.height(300.dp))
+            Spacer(modifier = Modifier.height(300.dp))
 
         }
 

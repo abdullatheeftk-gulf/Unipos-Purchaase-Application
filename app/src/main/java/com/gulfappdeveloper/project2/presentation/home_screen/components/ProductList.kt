@@ -9,6 +9,7 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
 private const val TAG = "ProductList"
@@ -16,6 +17,7 @@ private const val TAG = "ProductList"
 @Composable
 fun ProductList(
     rootViewModel: RootViewModel,
+    onProductListItemClicked:(Int,ProductSelected)->Unit
    // lazyColumnState: LazyListState
 ) {
     val selectedProductList = rootViewModel.selectedProductList
@@ -33,7 +35,8 @@ fun ProductList(
         items(selectedProductList.size) { count ->
             ProductDisplay(
                 productSelected = selectedProductList[count],
-                count = count
+                count = count,
+                onItemClicked = onProductListItemClicked
             )
         }
     }

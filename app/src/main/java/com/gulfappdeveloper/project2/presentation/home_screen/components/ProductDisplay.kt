@@ -25,7 +25,8 @@ private const val TAG = "ProductDisplay"
 @Composable
 fun ProductDisplay(
     productSelected: ProductSelected,
-    count: Int
+    count: Int,
+    onItemClicked:(Int,ProductSelected)->Unit
 ) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -102,7 +103,7 @@ fun ProductDisplay(
                     .height(18.dp)
                     .weight(0.85f)
                     .clickable {
-                        Log.i(TAG, "ProductDisplay: rfr")
+                        onItemClicked(count,productSelected)
                     }
             )
 
