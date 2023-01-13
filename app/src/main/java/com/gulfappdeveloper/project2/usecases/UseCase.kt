@@ -14,7 +14,8 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProd
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
-import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_peoduct.AddProductUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_product.AddProductUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.purchase.PurchaseUseCase
 
 data class UseCase(
     val getWelcomeMessageUseCase: GetWelcomeMessageUseCase,
@@ -41,7 +42,6 @@ data class UseCase(
     val readOperationCountUseCase: ReadOperationCountUseCase,
     val readBaseUrlUseCase: ReadBaseUrlUseCase,
 
-
-
-
-    )
+    // purchase
+    val purchaseUseCase: PurchaseUseCase
+)

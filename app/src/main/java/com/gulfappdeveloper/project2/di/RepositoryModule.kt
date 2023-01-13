@@ -17,7 +17,8 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProd
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
-import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_peoduct.AddProductUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_product.AddProductUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.purchase.PurchaseUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,6 +56,9 @@ object RepositoryModule {
             // post
             addClientUseCase = AddClientUseCase(remoteRepository = remoteRepository),
             addProductUseCase = AddProductUseCase(remoteRepository = remoteRepository),
+
+            // purchase
+            purchaseUseCase = PurchaseUseCase(remoteRepository = remoteRepository),
 
 
             updateOperationCountUseCase = UpdateOperationCountUseCase(dataStoreRepository = dataStoreRepository),

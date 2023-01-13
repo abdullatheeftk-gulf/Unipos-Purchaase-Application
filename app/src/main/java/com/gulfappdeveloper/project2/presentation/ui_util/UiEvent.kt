@@ -5,7 +5,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 sealed class UiEvent {
     object ShowProgressBar : UiEvent()
     object CloseProgressBar : UiEvent()
-    object ShowAlertDialog : UiEvent()
+    data class ShowAlertDialog(val message:String) : UiEvent()
     object CloseAlertDialog : UiEvent()
     data class ShowToastMessage(val message: String) : UiEvent()
     data class ShowEmptyList(val value: Boolean) : UiEvent()

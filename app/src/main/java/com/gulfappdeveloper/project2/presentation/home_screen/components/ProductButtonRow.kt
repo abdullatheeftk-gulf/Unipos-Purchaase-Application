@@ -19,6 +19,8 @@ fun ProductButtonRow(
     rootViewModel: RootViewModel,
     onProductAdded: () -> Unit,
     onProductNameError: (Boolean) -> Unit,
+    onAdditionalDiscountAdded:()->Unit,
+    onFreightChargeAdded:()->Unit,
     onQuantityError: (Boolean) -> Unit,
     onBarcodeError: (Boolean) -> Unit
 ) {
@@ -108,11 +110,28 @@ fun ProductButtonRow(
                 }
             ) {
                 DropdownMenuItem(
-                    onClick = { showDropDownMenu = false }
-                ) {
-                    Button(onClick = { showDropDownMenu = false }) {
-                        Text(text = "Clear Product List")
+                    onClick = {
+                        rootViewModel.clearProductList()
+                        showDropDownMenu = false
                     }
+                ) {
+                    Text(text = "Clear Product List")
+                }
+                DropdownMenuItem(
+                    onClick = {
+                        onAdditionalDiscountAdded()
+                        showDropDownMenu = false
+                    }
+                ) {
+                    Text(text = "Add Additional Discount")
+                }
+                DropdownMenuItem(
+                    onClick = {
+                        onFreightChargeAdded()
+                        showDropDownMenu = false
+                    }
+                ) {
+                    Text(text = "Add Freight Charge")
                 }
             }
 

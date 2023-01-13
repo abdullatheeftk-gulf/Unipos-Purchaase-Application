@@ -11,6 +11,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Ta
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
+import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import com.gulfappdeveloper.project2.domain.services.ApiService
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -1332,6 +1333,137 @@ class ApiServiceImpl(
             } catch (e: Exception) {
 
                 // Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 604,
+                            message = "Other Exception $e"
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun purchaseFunction(
+        url: String,
+        purchaseClass: PurchaseClass
+    ): Flow<GetDataFromRemote<PurchaseClass>> {
+        return flow {
+            try {
+                val httpResponse = client.post(urlString = url) {
+                    contentType(ContentType.Application.Json)
+                    setBody(purchaseClass)
+                }
+                val statusCode = httpResponse.status.value
+                Log.i(TAG, "status code $statusCode")
+                // Log.w(TAG, "addClientDetails body: ${httpResponse.bodyAsText()}")
+                when (statusCode) {
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(httpResponse.body())
+                        )
+                    }
+                    in 300..399 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 400..499 -> {
+                        if (statusCode == 400) {
+                            emit(
+                                GetDataFromRemote.Failed(
+                                    error = com.gulfappdeveloper.project2.domain.models.remote.Error(
+                                        code = statusCode,
+                                        message = "Duplicate Barcode"
+                                    )
+                                )
+                            )
+                        } else {
+                            emit(
+                                GetDataFromRemote.Failed(
+                                    error = Error(
+                                        code = statusCode,
+                                        message = httpResponse.status.description
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    in 500..599 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    else -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                }
+
+            } catch (e: ConnectTimeoutException) {
+                //Log.e(TAG, " ConnectTimeoutException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 600,
+                            message = "ConnectTimeoutException Server Down"
+                        )
+                    )
+                )
+
+            } catch (e: NoTransformationFoundException) {
+                //  Log.e(TAG, " NoTransformationFoundException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 601,
+                            message = "NoTransformationFoundException or Json Convert Exception Server ok. other problem"
+                        )
+                    )
+                )
+            } catch (e: ConnectException) {
+                //   Log.e(TAG, " No internet")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 602,
+                            message = "No internet in mobile "
+                        )
+                    )
+                )
+            } catch (e: JsonConvertException) {
+                // e.printStackTrace()
+                //  Log.e(TAG, "AddClient ${e.message}")
+                // Log.w(TAG, "added ClientDetails: $addClient", )
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 603,
+                            message = "Json convert Exception $e"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+                Log.e(TAG, "addProduct: $e", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(

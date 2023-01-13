@@ -1,6 +1,7 @@
 package com.gulfappdeveloper.project2.presentation.product_list_screen
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.product_list.EmptyList
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.product_list.ShowProductList
@@ -36,7 +38,7 @@ fun ProductListScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        rootViewModel.resetNavCounter()
+       // rootViewModel.resetNavCounter()
         rootViewModel.productListScreenEvent.collectLatest { value ->
             when (val event = value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -51,6 +53,12 @@ fun ProductListScreen(
                 is UiEvent.Navigate -> {
                     Log.e(TAG, "ProductListScreen:")
                     navHostController.popBackStack()
+                    navHostController.navigate(route = RootNavScreens.HomeScreen.route)
+                    /*navHostController.navigate(route = RootNavScreens.HomeScreen.route){
+                        popUpTo(RootNavScreens.HomeScreen.route){
+                            inclusive = true
+                        }
+                    }*/
                 }
                 is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(event.message)
@@ -58,6 +66,15 @@ fun ProductListScreen(
                 else -> Unit
             }
         }
+    }
+    BackHandler(true) {
+        navHostController.popBackStack()
+        navHostController.navigate(route = RootNavScreens.HomeScreen.route)
+        /*navHostController.navigate(route = RootNavScreens.HomeScreen.route){
+            popUpTo(RootNavScreens.HomeScreen.route){
+                inclusive = true
+            }
+        }*/
     }
 
 
@@ -73,7 +90,11 @@ fun ProductListScreen(
                 },
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {
-                    navHostController.popBackStack()
+                    navHostController.navigate(route = RootNavScreens.HomeScreen.route){
+                        popUpTo(RootNavScreens.HomeScreen.route){
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

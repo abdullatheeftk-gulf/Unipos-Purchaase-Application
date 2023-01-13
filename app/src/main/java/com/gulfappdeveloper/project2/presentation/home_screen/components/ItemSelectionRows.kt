@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -22,12 +23,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
+import kotlin.math.roundToInt
 
 private const val TAG = "ItemSelectionRows"
 @OptIn(ExperimentalMaterialApi::class)
@@ -71,7 +74,7 @@ fun ItemSelectionRows(
     }
 
 
-
+    var roundOff = 0f
 
 
     Column() {
@@ -282,7 +285,7 @@ fun ItemSelectionRows(
                             Text(
                                 text = value,
                                 modifier = Modifier.weight(1f),
-                                fontSize = 14.sp,
+                                fontSize = 12.sp,
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             )
                             Icon(
@@ -340,11 +343,17 @@ fun ItemSelectionRows(
                         start = 2.dp, end = 2.dp
                     )
             ) {
+
+                roundOff = if (rate.isNotEmpty()||rate.isNotBlank()) {
+                    ((rate.toFloat() * 100f).roundToInt()) / 100f
+                }else{
+                    0f
+                }
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = rate,
+                    value = roundOff.toString(),
                     innerTextField = {
                         BasicTextField(
-                            value = rate,
+                            value = roundOff.toString(),
                             onValueChange = {
 
                             },
@@ -383,11 +392,16 @@ fun ItemSelectionRows(
                     )
             ) {
 
+                roundOff = if (disc.isNotEmpty()||disc.isNotBlank()) {
+                    ((disc.toFloat() * 100f).roundToInt()) / 100f
+                }else{
+                    0f
+                }
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = disc,
+                    value = roundOff.toString(),
                     innerTextField = {
                         BasicTextField(
-                            value = disc,
+                            value = roundOff.toString(),
                             onValueChange = { value ->
                                 rootViewModel.setDisc(value)
                             },
@@ -468,6 +482,9 @@ fun ItemSelectionRows(
                 )
             }
 
+
+
+
             // net amount box read only
             Box(
                 modifier = Modifier
@@ -476,11 +493,12 @@ fun ItemSelectionRows(
                         start = 2.dp
                     )
             ) {
+               roundOff = ((net*100f).roundToInt())/100f
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = net.toString(),
+                    value = roundOff.toString(),
                     innerTextField = {
                         BasicTextField(
-                            value = net.toString(),
+                            value = roundOff.toString(),
                             onValueChange = {
                             },
                             textStyle = TextStyle(
@@ -511,6 +529,51 @@ fun ItemSelectionRows(
             }
         }
     }
+}
+
+@Composable
+fun AutoResizedText(
+    modifier: Modifier = Modifier,
+    text:String,
+    style: TextStyle = MaterialTheme.typography.body1,
+    color: Color = style.color
+) {
+    var resizedTextStyle by remember {
+        mutableStateOf(style)
+    }
+
+    var shouldDraw by remember {
+        mutableStateOf(false)
+    }
+
+    val defaultFontSize = 12.sp
+
+    Text(
+        text = text,
+        color = color,
+        modifier = modifier.drawWithContent {
+             if (shouldDraw){
+                 drawContent()
+             }
+        },
+        softWrap = false,
+        style = resizedTextStyle,
+        onTextLayout = {result->
+
+            if (result.didOverflowWidth){
+                if (style.fontSize.isUnspecified){
+                    resizedTextStyle = resizedTextStyle.copy(
+                        fontSize = defaultFontSize
+                    )
+                }
+                resizedTextStyle = resizedTextStyle.copy(
+                    fontSize = resizedTextStyle.fontSize * 0.95
+                )
+            }else{
+                shouldDraw = true
+            }
+        }
+    )
 }
 
 

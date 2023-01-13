@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_peoduct
+package com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_product
 
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
 import com.gulfappdeveloper.project2.repositories.RemoteRepository

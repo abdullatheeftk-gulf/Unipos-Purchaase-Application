@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
+import kotlin.math.roundToInt
 
 private const val TAG = "ProductDisplay"
 
@@ -28,6 +29,7 @@ fun ProductDisplay(
     count: Int,
     onItemClicked:(Int,ProductSelected)->Unit
 ) {
+    var roundOff = 0f
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -67,8 +69,9 @@ fun ProductDisplay(
                 modifier = Modifier.weight(1.4f),
                 color = MaterialTheme.colors.primary
             )
+            roundOff = (productSelected.productRate*100f).roundToInt()/100f
             Text(
-                text = productSelected.productRate.toString(),
+                text = roundOff.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(2f),
@@ -88,8 +91,9 @@ fun ProductDisplay(
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colors.primary
             )
+            roundOff = (productSelected.net*100f).roundToInt()/100f
             Text(
-                text = productSelected.net.toString(),
+                text = roundOff.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(2.5f),

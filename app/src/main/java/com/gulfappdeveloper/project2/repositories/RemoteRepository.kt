@@ -10,6 +10,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Ta
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
+import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import com.gulfappdeveloper.project2.domain.services.ApiService
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
@@ -76,5 +77,15 @@ class RemoteRepository @Inject constructor(
 
     suspend fun getAllTaxCategories(url: String): Flow<GetDataFromRemote<List<TaxCategory>>> {
         return apiService.getAllTaxCategories(url = url)
+    }
+
+    suspend fun purchaseFunction(
+        url: String,
+        purchaseClass: PurchaseClass
+    ): Flow<GetDataFromRemote<PurchaseClass>> {
+        return  apiService.purchaseFunction(
+            url = url,
+            purchaseClass = purchaseClass
+        )
     }
 }

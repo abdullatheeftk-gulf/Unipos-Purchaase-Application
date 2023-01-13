@@ -9,6 +9,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Ta
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
+import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import kotlinx.coroutines.flow.Flow
 
 interface ApiService {
@@ -28,10 +29,7 @@ interface ApiService {
     suspend fun getAllTaxCategories(url: String):Flow<GetDataFromRemote<List<TaxCategory>>>
     suspend fun addProduct(url: String,addProduct:AddProduct):Flow<GetDataFromRemote<Product>>
 
-
-
-
-
-
+    // Purchase
+    suspend fun purchaseFunction(url: String,purchaseClass: PurchaseClass):Flow<GetDataFromRemote<PurchaseClass>>
 
 }

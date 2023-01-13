@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,8 @@ fun ProductListTitle() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 2.dp)
+                .padding(horizontal = 2.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Text(
@@ -34,7 +36,7 @@ fun ProductListTitle() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(1f),
-                textDecoration = TextDecoration.Underline
+               // textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Product Item",
@@ -42,7 +44,7 @@ fun ProductListTitle() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(5.5f),
-                textDecoration = TextDecoration.Underline
+                //textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Qty",
@@ -50,7 +52,7 @@ fun ProductListTitle() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(1f),
-                textDecoration = TextDecoration.Underline
+               // textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Unit",
@@ -68,7 +70,7 @@ fun ProductListTitle() {
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(2f),
-                textDecoration = TextDecoration.Underline
+               // textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Dis",
@@ -76,15 +78,15 @@ fun ProductListTitle() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(1.5f),
-                textDecoration = TextDecoration.Underline
+              //  textDecoration = TextDecoration.Underline
             )
             Text(
-                text = "Vat",
+                text = "Vat%",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 11.sp,
+                fontSize = 9.sp,
                 modifier = Modifier.weight(1f),
-                textDecoration = TextDecoration.Underline
+              //  textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "Net",
@@ -92,7 +94,7 @@ fun ProductListTitle() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(2.5f),
-                textDecoration = TextDecoration.Underline
+               // textDecoration = TextDecoration.Underline
             )
             Text(
                 text = "",
