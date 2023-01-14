@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.presentation.home_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -27,7 +26,7 @@ private const val TAG = "ProductDisplay"
 fun ProductDisplay(
     productSelected: ProductSelected,
     count: Int,
-    onItemClicked:(Int,ProductSelected)->Unit
+    onItemClicked: (Int, ProductSelected) -> Unit
 ) {
     var roundOff = 0f
 
@@ -69,7 +68,7 @@ fun ProductDisplay(
                 modifier = Modifier.weight(1.4f),
                 color = MaterialTheme.colors.primary
             )
-            roundOff = (productSelected.productRate*100f).roundToInt()/100f
+            roundOff = (productSelected.productRate * 100f).roundToInt() / 100f
             Text(
                 text = roundOff.toString(),
                 textAlign = TextAlign.Center,
@@ -91,7 +90,7 @@ fun ProductDisplay(
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colors.primary
             )
-            roundOff = (productSelected.net*100f).roundToInt()/100f
+            roundOff = (productSelected.net * 100f).roundToInt() / 100f
             Text(
                 text = roundOff.toString(),
                 textAlign = TextAlign.Center,
@@ -107,7 +106,7 @@ fun ProductDisplay(
                     .height(18.dp)
                     .weight(0.85f)
                     .clickable {
-                        onItemClicked(count,productSelected)
+                        onItemClicked(count, productSelected)
                     }
             )
 

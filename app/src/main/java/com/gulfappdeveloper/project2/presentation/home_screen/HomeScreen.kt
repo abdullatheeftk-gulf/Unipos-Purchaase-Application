@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.home_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -203,12 +204,20 @@ fun HomeScreen(
         showProductListIsEmpty = false
     }
 
+    BackHandler(true) {
+        rootViewModel.resetAll()
+        navHostController.popBackStack()
+    }
+
 
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopBar()
+            TopBar(
+                navHostController = navHostController,
+                rootViewModel = rootViewModel
+            )
         }
     ) {
         it.calculateTopPadding()
@@ -285,7 +294,8 @@ fun HomeScreen(
                             productSelectedForList = productSelected
                             countSelectedForList = i
                             showListEditAlertDialog = true
-                        }
+                        },
+                        lazyColumnState = lazyColumState
                     )
                 }
             }
@@ -367,7 +377,7 @@ fun HomeScreen(
                         color = MaterialTheme.colors.primary,
                         fontStyle = MaterialTheme.typography.h6.fontStyle,
                         fontSize = MaterialTheme.typography.h6.fontSize,
-                        // modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(3f)
                     )
                     OutlinedTextField(
                         value = additionalDiscount,
@@ -402,7 +412,7 @@ fun HomeScreen(
                         color = MaterialTheme.colors.primary,
                         fontStyle = MaterialTheme.typography.h6.fontStyle,
                         fontSize = MaterialTheme.typography.h6.fontSize,
-                        // modifier = Modifier.weight(2f)
+                         modifier = Modifier.weight(3f)
                     )
                     OutlinedTextField(
                         value = freightCharge,

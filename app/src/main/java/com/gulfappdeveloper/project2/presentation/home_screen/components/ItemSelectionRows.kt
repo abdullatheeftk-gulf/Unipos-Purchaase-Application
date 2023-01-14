@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +34,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlin.math.roundToInt
 
 private const val TAG = "ItemSelectionRows"
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemSelectionRows(
@@ -40,10 +42,10 @@ fun ItemSelectionRows(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
     onQrScanClicked: () -> Unit,
-    onProductNameError:()->Unit,
-    onQuantityError:()->Unit,
-    showProductNameError:Boolean,
-    showQuantityError:Boolean,
+    onProductNameError: () -> Unit,
+    onQuantityError: () -> Unit,
+    showProductNameError: Boolean,
+    showQuantityError: Boolean,
 ) {
     val unitsList = rootViewModel.unitsList
 
@@ -98,8 +100,8 @@ fun ItemSelectionRows(
                             onValueChange = { value ->
                                 onProductNameError()
                                 // if length is less than or equal to 3, it will call
-                                if (value.length <=3) {
-                                    Log.e(TAG, "ItemSelectionRows: ${value.length}", )
+                                if (value.length <= 3) {
+                                    Log.e(TAG, "ItemSelectionRows: ${value.length}")
                                     rootViewModel.setProductName(value, isItFromHomeScreen = true)
                                 }
                             },
@@ -148,7 +150,7 @@ fun ItemSelectionRows(
                 )
             }
 
-            // Barcode Read only
+            // Barcode
             Box(
                 modifier = Modifier
                     .weight(1.2f)
@@ -159,11 +161,23 @@ fun ItemSelectionRows(
                     innerTextField = {
                         BasicTextField(
                             value = barcode,
-                            onValueChange = {},
+                            onValueChange = { value ->
+                                rootViewModel.setBarcode(value)
+                            },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = true,
+                            readOnly = !(productName.isEmpty()||productName.isBlank()),
                             textStyle = TextStyle(
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    rootViewModel.searchProductByQrCode(value = barcode)
+                                    hideKeyboard()
+                                }
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Search,
+                                capitalization = KeyboardCapitalization.Characters
                             )
                         )
                     },
@@ -277,9 +291,9 @@ fun ItemSelectionRows(
                             horizontalArrangement = Arrangement.SpaceAround,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            val value =  if (unit.length>3) {
+                            val value = if (unit.length > 3) {
                                 unit.take(3)
-                            }else{
+                            } else {
                                 unit
                             }
                             Text(
@@ -295,9 +309,9 @@ fun ItemSelectionRows(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickable(enabled = unitsList.isNotEmpty()) {
-                                        if (productName.isNotEmpty() || productName.isNotBlank()) {
+                                        /* if (productName.isNotEmpty() || productName.isNotBlank()) {
                                             showDropDownMenu = true
-                                        }
+                                        }*/
                                     }
                             )
                         }
@@ -314,25 +328,25 @@ fun ItemSelectionRows(
                         start = 8.dp, top = 4.dp, bottom = 4.dp, end = 0.dp
                     ),
                 )
-                DropdownMenu(
-                    expanded = showDropDownMenu,
-                    onDismissRequest = {
-                        showDropDownMenu = false
-                    },
-                    modifier = Modifier.width(60.dp)
-                ) {
-                    unitsList.forEach { value ->
-                        DropdownMenuItem(
-                            onClick = {
-                                rootViewModel.setUnit(value)
-                                showDropDownMenu = false
-                            },
-                            contentPadding = PaddingValues(all = 8.dp)
-                        ) {
-                            Text(text = value.unitName)
-                        }
-                    }
-                }
+                /*  DropdownMenu(
+                      expanded = showDropDownMenu,
+                      onDismissRequest = {
+                          showDropDownMenu = false
+                      },
+                      modifier = Modifier.width(60.dp)
+                  ) {
+                      unitsList.forEach { value ->
+                          DropdownMenuItem(
+                              onClick = {
+                                  rootViewModel.setUnit(value)
+                                  showDropDownMenu = false
+                              },
+                              contentPadding = PaddingValues(all = 8.dp)
+                          ) {
+                              Text(text = value.unitName)
+                          }
+                      }
+                  }*/
             }
 
             // Rate box
@@ -344,24 +358,33 @@ fun ItemSelectionRows(
                     )
             ) {
 
-                roundOff = if (rate.isNotEmpty()||rate.isNotBlank()) {
+                /*roundOff = if (rate.isNotEmpty()||rate.isNotBlank()) {
                     ((rate.toFloat() * 100f).roundToInt()) / 100f
                 }else{
                     0f
-                }
+                }*/
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = roundOff.toString(),
+                    value = rate,
                     innerTextField = {
                         BasicTextField(
-                            value = roundOff.toString(),
-                            onValueChange = {
-
+                            value = rate,
+                            onValueChange = { value ->
+                                rootViewModel.setProductRate(value)
                             },
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
-                            readOnly = true
+                            readOnly = !(productName.isNotEmpty() || productName.isNotBlank()),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done,
+                                keyboardType = KeyboardType.Decimal
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    hideKeyboard()
+                                }
+                            )
                         )
                     },
                     enabled = true,
@@ -373,6 +396,9 @@ fun ItemSelectionRows(
                             text = "Rate",
                             fontSize = 10.sp,
                         )
+                    },
+                    placeholder = {
+                        Text(text = "0.0")
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = if (rate.isEmpty()) 8.dp else 2.dp,
@@ -392,16 +418,12 @@ fun ItemSelectionRows(
                     )
             ) {
 
-                roundOff = if (disc.isNotEmpty()||disc.isNotBlank()) {
-                    ((disc.toFloat() * 100f).roundToInt()) / 100f
-                }else{
-                    0f
-                }
+
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                    value = roundOff.toString(),
+                    value = disc,
                     innerTextField = {
                         BasicTextField(
-                            value = roundOff.toString(),
+                            value = disc,
                             onValueChange = { value ->
                                 rootViewModel.setDisc(value)
                             },
@@ -483,8 +505,6 @@ fun ItemSelectionRows(
             }
 
 
-
-
             // net amount box read only
             Box(
                 modifier = Modifier
@@ -493,7 +513,7 @@ fun ItemSelectionRows(
                         start = 2.dp
                     )
             ) {
-               roundOff = ((net*100f).roundToInt())/100f
+                roundOff = ((net * 100f).roundToInt()) / 100f
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
                     value = roundOff.toString(),
                     innerTextField = {
@@ -534,7 +554,7 @@ fun ItemSelectionRows(
 @Composable
 fun AutoResizedText(
     modifier: Modifier = Modifier,
-    text:String,
+    text: String,
     style: TextStyle = MaterialTheme.typography.body1,
     color: Color = style.color
 ) {
@@ -552,16 +572,16 @@ fun AutoResizedText(
         text = text,
         color = color,
         modifier = modifier.drawWithContent {
-             if (shouldDraw){
-                 drawContent()
-             }
+            if (shouldDraw) {
+                drawContent()
+            }
         },
         softWrap = false,
         style = resizedTextStyle,
-        onTextLayout = {result->
+        onTextLayout = { result ->
 
-            if (result.didOverflowWidth){
-                if (style.fontSize.isUnspecified){
+            if (result.didOverflowWidth) {
+                if (style.fontSize.isUnspecified) {
                     resizedTextStyle = resizedTextStyle.copy(
                         fontSize = defaultFontSize
                     )
@@ -569,7 +589,7 @@ fun AutoResizedText(
                 resizedTextStyle = resizedTextStyle.copy(
                     fontSize = resizedTextStyle.fontSize * 0.95
                 )
-            }else{
+            } else {
                 shouldDraw = true
             }
         }

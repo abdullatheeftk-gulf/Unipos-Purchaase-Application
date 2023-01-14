@@ -8,6 +8,7 @@ import com.gulfappdeveloper.project2.presentation.add_client_screen.AddClientScr
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.ClientListScreen
 import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
+import com.gulfappdeveloper.project2.presentation.main_screen.MainScreen
 import com.gulfappdeveloper.project2.presentation.product_list_screen.ProductListScreen
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
@@ -24,7 +25,7 @@ fun RootNavGraph(
 
     NavHost(
         navController = navHostController,
-        startDestination = RootNavScreens.HomeScreen.route
+        startDestination = RootNavScreens.MainScreen.route
     ) {
 
 
@@ -35,11 +36,19 @@ fun RootNavGraph(
             )
         }
 
+
         composable(RootNavScreens.UrlSetScreen.route) {
             SetBaseUrlScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard
+            )
+        }
+
+        composable(RootNavScreens.MainScreen.route) {
+            MainScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController
             )
         }
 
@@ -77,13 +86,12 @@ fun RootNavGraph(
         }
 
         composable(route = RootNavScreens.AddProductMainScreen.route) {
-           AddProductMainScreen(
-               rootViewModel = rootViewModel,
-               hideKeyboard = hideKeyboard,
-               navHostController = navHostController
-           )
+            AddProductMainScreen(
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard,
+                navHostController = navHostController
+            )
         }
-
 
 
     }

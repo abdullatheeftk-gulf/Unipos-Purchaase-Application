@@ -38,7 +38,7 @@ fun ProductListScreen(
     }
 
     LaunchedEffect(key1 = true) {
-       // rootViewModel.resetNavCounter()
+        rootViewModel.resetNavCounter()
         rootViewModel.productListScreenEvent.collectLatest { value ->
             when (val event = value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -90,11 +90,13 @@ fun ProductListScreen(
                 },
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {
-                    navHostController.navigate(route = RootNavScreens.HomeScreen.route){
+                    navHostController.popBackStack()
+                    navHostController.navigate(route = RootNavScreens.HomeScreen.route)
+                    /*navHostController.navigate(route = RootNavScreens.HomeScreen.route){
                         popUpTo(RootNavScreens.HomeScreen.route){
                             inclusive = true
                         }
-                    }
+                    }*/
                 }
             )
         }

@@ -110,8 +110,19 @@ open class RootViewModel @Inject constructor(
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
 
+    fun setBarcode(value:String){
+        _barCode.value = value
+    }
+
     private val _qty = mutableStateOf("")
     val qty: State<String> = _qty
+
+    fun setQty(value: String) {
+        _qty.value = value
+        if (qty.value.isNotEmpty() || qty.value.isNotBlank()) {
+            calculateNet()
+        }
+    }
 
     private val _unit = mutableStateOf("")
     val unit: State<String> = _unit
@@ -121,8 +132,20 @@ open class RootViewModel @Inject constructor(
     private val _rate = mutableStateOf("")
     val rate: State<String> = _rate
 
+    fun setProductRate(value: String){
+        _rate.value = value
+        calculateNet()
+    }
+
     private val _disc = mutableStateOf("")
     val disc: State<String> = _disc
+
+    fun setDisc(value: String) {
+        _disc.value = value
+        if (_disc.value.isNotEmpty() || _disc.value.isNotBlank()) {
+            calculateNet()
+        }
+    }
 
     private val _tax = mutableStateOf("")
     val tax: State<String> = _tax
@@ -224,24 +247,14 @@ open class RootViewModel @Inject constructor(
         _barCode.value = value
     }*/
 
-    fun setQty(value: String) {
-        _qty.value = value
-        if (qty.value.isNotEmpty() || qty.value.isNotBlank()) {
-            calculateNet()
-        }
-    }
+
 
 
     /*fun setRate(value: String) {
         _rate.value = value
     }*/
 
-    fun setDisc(value: String) {
-        _disc.value = value
-        if (_disc.value.isNotEmpty() || _disc.value.isNotBlank()) {
-            calculateNet()
-        }
-    }
+
 
     /* fun setTax(value: String) {
          _tax.value = value
@@ -380,7 +393,7 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    private fun resetNavCounter() {
+     fun resetNavCounter() {
         navCounter = 0
     }
 
@@ -432,6 +445,7 @@ open class RootViewModel @Inject constructor(
                     Log.e(TAG, "searchProductByQrCode: ${result.data}")
                     result.data?.let { product ->
                         _productName.value = product.productName
+                        _qty.value = "1"
                         setSelectedProduct(product)
                         setProductSearchMode(false)
                         return@collectLatest
@@ -451,6 +465,7 @@ open class RootViewModel @Inject constructor(
     fun onProductListItemClicked(product: Product) {
         viewModelScope.launch {
             sendProductListScreenEvent(UiEvent.Navigate(""))
+            _qty.value = "1"
             setSelectedProduct(product = product)
             setProductSearchMode(false)
             resetNavCounter()
@@ -461,15 +476,15 @@ open class RootViewModel @Inject constructor(
     // Calculate net value of a product
     private fun calculateNet() {
         try {
-            val qty = _qty.value.toFloat()
-            val rate = _rate.value.toFloat()
+            val qty = if (_qty.value.isNotBlank() || _qty.value.isNotEmpty()) _qty.value.toFloat() else 0f
+            val rate = if(_rate.value.isNotEmpty()||_rate.value.isNotBlank()) _rate.value.toFloat() else 0f
             var total = qty * rate
             val tax = tax.value.toFloat()
             total += total * (tax / 100)
             val discount = if (_disc.value.isEmpty() || _disc.value.isBlank()) {
                 0f
             } else {
-                _disc.value.toFloat()
+                _disc.value.toFloat()*qty
             }
             total -= discount
             total = (total * 100) / 100f
@@ -528,10 +543,15 @@ open class RootViewModel @Inject constructor(
 
         selectedProductList.forEach { sp ->
             _subTotal.value += sp.qty * sp.productRate
-            _totalDiscount.value += sp.disc
+            _totalDiscount.value += sp.disc*sp.qty
             _totalVat.value += sp.vat * sp.qty * sp.productRate / 100
         }
-        _grandTotal.value += (_subTotal.value - _totalDiscount.value + _totalVat.value)
+        _grandTotal.value += (_subTotal.value
+                        - _totalDiscount.value
+                        + _totalVat.value
+                        + if(_freightCharge.value.isEmpty() || _freightCharge.value.isBlank()) 0f else _freightCharge.value.toFloat()
+                        -if (_additionalDiscount.value.isEmpty() || _additionalDiscount.value.isBlank()) 0f else _additionalDiscount.value.toFloat()
+                )
     }
 
 
@@ -592,49 +612,49 @@ open class RootViewModel @Inject constructor(
         _net.value = 0f
     }
 
-    fun clearProductList(){
+    fun clearProductList() {
         selectedProductList.clear()
     }
 
     private val _showAdditionalDiscount = mutableStateOf(false)
-    val showAdditionalDiscount:State<Boolean> = _showAdditionalDiscount
+    val showAdditionalDiscount: State<Boolean> = _showAdditionalDiscount
 
-    fun setShowAdditionalDiscount(value: Boolean){
+    fun setShowAdditionalDiscount(value: Boolean) {
         _showAdditionalDiscount.value = value
     }
 
     private val _additionalDiscount = mutableStateOf("")
-    val additionalDiscount:State<String> = _additionalDiscount
+    val additionalDiscount: State<String> = _additionalDiscount
 
 
-    fun setAdditionalDiscount(value:String){
+    fun setAdditionalDiscount(value: String) {
         _additionalDiscount.value = value
     }
 
     private val _showFreightCharge = mutableStateOf(false)
-    val showFreightCharge:State<Boolean> = _showFreightCharge
+    val showFreightCharge: State<Boolean> = _showFreightCharge
 
-    fun setShowFreightCharge(value: Boolean){
+    fun setShowFreightCharge(value: Boolean) {
         _showFreightCharge.value = value
     }
 
     private val _freightCharge = mutableStateOf("")
-    val freightCharge:State<String> = _freightCharge
+    val freightCharge: State<String> = _freightCharge
 
-    fun setFreightCharge(value: String){
+    fun setFreightCharge(value: String) {
         _freightCharge.value = value
     }
 
-    fun submitFun(){
-        val url = _baseUrl.value+HttpRoutes.SUBMIT_PRODUCT
+    fun submitFun() {
+        val url = _baseUrl.value + HttpRoutes.SUBMIT_PRODUCT
         sendHomeScreenEvent(UiEvent.ShowProgressBar)
         val date = SimpleDateFormat("yyyy-MM-d", Locale.getDefault()).format(_selectedDate.value)
         val time = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(_selectedDate.value)
-        val purDate = date+"T"+time
+        val purDate = date + "T" + time
 
         val purchaseMaster = PurchaseMaster(
             additionalAmount = 0f,
-            additionalDiscount = if (_additionalDiscount.value.isNotEmpty()||_additionalDiscount.value.isNotBlank()) _additionalDiscount.value.toFloat() else 0f,
+            additionalDiscount = if (_additionalDiscount.value.isNotEmpty() || _additionalDiscount.value.isNotBlank()) _additionalDiscount.value.toFloat() else 0f,
             discountAmount = _totalDiscount.value,
             freight = if (_freightCharge.value.isNotBlank() || _freightCharge.value.isNotEmpty()) _freightCharge.value.toFloat() else 0f,
             partyAccId = _selectedClient.value?.clientId ?: 0,
@@ -648,9 +668,9 @@ open class RootViewModel @Inject constructor(
             userId = 1
         )
         val purchaseDetails = mutableListOf<PurchaseDetail>()
-        selectedProductList.forEach { selectedProduct->
-            var taxAmount = selectedProduct.qty*selectedProduct.productRate/selectedProduct.vat
-            if (taxAmount.isInfinite() || taxAmount.isNaN()){
+        selectedProductList.forEach { selectedProduct ->
+            var taxAmount = selectedProduct.qty * selectedProduct.productRate / selectedProduct.vat
+            if (taxAmount.isInfinite() || taxAmount.isNaN()) {
                 taxAmount = 0f
             }
             Log.w(TAG, "submitFun: $taxAmount")
@@ -660,33 +680,34 @@ open class RootViewModel @Inject constructor(
                     barcode = selectedProduct.barcode,
                     disc = selectedProduct.disc,
                     discAmount = selectedProduct.disc,
-                    gross = selectedProduct.qty*selectedProduct.productRate,
+                    gross = selectedProduct.qty * selectedProduct.productRate,
                     netAmount = selectedProduct.net,
                     proId = selectedProduct.productId,
                     proQty = selectedProduct.qty,
                     proRate = selectedProduct.productRate,
                     taxAmount = taxAmount,
                     taxPercentage = selectedProduct.vat,
-                    taxable = selectedProduct.qty*selectedProduct.productRate,
+                    taxable = selectedProduct.qty * selectedProduct.productRate,
                     unitId = selectedProduct.unitId
                 )
             )
         }
-        viewModelScope.launch (Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             useCase.purchaseUseCase(
                 url = url,
                 purchaseClass = PurchaseClass(
                     purchaseMaster = purchaseMaster,
                     purchaseDetails = purchaseDetails
                 )
-            ).collectLatest { result->
+            ).collectLatest { result ->
                 sendHomeScreenEvent(UiEvent.CloseProgressBar)
-                if(result is GetDataFromRemote.Success){
-                    Log.e(TAG, "submitFun: $", )
+                if (result is GetDataFromRemote.Success) {
+                    Log.e(TAG, "submitFun: $")
                     sendHomeScreenEvent(UiEvent.ShowAlertDialog(message = "Purchase finished"))
                 }
-                if (result is GetDataFromRemote.Failed){
-                    val error = result.error.message+", code:- "+result.error.code+", url:- $url"
+                if (result is GetDataFromRemote.Failed) {
+                    val error =
+                        result.error.message + ", code:- " + result.error.code + ", url:- $url"
                     Log.e(TAG, "submitFun: $error")
                     sendHomeScreenEvent(UiEvent.ShowSnackBar(message = error))
                 }
@@ -696,8 +717,7 @@ open class RootViewModel @Inject constructor(
     }
 
 
-
-    fun resetAll(){
+    fun resetAll() {
         _billNo.value = ""
         _selectedDate.value = Date()
         _selectedClient.value = null

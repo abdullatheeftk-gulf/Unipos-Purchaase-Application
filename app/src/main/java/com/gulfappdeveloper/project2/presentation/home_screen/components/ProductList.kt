@@ -17,8 +17,8 @@ private const val TAG = "ProductList"
 @Composable
 fun ProductList(
     rootViewModel: RootViewModel,
-    onProductListItemClicked:(Int,ProductSelected)->Unit
-   // lazyColumnState: LazyListState
+    onProductListItemClicked:(Int,ProductSelected)->Unit,
+    lazyColumnState: LazyListState
 ) {
     val selectedProductList = rootViewModel.selectedProductList
 
@@ -30,7 +30,7 @@ fun ProductList(
             Log.e(TAG, "ProductList: df",)
         }*/,
         contentPadding = PaddingValues(vertical = 4.dp),
-        //state = lazyColumnState
+        state = lazyColumnState
     ) {
         items(selectedProductList.size) { count ->
             ProductDisplay(
