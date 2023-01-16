@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -155,18 +156,26 @@ fun StockAdjustmentScreen(
                         }) {
                             Text(
                                 text = "Submit",
-                                color = MaterialTheme.colors.surface,
+                                color = if (showProgressbar) Color.White else MaterialTheme.colors.surface,
                                 fontSize = MaterialTheme.typography.h6.fontSize,
                                 fontStyle = MaterialTheme.typography.h6.fontStyle,
+                                modifier = Modifier.alpha(
+                                    if (showProgressbar) ContentAlpha.disabled else ContentAlpha.high
+                                )
                             )
                         }
 
                     },
                     onClick = {
-                        rootViewModel.submitStockAdjustment()
+                        if (!showProgressbar) {
+                            rootViewModel.submitStockAdjustment()
+                        }
                     },
-                    backgroundColor = MaterialTheme.colors.primary,
-                    shape = RoundedCornerShape(25)
+                    backgroundColor = if (showProgressbar) MaterialTheme.colors.onSurface else MaterialTheme.colors.primary,
+                    shape = RoundedCornerShape(25),
+                    modifier = Modifier.alpha(
+                        if (showProgressbar) ContentAlpha.disabled else ContentAlpha.high
+                    )
                 )
 
             }

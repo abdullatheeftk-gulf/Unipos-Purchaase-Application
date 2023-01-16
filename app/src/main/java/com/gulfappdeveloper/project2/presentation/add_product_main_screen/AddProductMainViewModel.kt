@@ -221,13 +221,7 @@ class AddProductMainViewModel @Inject constructor(
     }
 
     fun searchProductGroups() {
-        try {
-            productGroupsList.removeAll {
-                true
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        productGroupsList.clear()
         sendSelectedProductGroupEvent(UiEvent.ShowProgressBar)
         val url = _baseUrl.value + HttpRoutes.GET_PRODUCT_GROUPS + _searchText.value
         viewModelScope.launch(Dispatchers.IO) {
@@ -235,13 +229,7 @@ class AddProductMainViewModel @Inject constructor(
                 sendSelectedProductGroupEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        try {
-                            productGroupsList.removeAll {
-                                true
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                        productGroupsList.clear()
                         productGroupsList.addAll(result.data)
                         if (result.data.isEmpty()) {
                             sendSelectedProductGroupEvent(UiEvent.ShowEmptyList(true))
@@ -289,6 +277,9 @@ class AddProductMainViewModel @Inject constructor(
                 when (result) {
                     is GetDataFromRemote.Success -> {
                         taxCategoryList.addAll(result.data)
+                        if (taxCategoryList.isNotEmpty()) {
+                            _taxCategory.value = taxCategoryList[0]
+                        }
                     }
                     is GetDataFromRemote.Failed -> {
                         val error = "Error:- ${result.error.code}, ${result.error.message}, $url"
@@ -303,7 +294,7 @@ class AddProductMainViewModel @Inject constructor(
         }
     }
 
-     fun addProduct() {
+    fun addProduct() {
         val url = _baseUrl.value + HttpRoutes.ADD_PRODUCT
         sendAddProductEvent(UiEvent.ShowProgressBar)
         val addProduct = AddProduct(
@@ -327,22 +318,23 @@ class AddProductMainViewModel @Inject constructor(
             userId = 1
         )
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.addProductUseCase(url = url, addProduct = addProduct ).collectLatest { result->
+            useCase.addProductUseCase(url = url, addProduct = addProduct).collectLatest { result ->
                 sendAddProductEvent(UiEvent.CloseProgressBar)
-                when(result){
-                    is GetDataFromRemote.Success->{
+                when (result) {
+                    is GetDataFromRemote.Success -> {
                         val addedProduct = result.data
                         Log.d(TAG, "addProduct: $addedProduct")
                         sendAddProductEvent(UiEvent.AddedProduct(addedProduct))
                         sendAddProductEvent(UiEvent.Navigate(""))
 
                     }
-                    is GetDataFromRemote.Failed->{
-                        val error = "code:- ${result.error.code} message:- ${result.error.message} url:-$url"
-                        Log.e(TAG, "addProduct: $error", )
+                    is GetDataFromRemote.Failed -> {
+                        val error =
+                            "code:- ${result.error.code} message:- ${result.error.message} url:-$url"
+                        Log.e(TAG, "addProduct: $error")
                         sendAddProductEvent(UiEvent.ShowSnackBar(message = error))
                     }
-                    else->Unit
+                    else -> Unit
                 }
             }
         }

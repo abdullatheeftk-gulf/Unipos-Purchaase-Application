@@ -103,7 +103,11 @@ fun ItemSelectionRows(
                                 // if length is less than or equal to 3, it will call
                                 if (value.length <= 3) {
                                     Log.e(TAG, "ItemSelectionRows: ${value.length}")
-                                    rootViewModel.setProductName(value, isItFromHomeScreen = true)
+                                    rootViewModel.setProductName(
+                                        value,
+                                        isItFromHomeScreen = true,
+                                        requiredSearch = true
+                                    )
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),

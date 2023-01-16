@@ -118,6 +118,7 @@ fun AddProductHomeScreen(
                 is UiEvent.AddedProduct -> {
                     rootViewModel.setProductSearchMode(false)
                     rootViewModel.setSelectedProduct(event.product)
+                    rootViewModel.setQty("1")
                 }
                 is UiEvent.Navigate -> {
                     navHostController.popBackStack()

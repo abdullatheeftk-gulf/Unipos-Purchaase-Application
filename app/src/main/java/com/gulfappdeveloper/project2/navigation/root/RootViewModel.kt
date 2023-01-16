@@ -377,8 +377,11 @@ open class RootViewModel @Inject constructor(
 
     // Set product name and search
     private var navCounter = 0
-    fun setProductName(value: String, isItFromHomeScreen: Boolean) {
+    fun setProductName(value: String, isItFromHomeScreen: Boolean, requiredSearch: Boolean) {
         _productName.value = value
+        if (!requiredSearch) {
+            return
+        }
         if (_productName.value.isEmpty()) {
             productList.clear()
             sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
@@ -393,20 +396,6 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun searchProduct(isItFromHomeScreen: Boolean){
-        if (_productName.value.isEmpty()) {
-            productList.clear()
-            sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
-        }
-        if (_productName.value.length >= 3 && _productSearchMode.value) {
-            Log.i(TAG, "setProductName: ${_productName.value} ")
-            searchProductListByName()
-            if (isItFromHomeScreen && navCounter < 1) {
-                sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
-                navCounter++
-            }
-        }
-    }
 
     fun resetNavCounter() {
         navCounter = 0

@@ -86,7 +86,7 @@ fun ProductListScreen(
             SearchTopBar(
                 rootViewModel = rootViewModel,
                 onClearButtonClicked = {
-                    rootViewModel.setProductName("", isItFromHomeScreen = false)
+                    rootViewModel.setProductName("", isItFromHomeScreen = false,requiredSearch = false)
                 },
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {

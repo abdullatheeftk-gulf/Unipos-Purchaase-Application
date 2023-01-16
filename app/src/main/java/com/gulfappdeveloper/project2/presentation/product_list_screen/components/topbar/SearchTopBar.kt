@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,11 +48,20 @@ fun SearchTopBar(
             BasicTextField(
                 value = productSearchText,
                 onValueChange = { value ->
-                    rootViewModel.setProductName(value = value, isItFromHomeScreen = false)
+                    rootViewModel.setProductName(
+                        value = value,
+                        isItFromHomeScreen = false,
+                        requiredSearch = false
+                    )
                 },
                 keyboardActions = KeyboardActions(
                     onSearch = {
                         hideKeyboard()
+                        rootViewModel.setProductName(
+                            value = productSearchText,
+                            isItFromHomeScreen = false,
+                            requiredSearch = true
+                        )
                     }
                 ),
                 keyboardOptions = KeyboardOptions(
