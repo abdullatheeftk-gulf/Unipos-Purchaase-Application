@@ -13,14 +13,17 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
+import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseDetail
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseMaster
+import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 //import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.home_screen.util.HomeScreenEvent
 import com.gulfappdeveloper.project2.presentation.product_list_screen.util.ProductListScreenEvent
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
+import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.util.StockAdjustmentScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,7 +113,7 @@ open class RootViewModel @Inject constructor(
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
 
-    fun setBarcode(value:String){
+    fun setBarcode(value: String) {
         _barCode.value = value
     }
 
@@ -132,7 +135,7 @@ open class RootViewModel @Inject constructor(
     private val _rate = mutableStateOf("")
     val rate: State<String> = _rate
 
-    fun setProductRate(value: String){
+    fun setProductRate(value: String) {
         _rate.value = value
         calculateNet()
     }
@@ -248,12 +251,9 @@ open class RootViewModel @Inject constructor(
     }*/
 
 
-
-
     /*fun setRate(value: String) {
         _rate.value = value
     }*/
-
 
 
     /* fun setTax(value: String) {
@@ -281,7 +281,7 @@ open class RootViewModel @Inject constructor(
         } catch (e: Exception) {
             // Log.e(TAG, "getClientDetails: ${e.message}")
         }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             useCase.getClientDetailsUseCase(url = url)
                 .collectLatest { result ->
                     //Log.i(TAG, "getClientDetails: $result")
@@ -317,7 +317,7 @@ open class RootViewModel @Inject constructor(
             e.printStackTrace()
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             useCase.searchClientDetailsUseCase(url = url).collectLatest { result ->
                 // Log.w(TAG, "clientSearch: $result")
                 sendClientScreenEvent(UiEvent.CloseProgressBar)
@@ -393,19 +393,30 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-     fun resetNavCounter() {
+    fun searchProduct(isItFromHomeScreen: Boolean){
+        if (_productName.value.isEmpty()) {
+            productList.clear()
+            sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
+        }
+        if (_productName.value.length >= 3 && _productSearchMode.value) {
+            Log.i(TAG, "setProductName: ${_productName.value} ")
+            searchProductListByName()
+            if (isItFromHomeScreen && navCounter < 1) {
+                sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
+                navCounter++
+            }
+        }
+    }
+
+    fun resetNavCounter() {
         navCounter = 0
     }
 
     private fun searchProductListByName() {
         sendProductListScreenEvent(UiEvent.ShowProgressBar)
         val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productName.value
-        try {
-            productList.clear()
-        } catch (e: Exception) {
-            // Log.e(TAG, "getProductDetails: ${e.message}")
-        }
-        viewModelScope.launch {
+        productList.clear()
+        viewModelScope.launch(Dispatchers.IO) {
             useCase.getProductDetailsUseCase(url = url)
                 .collectLatest { result ->
                     sendProductListScreenEvent(UiEvent.CloseProgressBar)
@@ -414,11 +425,7 @@ open class RootViewModel @Inject constructor(
                         if (result.data.isEmpty()) {
                             sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
                         } else {
-                            try {
-                                productList.clear()
-                            } catch (e: Exception) {
-                                //  Log.e(TAG, "getProductDetails: ${e.message}")
-                            }
+                            productList.clear()
                             productList.addAll(result.data)
                             sendProductListScreenEvent(UiEvent.ShowEmptyList(value = false))
                         }
@@ -476,15 +483,17 @@ open class RootViewModel @Inject constructor(
     // Calculate net value of a product
     private fun calculateNet() {
         try {
-            val qty = if (_qty.value.isNotBlank() || _qty.value.isNotEmpty()) _qty.value.toFloat() else 0f
-            val rate = if(_rate.value.isNotEmpty()||_rate.value.isNotBlank()) _rate.value.toFloat() else 0f
+            val qty =
+                if (_qty.value.isNotBlank() || _qty.value.isNotEmpty()) _qty.value.toFloat() else 0f
+            val rate =
+                if (_rate.value.isNotEmpty() || _rate.value.isNotBlank()) _rate.value.toFloat() else 0f
             var total = qty * rate
             val tax = tax.value.toFloat()
             total += total * (tax / 100)
             val discount = if (_disc.value.isEmpty() || _disc.value.isBlank()) {
                 0f
             } else {
-                _disc.value.toFloat()*qty
+                _disc.value.toFloat() * qty
             }
             total -= discount
             total = (total * 100) / 100f
@@ -543,14 +552,14 @@ open class RootViewModel @Inject constructor(
 
         selectedProductList.forEach { sp ->
             _subTotal.value += sp.qty * sp.productRate
-            _totalDiscount.value += sp.disc*sp.qty
+            _totalDiscount.value += sp.disc * sp.qty
             _totalVat.value += sp.vat * sp.qty * sp.productRate / 100
         }
         _grandTotal.value += (_subTotal.value
-                        - _totalDiscount.value
-                        + _totalVat.value
-                        + if(_freightCharge.value.isEmpty() || _freightCharge.value.isBlank()) 0f else _freightCharge.value.toFloat()
-                        -if (_additionalDiscount.value.isEmpty() || _additionalDiscount.value.isBlank()) 0f else _additionalDiscount.value.toFloat()
+                - _totalDiscount.value
+                + _totalVat.value
+                + if (_freightCharge.value.isEmpty() || _freightCharge.value.isBlank()) 0f else _freightCharge.value.toFloat()
+                - if (_additionalDiscount.value.isEmpty() || _additionalDiscount.value.isBlank()) 0f else _additionalDiscount.value.toFloat()
                 )
     }
 
@@ -749,6 +758,171 @@ open class RootViewModel @Inject constructor(
         viewModelScope.launch {
             _productListScreenEvent.send(ProductListScreenEvent(uiEvent = uiEvent))
         }
+    }
+
+
+    /*
+        StockAdjustmentBlock
+    */
+
+    private val _productNameForStockAdjustment = lazy { mutableStateOf("") }
+    val productNameForStockAdjustment: Lazy<State<String>> = _productNameForStockAdjustment
+
+    fun setProductNameForStockAdjustment(value: String) {
+        _productNameForStockAdjustment.value.value = value
+    }
+
+    private val _stockAdjustmentScreenEvent = Channel<StockAdjustmentScreenEvent>()
+    val stockAdjustmentScreenEvent = _stockAdjustmentScreenEvent.receiveAsFlow()
+
+    private fun sendStockAdjustmentScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _stockAdjustmentScreenEvent.send(StockAdjustmentScreenEvent(uiEvent = uiEvent))
+        }
+    }
+
+    val productListForStockAdjustment = lazy { mutableStateListOf<Pair<Boolean, Product>>() }
+
+    fun searchProductListByNameForStockAdjustment() {
+        sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
+        val url =
+            baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productNameForStockAdjustment.value.value
+        productListForStockAdjustment.value.clear()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductDetailsUseCase(url = url)
+                .collectLatest { result ->
+                    sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
+                    Log.w(TAG, "getProductDetails: $result")
+                    if (result is GetDataFromRemote.Success) {
+                        setProductNameForStockAdjustment("")
+                        if (result.data.isEmpty()) {
+                            sendStockAdjustmentScreenEvent(UiEvent.ShowEmptyList(value = true))
+                        } else {
+                            productListForStockAdjustment.value.clear()
+                            result.data.forEach { product ->
+                                productListForStockAdjustment.value.add(
+                                    Pair(false, product)
+                                )
+                            }
+
+                            // productListForStockAdjustment.value.addAll(result.data)
+                            sendStockAdjustmentScreenEvent(UiEvent.ShowEmptyList(value = false))
+                        }
+                    }
+                    if (result is GetDataFromRemote.Failed) {
+                        sendStockAdjustmentScreenEvent(UiEvent.ShowEmptyList(value = true))
+                        sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
+                        Log.e(
+                            TAG,
+                            "getProductDetails: ${result.error.code}, ${result.error.message} "
+                        )
+                    }
+                }
+        }
+    }
+
+    fun searchProductByQrCodeForStockAdjustment(value: String) {
+        productListForStockAdjustment.value.clear()
+        sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
+        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
+                sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    setProductNameForStockAdjustment("")
+                    Log.e(TAG, "searchProductByQrCode: ${result.data}")
+                    result.data?.let { product ->
+                        productListForStockAdjustment.value.add(Pair(false, product))
+                        return@collectLatest
+                    }
+                    sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar("No productItem with barcode $value"))
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendStockAdjustmentScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
+                    Log.e(TAG, "searchProductByQrCode: ${result.error}")
+                }
+            }
+
+        }
+    }
+
+    val stockAdjustedProductList = lazy { mutableStateListOf<ProductStock>() }
+
+    fun addSelectedProductForStockAdjustment(stockAdjustedProduct: ProductStock, index: Int) {
+        stockAdjustedProductList.value.add(stockAdjustedProduct)
+        productListForStockAdjustment.value[index] =
+            Pair(true, productListForStockAdjustment.value[index].second)
+    }
+
+    private val _productStockForStockAdjustment: Lazy<MutableState<ProductStock?>> =
+        lazy { mutableStateOf(null) }
+    val productStockForStockAdjustment: Lazy<State<ProductStock?>> = _productStockForStockAdjustment
+
+    fun getStockOfAProduct(barcode: String) {
+        sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
+        val url = _baseUrl.value + HttpRoutes.STOCK_ADJUSTMENT + barcode
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getStockOfAProductUseCase(url = url).collectLatest { result ->
+                sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        _productStockForStockAdjustment.value.value = result.data
+                        sendStockAdjustmentScreenEvent(UiEvent.ShowAlertDialog("stock_adjusted"))
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        val error = result.error
+                        val errorData =
+                            "Error code ${error.code}, message: ${error.message}, url: $url"
+                        Log.e(TAG, "getStockOfAProduct: $errorData")
+                        sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar(errorData))
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    fun submitStockAdjustment() {
+        val url = _baseUrl.value + HttpRoutes.STOCK_ADJUSTMENT
+        sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
+        viewModelScope.launch(Dispatchers.IO) {
+            val stockAdjustment = StockAdjustment(
+                stockAdjustments = stockAdjustedProductList.value,
+                userId = 1
+            )
+            useCase.adjustStocksOfProductListUseCase(
+                url = url,
+                stockAdjustment = stockAdjustment
+            ).collectLatest { result ->
+                sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
+
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        val success = result.data
+                        Log.d(TAG, "submitStockAdjustment: $success")
+                        sendStockAdjustmentScreenEvent(UiEvent.ShowAlertDialog("stock_adjust_submitted"))
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        val error = result.error
+                        val errorData =
+                            "Error code ${error.code}, message: ${error.message}, url: $url"
+                        Log.e(TAG, "getStockOfAProduct: $errorData")
+                        sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar(errorData))
+                    }
+                    else -> Unit
+                }
+
+            }
+        }
+
+    }
+
+    fun resetAllStockAdjustmentData() {
+        setProductNameForStockAdjustment("")
+        productListForStockAdjustment.value.clear()
+        _productStockForStockAdjustment.value.value = null
+        stockAdjustedProductList.value.clear()
     }
 
 

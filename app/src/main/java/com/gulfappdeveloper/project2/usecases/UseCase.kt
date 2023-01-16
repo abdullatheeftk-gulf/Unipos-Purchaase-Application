@@ -16,6 +16,8 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelc
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_product.AddProductUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.purchase.PurchaseUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.AdjustStocksOfProductListUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.GetStockOfAProductUseCase
 
 data class UseCase(
     val getWelcomeMessageUseCase: GetWelcomeMessageUseCase,
@@ -43,5 +45,9 @@ data class UseCase(
     val readBaseUrlUseCase: ReadBaseUrlUseCase,
 
     // purchase
-    val purchaseUseCase: PurchaseUseCase
+    val purchaseUseCase: PurchaseUseCase,
+
+    // Stock adjustment
+    val getStockOfAProductUseCase: GetStockOfAProductUseCase,
+    val adjustStocksOfProductListUseCase: AdjustStocksOfProductListUseCase
 )

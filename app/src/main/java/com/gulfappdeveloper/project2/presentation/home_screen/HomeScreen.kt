@@ -24,6 +24,7 @@ import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelec
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.home_screen.components.*
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.keyboardAsState
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
@@ -36,7 +37,7 @@ private const val TAG = "HomeScreen"
 fun HomeScreen(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
-    onScanButtonClicked: () -> Unit,
+    onScanButtonClicked: (ScanFrom) -> Unit,
     rootViewModel: RootViewModel,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
@@ -319,7 +320,7 @@ fun HomeScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard,
-                onQrScanClicked = onScanButtonClicked,
+                onScanButtonClicked = onScanButtonClicked,
                 showProductNameError = showProductNameError,
                 showQuantityError = showQuantityError,
                 onProductNameError = {

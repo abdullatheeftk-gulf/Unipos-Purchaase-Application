@@ -28,41 +28,6 @@ fun ShowProductList(
 
     LazyColumn {
         itemsIndexed(productList) { index, product ->
-            val categoryColor = when (index % 5) {
-                0 -> {
-                    MaterialTheme.colors.Color1
-                }
-                1 -> {
-                    MaterialTheme.colors.Color2
-                }
-                2 -> {
-                    MaterialTheme.colors.Color3
-                }
-                3 -> {
-                    MaterialTheme.colors.Color4
-                }
-                4 -> {
-                    MaterialTheme.colors.Color5
-                }
-                else -> {
-                    MaterialTheme.colors.primary
-                }
-            }
-           /* Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-                    .clickable {
-                        rootViewModel.onProductListItemClicked(product = product)
-                    },
-                shape = RoundedCornerShape(35),
-                border = BorderStroke(width = 1.dp, color = categoryColor)
-            ) {
-                Text(
-                    text = product.productName,
-                    modifier = Modifier.padding(all = 10.dp)
-                )
-            }*/
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()

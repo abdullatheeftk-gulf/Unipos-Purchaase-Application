@@ -21,4 +21,6 @@ object HttpRoutes {
 
     const val SUBMIT_PRODUCT = "/api/purchase"
 
+    const val STOCK_ADJUSTMENT = "/api/stockadjustment/"
+
 }

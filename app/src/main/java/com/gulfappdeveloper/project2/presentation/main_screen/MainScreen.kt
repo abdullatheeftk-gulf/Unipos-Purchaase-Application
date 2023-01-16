@@ -40,7 +40,7 @@ fun MainScreen(
                         navHostController.navigate(route = RootNavScreens.HomeScreen.route)
                     },
                 backgroundColor = Color(0xFF6FACC7),
-               // shape = RoundedCornerShape(25)
+                // shape = RoundedCornerShape(25)
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -62,8 +62,10 @@ fun MainScreen(
                     .padding(24.dp)
                     .clip(shape = RoundedCornerShape(25))
                     .clickable {
-
-                    }, backgroundColor = Color(0xFFEDCBC0), shape = RoundedCornerShape(25)
+                        navHostController.navigate(route = RootNavScreens.StockAdjustmentScreen.route)
+                    },
+                backgroundColor = Color(0xFFEDCBC0),
+                shape = RoundedCornerShape(25)
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),

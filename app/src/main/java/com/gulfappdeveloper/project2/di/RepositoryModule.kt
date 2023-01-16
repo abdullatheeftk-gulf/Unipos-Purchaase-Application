@@ -19,6 +19,8 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelc
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_product.AddProductUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.purchase.PurchaseUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.AdjustStocksOfProductListUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.GetStockOfAProductUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -66,7 +68,10 @@ object RepositoryModule {
 
 
             readOperationCountUseCase = ReadOperationCountUseCase(dataStoreRepository = dataStoreRepository),
-            readBaseUrlUseCase = ReadBaseUrlUseCase(dataStoreRepository = dataStoreRepository)
+            readBaseUrlUseCase = ReadBaseUrlUseCase(dataStoreRepository = dataStoreRepository),
+
+            getStockOfAProductUseCase = GetStockOfAProductUseCase(remoteRepository = remoteRepository),
+            adjustStocksOfProductListUseCase = AdjustStocksOfProductListUseCase(remoteRepository = remoteRepository)
 
         )
     }

@@ -7,9 +7,11 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.ProductGroup
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.TaxCategory
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
+import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
+import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 import kotlinx.coroutines.flow.Flow
 
 interface ApiService {
@@ -31,5 +33,11 @@ interface ApiService {
 
     // Purchase
     suspend fun purchaseFunction(url: String,purchaseClass: PurchaseClass):Flow<GetDataFromRemote<PurchaseClass>>
+
+    // Stock adjustment
+    suspend fun getStockOfAProduct(url: String):Flow<GetDataFromRemote<ProductStock?>>
+    suspend fun adjustStocksOfProductList(url: String,stockAdjustment:StockAdjustment):Flow<GetDataFromRemote<StockAdjustment>>
+
+
 
 }

@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlin.math.roundToInt
 
@@ -41,7 +42,7 @@ fun ItemSelectionRows(
     rootViewModel: RootViewModel,
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
-    onQrScanClicked: () -> Unit,
+    onScanButtonClicked: (ScanFrom) -> Unit,
     onProductNameError: () -> Unit,
     onQuantityError: () -> Unit,
     showProductNameError: Boolean,
@@ -165,7 +166,7 @@ fun ItemSelectionRows(
                                 rootViewModel.setBarcode(value)
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = !(productName.isEmpty()||productName.isBlank()),
+                            readOnly = !(productName.isEmpty() || productName.isBlank()),
                             textStyle = TextStyle(
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
@@ -201,7 +202,7 @@ fun ItemSelectionRows(
                                     rootViewModel.setProductSearchMode(true)
                                     rootViewModel.resetSelectedProduct()
                                     onProductNameError()
-                                    onQrScanClicked()
+                                    onScanButtonClicked(ScanFrom.PURCHASE_SCREEN)
                                 }
                             )
 

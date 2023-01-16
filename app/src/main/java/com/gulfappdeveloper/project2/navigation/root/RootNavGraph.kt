@@ -12,13 +12,15 @@ import com.gulfappdeveloper.project2.presentation.main_screen.MainScreen
 import com.gulfappdeveloper.project2.presentation.product_list_screen.ProductListScreen
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
+import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.StockAdjustmentScreen
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 
 
 @Composable
 fun RootNavGraph(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
-    onScanButtonClicked: () -> Unit,
+    onScanButtonClicked: (ScanFrom) -> Unit,
     rootViewModel: RootViewModel,
 ) {
 
@@ -58,6 +60,15 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel,
+            )
+        }
+
+        composable(route = RootNavScreens.StockAdjustmentScreen.route) {
+            StockAdjustmentScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard,
+                onScanButtonClicked = onScanButtonClicked
             )
         }
 

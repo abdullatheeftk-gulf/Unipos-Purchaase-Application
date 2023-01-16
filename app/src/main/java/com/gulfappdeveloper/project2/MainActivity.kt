@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.gulfappdeveloper.project2.navigation.root.RootNavGraph
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.ui.theme.Project2Theme
 import com.journeyapps.barcodescanner.CaptureActivity
 import com.journeyapps.barcodescanner.ScanContract
@@ -31,6 +32,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val rootViewModel by viewModels<RootViewModel>()
+        var scanFrom: ScanFrom = ScanFrom.PURCHASE_SCREEN
+
 
 
 
@@ -42,10 +45,14 @@ class MainActivity : ComponentActivity() {
                     rememberLauncherForActivityResult(contract = ScanContract(), onResult = {
                         if (it.contents != null) {
                             try {
-                                Log.w(TAG, "onCreate: ${it.contents}")
+                               // Log.w(TAG, "onCreate: ${it.contents}")
                                 Toast.makeText(this, it.contents, Toast.LENGTH_LONG).show()
                                 it.contents?.let { value ->
-                                    rootViewModel.searchProductByQrCode(value)
+                                    if (scanFrom == ScanFrom.PURCHASE_SCREEN) {
+                                        rootViewModel.searchProductByQrCode(value)
+                                    } else if (scanFrom == ScanFrom.STOCK_ADJUSTMENT_SCREEN) {
+                                        rootViewModel.searchProductByQrCodeForStockAdjustment(value = value)
+                                    }
                                 }
                             } catch (e: Exception) {
                                 // Log.e(TAG, "onCreate: ${e.message}", )
@@ -67,7 +74,8 @@ class MainActivity : ComponentActivity() {
                         hideKeyboard = {
                             hideSoftKeyboard()
                         },
-                        onScanButtonClicked = {
+                        onScanButtonClicked = { scan ->
+                            scanFrom = scan
                             val scanOption = ScanOptions().apply {
                                 setPrompt("Scan for the Invoice")
                                 setBeepEnabled(true)

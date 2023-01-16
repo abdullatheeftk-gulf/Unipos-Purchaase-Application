@@ -8,9 +8,11 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.ProductGroup
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.TaxCategory
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
+import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
+import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 import com.gulfappdeveloper.project2.domain.services.ApiService
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
@@ -56,14 +58,14 @@ class RemoteRepository @Inject constructor(
         return apiService.addClientDetails(url = url, addClient = addClient)
     }
 
-   suspend fun addProduct(
+    suspend fun addProduct(
         url: String,
         addProduct: AddProduct
     ): Flow<GetDataFromRemote<Product>> {
         return apiService.addProduct(url = url, addProduct = addProduct)
     }
 
-   suspend fun getProductGroups(url: String): Flow<GetDataFromRemote<List<ProductGroup>>> {
+    suspend fun getProductGroups(url: String): Flow<GetDataFromRemote<List<ProductGroup>>> {
         return apiService.getProductGroups(url = url)
     }
 
@@ -71,7 +73,7 @@ class RemoteRepository @Inject constructor(
         return apiService.searchProductGroups(url = url)
     }
 
-   suspend fun getAllUnits(url: String): Flow<GetDataFromRemote<List<Units>>> {
+    suspend fun getAllUnits(url: String): Flow<GetDataFromRemote<List<Units>>> {
         return apiService.getAllUnits(url = url)
     }
 
@@ -83,9 +85,22 @@ class RemoteRepository @Inject constructor(
         url: String,
         purchaseClass: PurchaseClass
     ): Flow<GetDataFromRemote<PurchaseClass>> {
-        return  apiService.purchaseFunction(
+        return apiService.purchaseFunction(
             url = url,
             purchaseClass = purchaseClass
         )
+    }
+
+    // Stock adjustments
+
+    suspend fun getStockOfAProduct(url: String): Flow<GetDataFromRemote<ProductStock?>> {
+        return apiService.getStockOfAProduct(url = url)
+    }
+
+    suspend fun adjustStocksOfProductList(
+        url: String,
+        stockAdjustment: StockAdjustment
+    ): Flow<GetDataFromRemote<StockAdjustment>> {
+        return apiService.adjustStocksOfProductList(url = url, stockAdjustment = stockAdjustment)
     }
 }
