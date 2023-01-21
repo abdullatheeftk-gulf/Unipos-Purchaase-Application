@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2
 
 import android.content.Context
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
         val rootViewModel by viewModels<RootViewModel>()
         var scanFrom: ScanFrom = ScanFrom.PURCHASE_SCREEN
 
-
+        val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
 
         setContent {
@@ -86,6 +87,7 @@ class MainActivity : ComponentActivity() {
                             launcher.launch(scanOption)
                         },
                         rootViewModel = rootViewModel,
+                        deviceId = deviceId
                     )
 
                 }

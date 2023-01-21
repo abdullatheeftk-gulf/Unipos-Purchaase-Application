@@ -8,11 +8,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
+import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
+import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseRequestBody
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseDetail
@@ -20,18 +22,24 @@ import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseMaster
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 //import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
-import com.gulfappdeveloper.project2.presentation.home_screen.util.HomeScreenEvent
+import com.gulfappdeveloper.project2.presentation.purchase_screen.util.HomeScreenEvent
+import com.gulfappdeveloper.project2.presentation.login_screen.util.LoginScreenEvent
 import com.gulfappdeveloper.project2.presentation.product_list_screen.util.ProductListScreenEvent
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.util.StockAdjustmentScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.util.UniLicenseActivationUiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -48,6 +56,26 @@ open class RootViewModel @Inject constructor(
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
 
+    private fun sendSplashScreenEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _splashScreenEvent.send(SplashScreenEvent(event))
+        }
+    }
+
+    // Add client screen navigation popUp flag, false is for navigation from the main screen
+    private val _addClientScreenNavPopUpFlag = mutableStateOf(false)
+    val addClientScreenNavPopUpFlag: State<Boolean> = _addClientScreenNavPopUpFlag
+
+    fun setAddClientScreenNavPopUpFlag(value: Boolean) {
+        _addClientScreenNavPopUpFlag.value = value
+    }
+
+    private val _serialNo = mutableStateOf(0)
+
+    private val _deviceIdSate = mutableStateOf("")
+    val deviceIdState: State<String> = _deviceIdSate
+
+
     private val _clientScreenEvent = Channel<ClientScreenEvent>()
     val clientScreenEvent = _clientScreenEvent.receiveAsFlow()
 
@@ -58,7 +86,7 @@ open class RootViewModel @Inject constructor(
     val productListScreenEvent = _productListScreenEvent.receiveAsFlow()
 
     private val _operationCount = mutableStateOf(0)
-    protected val operationCount: State<Int> = _operationCount
+    //protected val operationCount: State<Int> = _operationCount
 
 
     private val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
@@ -83,9 +111,10 @@ open class RootViewModel @Inject constructor(
     private val _selectedClient: MutableState<ClientDetails?> = mutableStateOf(null)
     val selectedClient: State<ClientDetails?> = _selectedClient
 
-    // selected Po no
+
+    /*// selected Po no
     private val _poNo = mutableStateOf("")
-    val poNo: State<String> = _poNo
+    val poNo: State<String> = _poNo*/
 
     // Selected Pay mode
 /*    private val _payMode = mutableStateOf(PayMode.Cash)
@@ -108,7 +137,7 @@ open class RootViewModel @Inject constructor(
       val selectedProduct: State<Product?> = _selectedProduct*/
 
     private val _productId = mutableStateOf(0)
-    private val productId: State<Int> = _productId
+    // private val productId: State<Int> = _productId
 
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
@@ -165,15 +194,49 @@ open class RootViewModel @Inject constructor(
 
 
     init {
-        sendSplashScreenEvent(SplashScreenEvent.ShowProgressBar)
+        sendSplashScreenEvent(UiEvent.ShowProgressBar)
+
         saveOperationCount()
+        readOperationCount()
         readBaseUrl()
+        readSerialNo()
+        readDeviceId()
+    }
+
+
+    private fun readDeviceId() {
+        viewModelScope.launch {
+            useCase.readDeviceIdUseCase().collectLatest {
+                _deviceIdSate.value = it
+                Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
+            }
+        }
+    }
+
+    fun saveDeviceId(value: String) {
+        viewModelScope.launch {
+            useCase.saveDeviceIdUseCase(deviceId = value)
+        }
+    }
+
+
+    // No of login
+    private fun readSerialNo() {
+        // Log.i(TAG, "readSerialNo: ")
+        viewModelScope.launch {
+            useCase.readSerialNoCountUseCase().collect {
+                // Log.d(TAG, "readSerialNo: $it")
+
+                _serialNo.value = it
+
+
+            }
+        }
     }
 
     private fun saveOperationCount() {
         viewModelScope.launch {
             useCase.updateOperationCountUseCase()
-            readOperationCount()
         }
     }
 
@@ -194,30 +257,80 @@ open class RootViewModel @Inject constructor(
                 if (!isInitialLoadingFinished) {
                     getWelcomeMessage()
                     getAllUnits()
+                    getIp4Address()
                     isInitialLoadingFinished = true
                 }
             }
         }
     }
 
+
     // Get the welcome message in splash screen
     private fun getWelcomeMessage() {
         viewModelScope.launch {
-            val url = baseUrl.value + HttpRoutes.WELCOME_MESSAGE
+            val url = _baseUrl.value + HttpRoutes.WELCOME_MESSAGE
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
+                sendSplashScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     _message.value = result.data.message
-                    //  Log.d(TAG, "getWelcomeMessage: ${message.value}")
+                    readUniLicenseKeyDetails()
                 }
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
-                    sendSplashScreenEvent(SplashScreenEvent.CloseProgressBar)
-                    sendSplashScreenEvent(SplashScreenEvent.ShowToast(message = "Server with ${baseUrl.value} down, Change server"))
-                    sendSplashScreenEvent(SplashScreenEvent.ShowSetBaseUrlButton)
+                    val error = result.error
+                    val errorMessage =
+                        "code:- ${error.code}, message:- ${error.message}, url:- $url"
+                    sendSplashScreenEvent(UiEvent.ShowSnackBar(message = errorMessage))
+                    sendSplashScreenEvent(UiEvent.ShowButton1)
                     // Log.e(TAG, "getWelcomeMessage: ${result.error.code} ${result.error.message}")
                 }
             }
         }
+    }
+
+    private val _loginScreenEvent = Channel<LoginScreenEvent>()
+    val loginScreenEvent = _loginScreenEvent.receiveAsFlow()
+
+    private fun sendLoginScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _loginScreenEvent.send(LoginScreenEvent(uiEvent))
+        }
+    }
+
+
+    /*login block*/
+    private var _userId = 0
+    fun loginUser(password: String) {
+        if (password.isEmpty()) {
+            sendLoginScreenEvent(UiEvent.ShowSnackBar("Password is empty"))
+            return
+        }
+        sendLoginScreenEvent(UiEvent.ShowProgressBar)
+        val url = _baseUrl.value + HttpRoutes.LOGIN + password
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.loginUseCase(url = url).collectLatest { result ->
+                sendLoginScreenEvent(UiEvent.CloseProgressBar)
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        _userId = result.data.userId
+                        Log.d(TAG, "loginUser: $_userId")
+                        // update login counter
+                        sendLoginScreenEvent(UiEvent.Navigate(route = RootNavScreens.MainScreen.route))
+                        useCase.updateSerialNoUseCase()
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        val error = result.error
+                        val errorMessage =
+                            "code:- ${error.code}, message:- ${error.message}, url:- $url"
+                        Log.e(TAG, "loginUser: $errorMessage")
+                        sendLoginScreenEvent(UiEvent.ShowSnackBar(errorMessage))
+                    }
+                    else -> Unit
+                }
+
+            }
+        }
+
     }
 
 
@@ -261,9 +374,33 @@ open class RootViewModel @Inject constructor(
      }*/
 
 
-    private fun sendSplashScreenEvent(splashScreenEvent: SplashScreenEvent) {
+    private var _publicIpAddress = ""
+
+    private fun getIp4Address() {
+        val url = HttpRoutes.SEE_IP4
         viewModelScope.launch {
-            _splashScreenEvent.send(splashScreenEvent)
+            useCase.getIp4AddressUseCase(url = url).collectLatest { result ->
+
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        _publicIpAddress = result.data.ip ?: ""
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        /* useCase.insertErrorDataToFireStoreUseCase(
+                             collectionName = collectionName,
+                             documentName = "getIp4Address,${Date()}",
+                             errorData = FirebaseError(
+                                 errorCode = result.error.code,
+                                 errorMessage = result.error.message ?: "Error on Activation",
+                                 url = url,
+                                 ipAddress = publicIpAddress
+                             )
+                         )*/
+                    }
+                    else -> Unit
+                }
+
+            }
         }
     }
 
@@ -275,7 +412,7 @@ open class RootViewModel @Inject constructor(
     // get client details
     fun getClientDetails() {
         sendClientScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS
+        val url = _baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS
         try {
             clientDetailsList.clear()
         } catch (e: Exception) {
@@ -310,7 +447,7 @@ open class RootViewModel @Inject constructor(
     // Client search
     fun clientSearch() {
         sendClientScreenEvent(UiEvent.ShowProgressBar)
-        val url = HttpRoutes.BASE_URL + HttpRoutes.SEARCH_CLIENT_DETAILS + _clientSearchText.value
+        val url = _baseUrl.value + HttpRoutes.SEARCH_CLIENT_DETAILS + _clientSearchText.value
         try {
             clientDetailsList.clear()
         } catch (e: Exception) {
@@ -319,7 +456,7 @@ open class RootViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             useCase.searchClientDetailsUseCase(url = url).collectLatest { result ->
-                // Log.w(TAG, "clientSearch: $result")
+                 Log.w(TAG, "clientSearch: $result")
                 sendClientScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     if (result.data.isEmpty()) {
@@ -332,10 +469,10 @@ open class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                     sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
-                    /*Log.e(
+                    Log.e(
                         TAG,
                         "clientSearch: $url, code:- ${result.error.code}, error: ${result.error.message}",
-                    )*/
+                    )
                 }
             }
         }
@@ -403,7 +540,7 @@ open class RootViewModel @Inject constructor(
 
     private fun searchProductListByName() {
         sendProductListScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productName.value
+        val url = _baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productName.value
         productList.clear()
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getProductDetailsUseCase(url = url)
@@ -433,7 +570,7 @@ open class RootViewModel @Inject constructor(
 
     fun searchProductByQrCode(value: String) {
         sendHomeScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+        val url = _baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
                 sendHomeScreenEvent(UiEvent.CloseProgressBar)
@@ -663,7 +800,7 @@ open class RootViewModel @Inject constructor(
             terminal = "dsd",
             totalAmount = _grandTotal.value,
             totalTax = _totalVat.value,
-            userId = 1
+            userId = _userId
         )
         val purchaseDetails = mutableListOf<PurchaseDetail>()
         selectedProductList.forEach { selectedProduct ->
@@ -775,7 +912,7 @@ open class RootViewModel @Inject constructor(
     fun searchProductListByNameForStockAdjustment() {
         sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
         val url =
-            baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productNameForStockAdjustment.value.value
+            _baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productNameForStockAdjustment.value.value
         productListForStockAdjustment.value.clear()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -814,7 +951,7 @@ open class RootViewModel @Inject constructor(
     fun searchProductByQrCodeForStockAdjustment(value: String) {
         productListForStockAdjustment.value.clear()
         sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+        val url = _baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
                 sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
@@ -878,7 +1015,7 @@ open class RootViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val stockAdjustment = StockAdjustment(
                 stockAdjustments = stockAdjustedProductList.value,
-                userId = 1
+                userId = _userId
             )
             useCase.adjustStocksOfProductListUseCase(
                 url = url,
@@ -912,6 +1049,161 @@ open class RootViewModel @Inject constructor(
         productListForStockAdjustment.value.clear()
         _productStockForStockAdjustment.value.value = null
         stockAdjustedProductList.value.clear()
+    }
+
+
+    /*
+        uni license Activation block
+    */
+
+    private val _uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
+    val uniLicenseDetails: State<UniLicenseDetails?> = _uniLicenseDetails
+
+    private val _licenseKeyActivationError = mutableStateOf("")
+    val licenseKeyActivationError: State<String> = _licenseKeyActivationError
+
+    private val _uniLicenseActivationUiEvent = Channel<UniLicenseActivationUiEvent>()
+    val uniLicenseActivationUiEvent = _uniLicenseActivationUiEvent.receiveAsFlow()
+
+    private fun sendUniLicenseActivation(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _uniLicenseActivationUiEvent.send(UniLicenseActivationUiEvent(uiEvent))
+        }
+    }
+
+    fun setUnitActivationErrorValue(value: String) {
+        _licenseKeyActivationError.value = value
+    }
+
+    fun uniLicenseActivation(deviceId: String, licenseKey: String) {
+
+        sendUniLicenseActivation(UiEvent.ShowProgressBar)
+
+        val url = HttpRoutes.UNI_LICENSE_ACTIVATION_URL
+        val header = HttpRoutes.UNI_LICENSE_HEADER
+
+        val licenseRequestBody = LicenseRequestBody(
+            licenseKey = licenseKey,
+            macId = _deviceIdSate.value.ifEmpty { deviceId },
+            ipAddress = _publicIpAddress
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.uniLicenseActivationUseCase(
+                url = url,
+                rioLabKey = header,
+                licenseRequestBody = licenseRequestBody
+            ).collectLatest { result ->
+                sendUniLicenseActivation(UiEvent.CloseProgressBar)
+
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        val licenceInformation = UniLicenseDetails(
+                            licenseType = result.data.message.licenseType,
+                            licenseKey = licenseKey,
+                            expiryDate = result.data.message.expiryDate ?: ""
+                        )
+
+                        _uniLicenseDetails.value = licenceInformation
+
+                        val licenseString = Json.encodeToString(licenceInformation)
+                        useCase.uniLicenseSaveUseCase(uniLicenseString = licenseString)
+                        sendUniLicenseActivation(UiEvent.ShowAlertDialog(""))
+                    }
+                    is GetDataFromRemote.Failed -> {
+
+                        val error = result.error
+                        _licenseKeyActivationError.value = error.message ?: "Error on Activation"
+                        val errorData =
+                            "Error code ${error.code}, message: ${error.message}, url: $url"
+                        Log.e(TAG, "getStockOfAProduct: $errorData")
+                        sendUniLicenseActivation(UiEvent.ShowSnackBar(errorData))
+
+                    }
+                    else -> Unit
+                }
+            }
+
+        }
+    }
+
+    private fun readUniLicenseKeyDetails() {
+        viewModelScope.launch {
+            useCase.uniLicenseReadUseCase().collectLatest { value ->
+                // checking for saved license details
+                if (value.isNotEmpty() && value.isNotBlank()) {
+
+                    val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
+
+                    _uniLicenseDetails.value = licenseDetails
+
+                    // check saved license is demo
+                    if (licenseDetails.licenseType == "demo" && licenseDetails.expiryDate.isNotEmpty()) {
+
+                        // check for license expired
+                        if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
+                            // demo license expired
+                            checkForPublicIpAddressStatus()
+
+                        } else {
+                            // demo license not expired
+                            sendSplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                        }
+                    }
+                    if (licenseDetails.licenseType == "permanent") {
+                        // license is permanent
+                        sendSplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+
+                    }
+                } else {
+                    checkForPublicIpAddressStatus()
+                }
+            }
+        }
+    }
+
+    private fun checkForPublicIpAddressStatus() {
+        viewModelScope.launch {
+            (1..180).forEach {
+                if (_publicIpAddress.isNotEmpty() && _publicIpAddress.isNotBlank()) {
+                    sendSplashScreenEvent(
+                        UiEvent.Navigate(RootNavScreens.UniLicenseActivationScreen.route)
+                    )
+                    return@launch
+                }
+                delay(1000L)
+                if (it % 30 == 0) {
+                    getIp4Address()
+                }
+                if (it == 180) {
+                    sendSplashScreenEvent(
+                            UiEvent.ShowSnackBar("There have some error on reading Public Ip address. Please restart application")
+                    )
+                    return@launch
+                }
+            }
+
+        }
+
+
+    }
+
+    private fun checkForLicenseExpiryDate(eDate: String): Boolean {
+
+        val expDate: Date = SimpleDateFormat(
+            "dd-MM-yyyy",
+            Locale.getDefault()
+        ).parse(eDate)!!
+
+        return expDate >= Date()
+    }
+
+    fun setIsInitialLoadingIsNotFinished() {
+        _message.value = ""
+        unitsList.clear()
+        readBaseUrl()
+        isInitialLoadingFinished = false
+
     }
 
 

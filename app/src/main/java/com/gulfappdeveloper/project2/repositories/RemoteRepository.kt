@@ -8,6 +8,10 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.ProductGroup
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.TaxCategory
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
+import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseRequestBody
+import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseResponse
+import com.gulfappdeveloper.project2.domain.models.remote.get.login.User
+import com.gulfappdeveloper.project2.domain.models.remote.get.see_ip.SeeIp
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
@@ -31,6 +35,15 @@ class RemoteRepository @Inject constructor(
 
     suspend fun getWelcomeMessage(url: String): Flow<GetDataFromRemote<WelcomeMessage>> {
         return apiService.getWelcomeMessage(url = url)
+    }
+
+    suspend fun loginUser(url: String): Flow<GetDataFromRemote<User>> {
+        return apiService.loginUser(url = url)
+    }
+
+
+    suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+        return apiService.getIp4Address(url = url)
     }
 
     suspend fun getClientDetails(url: String): Flow<GetDataFromRemote<List<ClientDetails>>> {
@@ -103,4 +116,19 @@ class RemoteRepository @Inject constructor(
     ): Flow<GetDataFromRemote<StockAdjustment>> {
         return apiService.adjustStocksOfProductList(url = url, stockAdjustment = stockAdjustment)
     }
+
+    suspend fun uniLicenseActivation(
+        rioLabKey: String,
+        url: String,
+        licenseRequestBody: LicenseRequestBody
+    ): Flow<GetDataFromRemote<LicenseResponse>> {
+        return apiService.uniLicenseActivation(
+            rioLabKey = rioLabKey,
+            url = url,
+            licenseRequestBody = licenseRequestBody
+        )
+    }
+
+
+
 }

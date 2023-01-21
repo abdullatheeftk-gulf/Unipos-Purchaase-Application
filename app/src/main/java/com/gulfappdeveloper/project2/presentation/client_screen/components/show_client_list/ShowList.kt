@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -25,27 +26,7 @@ fun ShowList(
     val clientList = rootViewModel.clientDetailsList
 
     LazyColumn {
-        itemsIndexed(clientList) { index, client ->
-            val categoryColor = when (index % 5) {
-                0 -> {
-                    MaterialTheme.colors.Color1
-                }
-                1 -> {
-                    MaterialTheme.colors.Color2
-                }
-                2 -> {
-                    MaterialTheme.colors.Color3
-                }
-                3 -> {
-                    MaterialTheme.colors.Color4
-                }
-                4 -> {
-                    MaterialTheme.colors.Color5
-                }
-                else -> {
-                    MaterialTheme.colors.primary
-                }
-            }
+        items(clientList) { client ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,7 +37,7 @@ fun ShowList(
                         navHostController.popBackStack()
                     },
                 shape = RoundedCornerShape(35),
-                border = BorderStroke(width = 1.dp, color = categoryColor)
+                border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary)
             ) {
                 Text(
                     text = client.clientName,

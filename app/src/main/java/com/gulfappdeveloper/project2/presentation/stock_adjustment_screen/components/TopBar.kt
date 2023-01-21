@@ -132,7 +132,8 @@ fun TopBar(
                     Icon(
                         painter = painterResource(id = R.drawable.barcode_scan_icon),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.surface
+                        tint = MaterialTheme.colors.surface,
+                        modifier = Modifier.padding(end = 4.dp)
                     )
                 }
             }

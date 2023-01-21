@@ -25,7 +25,7 @@ class SplashScreenViewModel @Inject constructor(
         if (welcomeMessage == "GulfAppDeveloper") {
             viewModelScope.launch {
                 delay(2000)
-                sendUiEvent(UiEvent.Navigate(RootNavScreens.HomeScreen.route))
+                sendUiEvent(UiEvent.Navigate(RootNavScreens.PurchaseScreen.route))
             }
         }
     }

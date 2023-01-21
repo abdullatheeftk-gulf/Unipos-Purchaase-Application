@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
@@ -34,6 +35,9 @@ fun AddClientScreen(
     addClientViewModel: AddClientViewModel = hiltViewModel()
 ) {
     val baseUrl by rootViewModel.baseUrl
+
+    // Add client screen navigation popUp flag, false is for navigation from the main screen
+    val addClientScreenNavPopUpFlag by rootViewModel.addClientScreenNavPopUpFlag
 
     var showClientNameError by remember {
         mutableStateOf(false)
@@ -90,13 +94,15 @@ fun AddClientScreen(
                 }
                 is UiEvent.Navigate -> {
                     try {
-                        rootViewModel.setClientDetails(
-                            value = ClientDetails(
-                                clientName = accountName,
-                                // Receiving result account id through the event
-                                clientId = value.route.toInt()
+                        if (addClientScreenNavPopUpFlag) {
+                            rootViewModel.setClientDetails(
+                                value = ClientDetails(
+                                    clientName = accountName,
+                                    // Receiving result account id through the event
+                                    clientId = value.route.toInt()
+                                )
                             )
-                        )
+                        }
                         navHostController.popBackStack()
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -124,11 +130,11 @@ fun AddClientScreen(
                 })
         }
     ) {
-        if (showProgressBar){
+        if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 CircularProgressIndicator()
             }
         }
@@ -208,7 +214,8 @@ fun AddClientScreen(
                 },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Next,
+                    capitalization = KeyboardCapitalization.Characters
                 ),
                 isError = showClientIdError
             )
@@ -447,16 +454,16 @@ fun AddClientScreen(
             Spacer(modifier = Modifier.height(25.dp))
             Button(
                 onClick = {
-                if (accountName.isEmpty()) {
-                    showClientNameError = true
-                    return@Button
-                }
-                if (taxId.isEmpty()) {
-                    showClientIdError = true
-                    return@Button
-                }
-                addClientViewModel.addClientFun(baseUrl = baseUrl)
-            },
+                    if (accountName.isEmpty()) {
+                        showClientNameError = true
+                        return@Button
+                    }
+                    if (taxId.isEmpty()) {
+                        showClientIdError = true
+                        return@Button
+                    }
+                    addClientViewModel.addClientFun(baseUrl = baseUrl)
+                },
                 enabled = !showProgressBar
             ) {
                 Text(text = "Add")

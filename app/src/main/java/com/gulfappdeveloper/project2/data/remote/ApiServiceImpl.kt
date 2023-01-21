@@ -9,6 +9,10 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.WelcomeMessage
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.ProductGroup
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.TaxCategory
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
+import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseRequestBody
+import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseResponse
+import com.gulfappdeveloper.project2.domain.models.remote.get.login.User
+import com.gulfappdeveloper.project2.domain.models.remote.get.see_ip.SeeIp
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
@@ -19,6 +23,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.flow.Flow
@@ -132,6 +137,244 @@ class ApiServiceImpl(
             } catch (e: Exception) {
 
                 //   Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 604,
+                            message = "Other Exception $e"
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun loginUser(url: String): Flow<GetDataFromRemote<User>> {
+        return flow {
+            try {
+                val httpResponse = client.get(urlString = url)
+                val statusCode = httpResponse.status.value
+                // Log.i(TAG, "status code $statusCode")
+
+                when (statusCode) {
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(httpResponse.body())
+                        )
+                    }
+                    in 300..399 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 400..499 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 500..599 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    else -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                }
+
+            } catch (e: ConnectTimeoutException) {
+                // Log.e(TAG, " ConnectTimeoutException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 600,
+                            message = "ConnectTimeoutException Server Down"
+                        )
+                    )
+                )
+
+            } catch (e: NoTransformationFoundException) {
+                // Log.e(TAG, " NoTransformationFoundException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 601,
+                            message = "NoTransformationFoundException Server ok. Other problem"
+                        )
+                    )
+                )
+            } catch (e: ConnectException) {
+                //Log.e(TAG, " No internet")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 602,
+                            message = "No internet in Mobile"
+                        )
+                    )
+                )
+            } catch (e: JsonConvertException) {
+
+                //  Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 603,
+                            message = "Json convert Exception $e"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+
+                //   Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 604,
+                            message = "Other Exception $e"
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun uniLicenseActivation(
+        rioLabKey: String,
+        url: String,
+        licenseRequestBody: LicenseRequestBody
+    ): Flow<GetDataFromRemote<LicenseResponse>> {
+        return flow {
+            try {
+                val httpResponse = client.post(urlString = url) {
+                    contentType(ContentType.Application.Json)
+                    header("Authorization", rioLabKey)
+                    setBody(licenseRequestBody)
+                }
+
+                when (val statusCode = httpResponse.status.value) {
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(httpResponse.body())
+                        )
+                    }
+                    in 300..399 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 400..499 -> {
+                        var str= ""
+                        try {
+                            str = httpResponse.bodyAsText()
+                        } catch (e: Exception) {
+                            e.message
+                        }
+
+                        //Log.d(TAG, "uniLicenseActivation: $str")
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description + "-" + str
+                                )
+                            )
+                        )
+                    }
+                    in 500..599 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    else -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                }
+
+            } catch (e: ConnectTimeoutException) {
+                // Log.e(TAG, " ConnectTimeoutException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 600,
+                            message = "ConnectTimeoutException Server Down"
+                        )
+                    )
+                )
+
+            } catch (e: NoTransformationFoundException) {
+                // Log.e(TAG, " NoTransformationFoundException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 601,
+                            message = "NoTransformationFoundException Server ok. Other problem"
+                        )
+                    )
+                )
+            } catch (e: ConnectException) {
+                // Log.e(TAG, "${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 602,
+                            message = "No internet in Mobile"
+                        )
+                    )
+                )
+            } catch (e: JsonConvertException) {
+
+                // Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 603,
+                            message = "Json convert Exception $e"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+
+                //Log.e(TAG, " ${e.message}")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -511,9 +754,8 @@ class ApiServiceImpl(
 
             try {
                 val httpResponse = client.get(urlString = url)
-                val statusCode = httpResponse.status.value
                 // Log.i(TAG, "status code $statusCode")
-                when (statusCode) {
+                when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
                         if (statusCode == 204) {
                             emit(
@@ -634,10 +876,9 @@ class ApiServiceImpl(
                     contentType(ContentType.Application.Json)
                     setBody(addClient)
                 }
-                val statusCode = httpResponse.status.value
                 //  Log.i(TAG, "status code $statusCode")
                 // Log.w(TAG, "addClientDetails body: ${httpResponse.bodyAsText()}")
-                when (statusCode) {
+                when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
@@ -1726,5 +1967,119 @@ class ApiServiceImpl(
             }
         }
     }
+
+
+    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+        return flow {
+            try {
+                val httpResponse = client.get(urlString = url)
+                val statusCode = httpResponse.status.value
+                //Log.i(TAG, "status code $statusCode")
+
+                when (statusCode) {
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(httpResponse.body())
+                        )
+                    }
+                    in 300..399 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 400..499 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 500..599 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    else -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                }
+
+            } catch (e: ConnectTimeoutException) {
+                // Log.e(TAG, " ConnectTimeoutException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 600,
+                            message = "ConnectTimeoutException Server Down"
+                        )
+                    )
+                )
+
+            } catch (e: NoTransformationFoundException) {
+                // Log.e(TAG, " NoTransformationFoundException")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 601,
+                            message = "NoTransformationFoundException Server ok. Other problem"
+                        )
+                    )
+                )
+            } catch (e: ConnectException) {
+                //  Log.e(TAG, " No internet")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 602,
+                            message = "No internet in Mobile"
+                        )
+                    )
+                )
+            } catch (e: JsonConvertException) {
+
+                // Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 603,
+                            message = "Json convert Exception $e"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+
+                //Log.e(TAG, " ${e.message}")
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 604,
+                            message = "Other Exception $e"
+                        )
+                    )
+                )
+            }
+        }
+    }
+
 
 }

@@ -5,14 +5,25 @@ import com.gulfappdeveloper.project2.repositories.RemoteRepository
 import com.gulfappdeveloper.project2.usecases.UseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_cases.ReadBaseUrlUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_cases.SaveBaseUrlUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.device_id_use_case.ReadDeviceIdUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.device_id_use_case.SaveDeviceIdUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.ip_address_usecases.ReadIpAddressUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.ip_address_usecases.SaveIpAddressUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_counter_use_cases.ReadOperationCountUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.operation_counter_use_cases.UpdateOperationCountUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counter_usecases.ReadSerialNoCountUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counter_usecases.UpdateSerialNoUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseReadUseCase
+import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseSaveUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllTaxCategoriesUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllUnitsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetProductGroupsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.SearchProductGroupsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.GetClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchClientDetailsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.license.UniLicenseActivationUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.login.LoginUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailByBarcodeUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
@@ -41,6 +52,9 @@ object RepositoryModule {
         return UseCase(
 
             getWelcomeMessageUseCase = GetWelcomeMessageUseCase(remoteRepository = remoteRepository),
+            loginUseCase = LoginUseCase(remoteRepository = remoteRepository),
+            uniLicenseActivationUseCase = UniLicenseActivationUseCase(remoteRepository = remoteRepository),
+            getIp4AddressUseCase = GetIp4AddressUseCase(remoteRepository = remoteRepository),
 
             getClientDetailsUseCase = GetClientDetailsUseCase(remoteRepository = remoteRepository),
             searchClientDetailsUseCase = SearchClientDetailsUseCase(repository = remoteRepository),
@@ -62,14 +76,23 @@ object RepositoryModule {
             // purchase
             purchaseUseCase = PurchaseUseCase(remoteRepository = remoteRepository),
 
-
+            // write on datastore
             updateOperationCountUseCase = UpdateOperationCountUseCase(dataStoreRepository = dataStoreRepository),
             saveBaseUrlUseCase = SaveBaseUrlUseCase(dataStoreRepository = dataStoreRepository),
+            updateSerialNoUseCase = UpdateSerialNoUseCase(dataStoreRepository = dataStoreRepository),
+            saveIpAddressUseCase = SaveIpAddressUseCase(dataStoreRepository = dataStoreRepository),
+            uniLicenseSaveUseCase = UniLicenseSaveUseCase(dataStoreRepository = dataStoreRepository),
+            saveDeviceIdUseCase = SaveDeviceIdUseCase(dataStoreRepository = dataStoreRepository),
 
-
+            // read from datastore
             readOperationCountUseCase = ReadOperationCountUseCase(dataStoreRepository = dataStoreRepository),
             readBaseUrlUseCase = ReadBaseUrlUseCase(dataStoreRepository = dataStoreRepository),
+            readSerialNoCountUseCase = ReadSerialNoCountUseCase(dataStoreRepository = dataStoreRepository),
+            readIpAddressUseCase = ReadIpAddressUseCase(dataStoreRepository = dataStoreRepository),
+            uniLicenseReadUseCase = UniLicenseReadUseCase(dataStoreRepository = dataStoreRepository),
+            readDeviceIdUseCase = ReadDeviceIdUseCase(dataStoreRepository = dataStoreRepository),
 
+            // Stock adjustment
             getStockOfAProductUseCase = GetStockOfAProductUseCase(remoteRepository = remoteRepository),
             adjustStocksOfProductListUseCase = AdjustStocksOfProductListUseCase(remoteRepository = remoteRepository)
 

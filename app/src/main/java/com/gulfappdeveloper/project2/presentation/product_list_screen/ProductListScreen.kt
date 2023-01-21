@@ -53,9 +53,9 @@ fun ProductListScreen(
                 is UiEvent.Navigate -> {
                     Log.e(TAG, "ProductListScreen:")
                     navHostController.popBackStack()
-                    navHostController.navigate(route = RootNavScreens.HomeScreen.route)
-                    /*navHostController.navigate(route = RootNavScreens.HomeScreen.route){
-                        popUpTo(RootNavScreens.HomeScreen.route){
+                    navHostController.navigate(route = RootNavScreens.PurchaseScreen.route)
+                    /*navHostController.navigate(route = RootNavScreens.PurchaseScreen.route){
+                        popUpTo(RootNavScreens.PurchaseScreen.route){
                             inclusive = true
                         }
                     }*/
@@ -69,9 +69,9 @@ fun ProductListScreen(
     }
     BackHandler(true) {
         navHostController.popBackStack()
-        navHostController.navigate(route = RootNavScreens.HomeScreen.route)
-        /*navHostController.navigate(route = RootNavScreens.HomeScreen.route){
-            popUpTo(RootNavScreens.HomeScreen.route){
+        navHostController.navigate(route = RootNavScreens.PurchaseScreen.route)
+        /*navHostController.navigate(route = RootNavScreens.PurchaseScreen.route){
+            popUpTo(RootNavScreens.PurchaseScreen.route){
                 inclusive = true
             }
         }*/
@@ -91,9 +91,9 @@ fun ProductListScreen(
                 hideKeyboard = hideKeyboard,
                 onBackButtonClicked = {
                     navHostController.popBackStack()
-                    navHostController.navigate(route = RootNavScreens.HomeScreen.route)
-                    /*navHostController.navigate(route = RootNavScreens.HomeScreen.route){
-                        popUpTo(RootNavScreens.HomeScreen.route){
+                    navHostController.navigate(route = RootNavScreens.PurchaseScreen.route)
+                    /*navHostController.navigate(route = RootNavScreens.PurchaseScreen.route){
+                        popUpTo(RootNavScreens.PurchaseScreen.route){
                             inclusive = true
                         }
                     }*/

@@ -14,4 +14,5 @@ sealed class UiEvent {
     object AnimateWithKeyBoard : UiEvent()
     object AnimateBackWithKeyBoard : UiEvent()
     data class AddedProduct(val product: Product) : UiEvent()
+    object ShowButton1 : UiEvent()
 }

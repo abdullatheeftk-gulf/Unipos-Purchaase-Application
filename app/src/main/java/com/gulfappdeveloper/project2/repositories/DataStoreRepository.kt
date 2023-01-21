@@ -18,6 +18,25 @@ class DataStoreRepository @Inject constructor(
         dataStoreService.saveBaseUrl(baseUrl = baseUrl)
     }
 
+    suspend fun updateSerialNo() {
+        dataStoreService.updateSerialNo()
+    }
+
+    suspend fun saveIpAddress(ipAddress: String) {
+        dataStoreService.saveIpAddress(ipAddress = ipAddress)
+    }
+
+
+    suspend fun saveUniLicenseKey(uniLicenseString: String) {
+        dataStoreService.saveUniLicenseData(uniLicenseString = uniLicenseString)
+    }
+
+    suspend fun saveDeviceId(deviceId:String){
+        dataStoreService.saveDeviceId(deviceId = deviceId)
+    }
+
+
+
 
     fun readOperationCount(): Flow<Int> {
         return dataStoreService.readOperationCount()
@@ -25,6 +44,22 @@ class DataStoreRepository @Inject constructor(
 
     fun readBaseUrl(): Flow<String> {
         return dataStoreService.readBaseUrl()
+    }
+
+    fun readSerialNo(): Flow<Int> {
+        return dataStoreService.readSerialNo()
+    }
+
+    fun readIpAddress(): Flow<String> {
+        return dataStoreService.readIpaddress()
+    }
+
+    fun readUniLicenseKey(): Flow<String> {
+        return dataStoreService.readUniLicenseData()
+    }
+
+    fun readDeviceId(): Flow<String> {
+        return dataStoreService.readDeviceId()
     }
 
 

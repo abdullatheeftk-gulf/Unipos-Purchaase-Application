@@ -148,8 +148,6 @@ class AddClientViewModel
                 sendAddClientEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                       // Log.i(TAG, "addClientFun: success ${result.data.accountId}")
-
                         // Account id will send through the navigation event
                         sendAddClientEvent(UiEvent.Navigate(route = result.data.accountId.toString()))
                     }

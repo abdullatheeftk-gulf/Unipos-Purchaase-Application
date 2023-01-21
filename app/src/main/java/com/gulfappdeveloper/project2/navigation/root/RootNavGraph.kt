@@ -7,13 +7,16 @@ import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project2.presentation.add_client_screen.AddClientScreen
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.ClientListScreen
-import com.gulfappdeveloper.project2.presentation.home_screen.HomeScreen
+import com.gulfappdeveloper.project2.presentation.purchase_screen.PurchaseScreen
+import com.gulfappdeveloper.project2.presentation.login_screen.LoginScreen
 import com.gulfappdeveloper.project2.presentation.main_screen.MainScreen
 import com.gulfappdeveloper.project2.presentation.product_list_screen.ProductListScreen
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
+import com.gulfappdeveloper.project2.presentation.settings_screen.SettingsScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.StockAdjustmentScreen
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
+import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.UniLicenseActivationScreen
 
 
 @Composable
@@ -22,12 +25,13 @@ fun RootNavGraph(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: (ScanFrom) -> Unit,
     rootViewModel: RootViewModel,
+    deviceId: String
 ) {
 
-
+    rootViewModel.saveDeviceId(value = deviceId)
     NavHost(
         navController = navHostController,
-        startDestination = RootNavScreens.MainScreen.route
+        startDestination = RootNavScreens.SplashScreen.route
     ) {
 
 
@@ -47,6 +51,23 @@ fun RootNavGraph(
             )
         }
 
+        composable(RootNavScreens.UniLicenseActivationScreen.route) {
+            UniLicenseActivationScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard,
+                deviceId = deviceId
+            )
+        }
+
+        composable(route = RootNavScreens.LoginScreen.route) {
+            LoginScreen(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard
+            )
+        }
+
         composable(RootNavScreens.MainScreen.route) {
             MainScreen(
                 rootViewModel = rootViewModel,
@@ -54,8 +75,8 @@ fun RootNavGraph(
             )
         }
 
-        composable(RootNavScreens.HomeScreen.route) {
-            HomeScreen(
+        composable(RootNavScreens.PurchaseScreen.route) {
+            PurchaseScreen(
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked,
@@ -69,6 +90,14 @@ fun RootNavGraph(
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard,
                 onScanButtonClicked = onScanButtonClicked
+            )
+        }
+
+        composable(route = RootNavScreens.SettingsScreen.route) {
+            SettingsScreen(
+                rootViewModel = rootViewModel,
+                hideKeyboard = hideKeyboard,
+                navHostController = navHostController
             )
         }
 
