@@ -1098,6 +1098,18 @@ open class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
+                        val licenseType = result.data.message.licenseType
+                        val expiryDate = result.data.message.expiryDate
+                        expiryDate?.let {ed->
+                            if (licenseType =="demo"){
+                                if (!checkForLicenseExpiryDate(ed)){
+                                    sendUniLicenseActivation(UiEvent.ShowSnackBar("Expired License"))
+                                    _licenseKeyActivationError.value = "Expired License"
+                                    return@collectLatest
+                                }
+                            }
+                        }
+
                         val licenceInformation = UniLicenseDetails(
                             licenseType = result.data.message.licenseType,
                             licenseKey = licenseKey,

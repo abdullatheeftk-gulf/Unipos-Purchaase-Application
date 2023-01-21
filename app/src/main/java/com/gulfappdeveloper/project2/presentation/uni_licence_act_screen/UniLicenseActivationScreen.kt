@@ -181,7 +181,10 @@ fun UniLicenseActivationScreen(
                     .padding(start = 25.dp)
             ) {
                 if (licenseKeyActivationError.isNotBlank() || licenseKeyActivationError.isNotEmpty()) {
-                    Text(text = licenseKeyActivationError, color = MaterialTheme.colors.error)
+                    Text(
+                        text = if (licenseKeyActivationError == "Expired License") "Expired License" else "Bad Request",
+                        color = MaterialTheme.colors.error
+                    )
                 }
             }
 
