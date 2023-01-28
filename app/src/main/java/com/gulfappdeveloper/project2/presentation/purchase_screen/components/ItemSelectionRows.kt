@@ -146,6 +146,8 @@ fun ItemSelectionRows(
                                 onProductNameError()
                                 rootViewModel.setProductSearchMode(true)
                                 rootViewModel.resetSelectedProduct()
+                                // navigation to AddProductScreen from the purchase screen
+                                rootViewModel.setNavFrom(false)
                                 navHostController.navigate(RootNavScreens.AddProductMainScreen.route)
                             }
                         )
@@ -265,10 +267,13 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Qty",
-                            fontSize = 10.sp,
+                            //  fontSize = 10.sp,
                             textAlign = if (qty.isEmpty()) TextAlign.Center else TextAlign.Start,
                             modifier = if (qty.isEmpty()) Modifier.fillMaxWidth() else Modifier
                         )
+                    },
+                    placeholder = {
+                        Text(text = "1")
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = if (qty.isEmpty()) 8.dp else 2.dp,
@@ -293,7 +298,7 @@ fun ItemSelectionRows(
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceAround,
+                            horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             val value = if (unit.length > 3) {
@@ -304,21 +309,21 @@ fun ItemSelectionRows(
                             Text(
                                 text = value,
                                 modifier = Modifier.weight(1f),
-                                fontSize = 12.sp,
+                                //fontSize = 12.sp,
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             )
-                            Icon(
+                            /*Icon(
                                 imageVector = Icons.Default.KeyboardArrowDown,
                                 contentDescription = null,
                                 tint = MaterialTheme.colors.OrangeColor,
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickable(enabled = unitsList.isNotEmpty()) {
-                                        /* if (productName.isNotEmpty() || productName.isNotBlank()) {
+                                        *//* if (productName.isNotEmpty() || productName.isNotBlank()) {
                                             showDropDownMenu = true
-                                        }*/
+                                        }*//*
                                     }
-                            )
+                            )*/
                         }
                     },
                     enabled = true,
@@ -327,10 +332,16 @@ fun ItemSelectionRows(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     label = {
-                        Text(text = "Unit", fontSize = 10.sp)
+                        Text(
+                            text = "Unit",
+                            //fontSize = 10.sp
+                        )
+                    },
+                    placeholder = {
+                        Text("PCs")
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
-                        start = 8.dp, top = 4.dp, bottom = 4.dp, end = 0.dp
+                        start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
                     ),
                 )
                 /*  DropdownMenu(
@@ -399,7 +410,7 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Rate",
-                            fontSize = 10.sp,
+                            //fontSize = 10.sp,
                         )
                     },
                     placeholder = {
@@ -453,10 +464,16 @@ fun ItemSelectionRows(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     label = {
-                        Text(text = "Disc", fontSize = 10.sp)
+                        Text(
+                            text = "Disc",
+                            //fontSize = 10.sp
+                        )
                     },
                     placeholder = {
-                        Text(text = "0.0", fontSize = 10.sp)
+                        Text(
+                            text = "0.0",
+                            // fontSize = 10.sp
+                        )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = if (disc.isEmpty()) 8.dp else 2.dp,
@@ -497,7 +514,7 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = if (tax.isEmpty()) "Tax" else "Tax %",
-                            fontSize = 10.sp
+                            // fontSize = 10.sp
                         )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
@@ -540,7 +557,7 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Net",
-                            fontSize = 10.sp,
+                            // fontSize = 10.sp,
                             color = MaterialTheme.colors.OrangeColor,
                         )
                     },

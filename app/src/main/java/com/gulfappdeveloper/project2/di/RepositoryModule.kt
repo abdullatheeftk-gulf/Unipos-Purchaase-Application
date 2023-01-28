@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.di
 
+import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.repositories.DataStoreRepository
 import com.gulfappdeveloper.project2.repositories.RemoteRepository
 import com.gulfappdeveloper.project2.usecases.UseCase
@@ -41,6 +42,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
+
+    @Provides
+    @Singleton
+    fun provideCommonMemory():CommonMemory{
+        return CommonMemory
+    }
 
 
     @Provides

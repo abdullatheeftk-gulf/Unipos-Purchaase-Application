@@ -15,7 +15,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.login.User
 import com.gulfappdeveloper.project2.domain.models.remote.get.see_ip.SeeIp
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
-import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
+import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.AddProduct
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 import com.gulfappdeveloper.project2.domain.services.ApiService

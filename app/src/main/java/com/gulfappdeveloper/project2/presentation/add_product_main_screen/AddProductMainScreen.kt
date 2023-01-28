@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project2.presentation.add_product_main_screen
 
+import android.util.Log
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,10 +13,9 @@ import com.gulfappdeveloper.project2.presentation.add_product_main_screen.naviga
 @Composable
 fun AddProductMainScreen(
     rootViewModel: RootViewModel,
-    hideKeyboard:()->Unit,
+    hideKeyboard: () -> Unit,
     navHostController: NavHostController
 ) {
-    val baseUrl by rootViewModel.baseUrl
 
 
     val addProductNavHostController = rememberNavController()
@@ -24,11 +25,8 @@ fun AddProductMainScreen(
         rootViewModel = rootViewModel,
         navHostController = navHostController,
         addProductNavHostController = addProductNavHostController,
-        baseUrl = baseUrl,
         hideKeyboard = hideKeyboard
     )
-
-
 
 
 }

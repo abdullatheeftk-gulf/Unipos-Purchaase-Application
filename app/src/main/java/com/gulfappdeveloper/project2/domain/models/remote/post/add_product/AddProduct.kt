@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.domain.models.remote.post
+package com.gulfappdeveloper.project2.domain.models.remote.post.add_product
 
 import kotlinx.serialization.Serializable
 
@@ -21,5 +21,6 @@ data class AddProduct(
     val specification: String,
     val tCategoryId: Int,
     val unitId: Int,
-    val userId: Int
+    val userId: Int,
+    val productUnits: List<ProductUnit> = emptyList()
 )

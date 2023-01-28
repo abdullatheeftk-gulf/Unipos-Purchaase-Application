@@ -31,6 +31,7 @@ fun PriceBlock(
     onPurchaseDiscChange: (String) -> Unit,
     onSalesDiscChange: (String) -> Unit,
     showPurchasePriceError: Boolean,
+    showSellingPriceError:Boolean,
     hideKeyboard: () -> Unit
 ) {
     Spacer(modifier = Modifier.height(25.dp))
@@ -99,21 +100,21 @@ fun PriceBlock(
                 .weight(1f)
                 .padding(horizontal = 4.dp),
             label = {
-                //
-                Text(text = "Selling Price")
-                /* Text(
-                     buildAnnotatedString {
-                         withStyle(
-                             style = SpanStyle(
-                                 color = MaterialTheme.colors.error,
-                                 baselineShift = BaselineShift.Superscript
-                             )
-                         ) {
-                             append("*")
-                         }
-                     },
-                 )*/
-                // }
+                Row() {
+                    Text(text = "Selling Price")
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colors.error,
+                                    baselineShift = BaselineShift.Superscript
+                                )
+                            ) {
+                                append("*")
+                            }
+                        },
+                    )
+                }
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next,
@@ -127,7 +128,8 @@ fun PriceBlock(
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.primary,
                 backgroundColor = MaterialTheme.colors.surface
-            )
+            ),
+            isError = showSellingPriceError
         )
         OutlinedTextField(
             value = mrp,

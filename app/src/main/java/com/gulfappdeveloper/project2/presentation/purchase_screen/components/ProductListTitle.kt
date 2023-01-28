@@ -35,7 +35,7 @@ fun ProductListTitle() {
                // textDecoration = TextDecoration.Underline
             )
             Text(
-                text = "Product Item",
+                text = "Product Unit Name",
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,

@@ -8,7 +8,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -29,6 +32,7 @@ import com.gulfappdeveloper.project2.presentation.add_product_main_screen.naviga
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -39,9 +43,11 @@ fun AddProductHomeScreen(
     hideKeyboard: () -> Unit,
     addProductMainViewModel: AddProductMainViewModel
 ) {
-
+    val navFrom by rootViewModel.navFrom
 
     val scaffoldState = rememberScaffoldState()
+
+    val scope = rememberCoroutineScope()
 
 
     val productName by addProductMainViewModel.productName
@@ -89,6 +95,10 @@ fun AddProductHomeScreen(
     }
 
     var showPurchasePriceError by remember {
+        mutableStateOf(false)
+    }
+
+    var showSellingPriceError by remember {
         mutableStateOf(false)
     }
 
@@ -155,6 +165,43 @@ fun AddProductHomeScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        var errors = false
+                        if (productName.isEmpty()) {
+                            showProductNameError = true
+                            errors = true
+                        }
+                        if (barcode.isEmpty()) {
+                            showBarcodeError = true
+                            errors = true
+                        }
+                        if (purchasePrice.isEmpty()) {
+                            showPurchasePriceError = true
+                            errors = true
+                        }
+                        if (sellingPrice.isEmpty()){
+                            showSellingPriceError = true
+                            errors = true
+                        }
+                        if (productUnit == null) {
+                            showUnitError = true
+                            errors = true
+                        }
+                        if (errors) {
+                            scope.launch {
+                                scaffoldState.snackbarHostState.showSnackbar("Add required columns to continue")
+                            }
+                            return@IconButton
+                        }
+                        addProductNavHostController.navigate(AddProductScreens.MultiUnitScreen.route)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
                             contentDescription = null
                         )
                     }
@@ -236,8 +283,7 @@ fun AddProductHomeScreen(
             )
             OutlinedTextField(
                 value = productGroup?.pGroupName ?: "",
-                onValueChange = {
-                },
+                onValueChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
@@ -360,7 +406,10 @@ fun AddProductHomeScreen(
                             textColor = MaterialTheme.colors.primary,
                             backgroundColor = MaterialTheme.colors.surface
                         ),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            capitalization = KeyboardCapitalization.Characters
+                        )
                     )
                     if (showBarcodeError) {
                         Text(
@@ -404,6 +453,7 @@ fun AddProductHomeScreen(
                     addProductMainViewModel.setSalesDisc(value)
                 },
                 showPurchasePriceError = showPurchasePriceError,
+                showSellingPriceError = showSellingPriceError,
                 hideKeyboard = hideKeyboard
             )
 
@@ -460,6 +510,10 @@ fun AddProductHomeScreen(
                         showPurchasePriceError = true
                         errors = true
                     }
+                    if (sellingPrice.isEmpty()){
+                        showSellingPriceError = true
+                        errors = true
+                    }
                     if (taxCategory == null) {
                         showTaxCategoryError = true
                         errors = true
@@ -469,13 +523,16 @@ fun AddProductHomeScreen(
                         errors = true
                     }
                     if (errors) {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar("Add required columns to continue")
+                        }
                         return@Button
                     }
                     addProductMainViewModel.addProduct()
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Add")
+                Text(text = "Add Product")
             }
             Spacer(modifier = Modifier.height(200.dp))
 
@@ -493,5 +550,6 @@ fun AddProductHomeScreen(
     }
 
 }
+
 
 

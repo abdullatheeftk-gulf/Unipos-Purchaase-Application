@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
@@ -85,6 +86,7 @@ fun MainScreen(
                     }
                 }
             }
+
             item {
                 Card(
                     modifier = Modifier
@@ -92,32 +94,9 @@ fun MainScreen(
                         .padding(24.dp)
                         .clip(shape = RoundedCornerShape(25))
                         .clickable {
-                            navHostController.navigate(route = RootNavScreens.SettingsScreen.route)
-                        }, backgroundColor = Color(0xFFCDA9B5),
-                    shape = RoundedCornerShape(25)
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "SETTINGS",
-                            color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-            item {
-                Card(
-                    modifier = Modifier
-                        .size(width = 150.dp, height = 150.dp)
-                        .padding(24.dp)
-                        .clip(shape = RoundedCornerShape(25))
-                        .clickable {
-                            // navHostController.navigate(route = RootNavScreens.SettingsScreen.route)
+                            //true is for from the Main screen
+                            rootViewModel.setNavFrom(true)
+                            navHostController.navigate(route = RootNavScreens.AddProductMainScreen.route)
                         },
                     backgroundColor = Color(0xFFBFA9CD),
                     shape = RoundedCornerShape(25)
@@ -136,6 +115,7 @@ fun MainScreen(
                     }
                 }
             }
+
             item {
                 Card(
                     modifier = Modifier
@@ -163,6 +143,33 @@ fun MainScreen(
                     }
                 }
             }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .size(width = 150.dp, height = 150.dp)
+                        .padding(24.dp)
+                        .clip(shape = RoundedCornerShape(25))
+                        .clickable {
+                            navHostController.navigate(route = RootNavScreens.SettingsScreen.route)
+                        }, backgroundColor = Color(0xFFCDA9B5),
+                    shape = RoundedCornerShape(25)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "SETTINGS",
+                            color = Color.Black,
+                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+
             item {
                 Card(
                     modifier = Modifier
@@ -193,13 +200,13 @@ fun MainScreen(
         }
         if (uniLicenseDetails?.licenseType != "permanent") {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {
 
                 Text(
-                    text = "Demo Version",
+                    text = if (BuildConfig.DEBUG) "Debug Version" else "Demo version",
                     color = MaterialTheme.colors.error,
                     fontStyle = MaterialTheme.typography.h6.fontStyle,
                     fontSize = MaterialTheme.typography.h6.fontSize,

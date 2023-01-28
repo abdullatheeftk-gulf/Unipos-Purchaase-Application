@@ -7,13 +7,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.ProductGroup
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.TaxCategory
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
-import com.gulfappdeveloper.project2.domain.models.remote.post.AddProduct
+import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.AddProduct
+import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.ProductUnit
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.util.AddProductEvent
+import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.util.MultiUnitScreenEvent
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.select_product_group.util.SelectedProductGroupScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
@@ -29,8 +32,13 @@ private const val TAG = "AddProductMainViewModel"
 
 @HiltViewModel
 class AddProductMainViewModel @Inject constructor(
-    private val useCase: UseCase
+    private val useCase: UseCase,
+    private val commonMemory: CommonMemory
 ) : ViewModel() {
+
+    private val _navFrom  = mutableStateOf(true)
+    val navFrom:State<Boolean> = _navFrom
+
     private val _addProductEvent = Channel<AddProductEvent>()
     val addProductEvent = _addProductEvent.receiveAsFlow()
 
@@ -150,6 +158,8 @@ class AddProductMainViewModel @Inject constructor(
     val unitsList = mutableStateListOf<Units>()
     val productGroupsList = mutableStateListOf<ProductGroup>()
 
+
+
     private val _searchText = mutableStateOf("")
     val searchText: State<String> = _searchText
 
@@ -158,14 +168,18 @@ class AddProductMainViewModel @Inject constructor(
     }
 
     private val _baseUrl = mutableStateOf("")
-    val baseUrl: State<String> = _baseUrl
+    //val baseUrl: State<String> = _baseUrl
 
+    private var _userId: Short = -1
 
-    fun setBaseUrl(value: String) {
-        _baseUrl.value = value
+    init {
+        _userId = commonMemory.userId
+        _baseUrl.value = commonMemory.baseUrl
+        _navFrom.value = commonMemory.addProductNavFrom
         getAllTaxCategories()
         getAllUnits()
     }
+
 
     fun setSelectedProductGroups(productGroup: ProductGroup) {
         _selectedProductGroup.value = productGroup
@@ -315,7 +329,7 @@ class AddProductMainViewModel @Inject constructor(
             specification = _specification.value,
             tCategoryId = _taxCategory.value?.tCategoryId ?: 1,
             unitId = _productUnit.value?.unitId ?: 1,
-            userId = 1
+            userId = _userId.toInt()
         )
         viewModelScope.launch(Dispatchers.IO) {
             useCase.addProductUseCase(url = url, addProduct = addProduct).collectLatest { result ->
@@ -324,8 +338,12 @@ class AddProductMainViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         val addedProduct = result.data
                         Log.d(TAG, "addProduct: $addedProduct")
-                        sendAddProductEvent(UiEvent.AddedProduct(addedProduct))
-                        sendAddProductEvent(UiEvent.Navigate(""))
+                        if (!_navFrom.value) {
+                            sendAddProductEvent(UiEvent.AddedProduct(addedProduct))
+                            sendAddProductEvent(UiEvent.Navigate(""))
+                        }else{
+                            clearAllAddProductProperties()
+                        }
 
                     }
                     is GetDataFromRemote.Failed -> {
@@ -352,4 +370,154 @@ class AddProductMainViewModel @Inject constructor(
             _selectedProductGroupEvent.send(SelectedProductGroupScreenEvent(uiEvent))
         }
     }
+
+    private fun clearAllAddProductProperties(){
+        _productName.value = ""
+        _localName.value = ""
+        _selectedProductGroup.value = null
+        _specification.value = ""
+        _barcode.value = ""
+        _openingStock.value = ""
+        _purchasePrice.value = ""
+        _sellingPrice.value = ""
+        _mrp.value = ""
+        _purchaseDisc.value = ""
+        _salesDisc.value =""
+        _taxCategory.value = taxCategoryList[0]
+        _productUnit.value = null
+        _isInclusive.value = true
+        _isScale.value = false
+        multiUnitProductList.clear()
+        clearMultiUnitDataEntryArea()
+    }
+
+    // multi unit work
+
+    private val _multiUnitScreenEvent = Channel<MultiUnitScreenEvent>()
+    val multiUnitScreenEvent = _multiUnitScreenEvent.receiveAsFlow()
+
+    private fun sendMultiUnitScreenEvent(uiEvent: UiEvent){
+        viewModelScope.launch (Dispatchers.IO){
+            _multiUnitScreenEvent.send(MultiUnitScreenEvent(uiEvent))
+        }
+    }
+
+    val multiUnitsList = mutableStateListOf<Units>()
+
+    fun setUnitsForMultiUnitScreen(){
+        multiUnitsList.clear()
+        multiUnitsList.addAll(unitsList)
+        _productUnit.value?.let {pUnit->
+            multiUnitsList.removeAll {unit->
+                unit.unitId == pUnit.unitId
+            }
+        }
+
+    }
+
+
+    private val _selectedMultiUnit: MutableState<Units?> = mutableStateOf(null)
+    val selectedMultiUnit: State<Units?> = _selectedMultiUnit
+
+    fun setSelectedMultiUnit(value: Units) {
+        _selectedMultiUnit.value = value
+        _multiUnitProductName.value = _productName.value + "_" + value.unitName
+    }
+
+    private val _multiUnitBarcode = mutableStateOf("")
+    val multiUnitBarcode: State<String> = _multiUnitBarcode
+
+    fun setMultiUnitBarcode(value: String) {
+        _multiUnitBarcode.value = value
+    }
+
+    private val _multiUnitProductName = mutableStateOf("")
+    val multiUnitProductName: State<String> = _multiUnitProductName
+
+    fun setMultiUnitProductName(value: String) {
+        _multiUnitProductName.value = value
+    }
+
+    private val _multiUnitQty = mutableStateOf("")
+    val multiUnitQty: State<String> = _multiUnitQty
+
+    fun setMultiUnitQty(value: String) {
+        _multiUnitQty.value = value
+
+        val qtyInDecimal = if (value.isNotEmpty() || value.isNotBlank()) value.toFloat() else 0f
+        val sellingPrice =
+            if (_sellingPrice.value.isNotEmpty() || _sellingPrice.value.isNotBlank()) _sellingPrice.value.toFloat() else 0f
+        _multiUnitPrice.value = (qtyInDecimal * sellingPrice).toString()
+        _multiUnitBarcode.value = _barcode.value+qtyInDecimal.toInt()
+    }
+
+
+    private val _multiUnitPrice = mutableStateOf("")
+    val multiUnitPrice: State<String> = _multiUnitPrice
+
+    fun setMultiUnitPrice(value: String) {
+        _multiUnitPrice.value = value
+    }
+
+    private val _multiUnitOpeningStock = mutableStateOf("")
+    val multiUnitOpeningStock: State<String> = _multiUnitOpeningStock
+
+    fun setMultiUnitOpeningStock(value: String) {
+        _multiUnitOpeningStock.value = value
+    }
+
+    private val _multiUnitIsInclusive = mutableStateOf(false)
+    val multiUnitIsInclusive: State<Boolean> = _multiUnitIsInclusive
+
+    fun setMultiUnitIsInclusive(value: Boolean) {
+        _multiUnitIsInclusive.value = value
+    }
+
+    private val _multiUnitIndexValue = mutableStateOf(1)
+
+
+
+    val multiUnitProductList = mutableStateListOf<ProductUnit>()
+
+    fun onAddToMultiUnitListClicked(){
+        _multiUnitIndexValue.value++
+        val productUnit = ProductUnit(
+            barcode = _multiUnitBarcode.value,
+            isInclusive = _multiUnitIsInclusive.value,
+            openingStock = if(_multiUnitOpeningStock.value.isNotEmpty() || _multiUnitOpeningStock.value.isNotBlank()) _multiUnitOpeningStock.value.toFloat() else 0f,
+            proUnitId = 1,
+            productId = 1,
+            productUnitName = _multiUnitProductName.value,
+            salesPrice = _multiUnitPrice.value.toFloat(),
+            unitId = _selectedMultiUnit.value?.unitId!!,
+            unitQty = _multiUnitQty.value.toFloat(),
+            // may be change
+            unitType = "${_multiUnitIndexValue.value} Unit"
+        )
+
+        multiUnitProductList.add(productUnit)
+        clearMultiUnitDataEntryArea()
+
+    }
+
+    fun clearMultiUnitDataEntryArea(){
+        _selectedMultiUnit.value = null
+        _multiUnitQty.value = ""
+        _multiUnitProductName.value = ""
+        _multiUnitBarcode.value = ""
+        _multiUnitPrice.value = ""
+        _multiUnitOpeningStock.value = ""
+        _multiUnitIsInclusive.value = false
+        _multiUnitIndexValue.value = 1
+    }
+
+    fun clearMultiUnitProductList(){
+        multiUnitProductList.clear()
+    }
+
+
+
+
+
+
 }

@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gulfappdeveloper.project2.BuildConfig
+import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
@@ -48,7 +50,8 @@ private const val TAG = "RootViewModel"
 
 @HiltViewModel
 open class RootViewModel @Inject constructor(
-    private val useCase: UseCase
+    private val useCase: UseCase,
+    private val commonMemory:CommonMemory
 ) : ViewModel() {
 
     private var isInitialLoadingFinished = false
@@ -192,6 +195,16 @@ open class RootViewModel @Inject constructor(
 
     val selectedProductList = mutableStateListOf<ProductSelected>()
 
+    // Add Product screen navigation from which screen check
+    // true is from mainScreen
+    private val _addProductNavFrom = mutableStateOf(true)
+    val navFrom:State<Boolean> = _addProductNavFrom
+
+    fun setNavFrom(value:Boolean){
+        _addProductNavFrom.value = value
+        commonMemory.addProductNavFrom = value
+    }
+
 
     init {
         sendSplashScreenEvent(UiEvent.ShowProgressBar)
@@ -273,7 +286,18 @@ open class RootViewModel @Inject constructor(
                 sendSplashScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     _message.value = result.data.message
-                    readUniLicenseKeyDetails()
+                    // Set common memory base url 25/01/2022
+                    commonMemory.baseUrl = _baseUrl.value
+
+                    if (BuildConfig.DEBUG) {
+                        sendSplashScreenEvent(
+                            UiEvent.Navigate(
+                                route = RootNavScreens.LoginScreen.route
+                            )
+                        )
+                    } else {
+                        readUniLicenseKeyDetails()
+                    }
                 }
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
@@ -301,6 +325,7 @@ open class RootViewModel @Inject constructor(
     /*login block*/
     private var _userId = 0
     fun loginUser(password: String) {
+
         if (password.isEmpty()) {
             sendLoginScreenEvent(UiEvent.ShowSnackBar("Password is empty"))
             return
@@ -313,7 +338,10 @@ open class RootViewModel @Inject constructor(
                 when (result) {
                     is GetDataFromRemote.Success -> {
                         _userId = result.data.userId
-                        Log.d(TAG, "loginUser: $_userId")
+
+                        // common memory user id set 25/01/2023
+                        commonMemory.userId = _userId.toShort()
+                       // Log.d(TAG, "loginUser: $_userId")
                         // update login counter
                         sendLoginScreenEvent(UiEvent.Navigate(route = RootNavScreens.MainScreen.route))
                         useCase.updateSerialNoUseCase()
@@ -456,7 +484,7 @@ open class RootViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             useCase.searchClientDetailsUseCase(url = url).collectLatest { result ->
-                 Log.w(TAG, "clientSearch: $result")
+                Log.w(TAG, "clientSearch: $result")
                 sendClientScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     if (result.data.isEmpty()) {
@@ -1100,9 +1128,9 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         val licenseType = result.data.message.licenseType
                         val expiryDate = result.data.message.expiryDate
-                        expiryDate?.let {ed->
-                            if (licenseType =="demo"){
-                                if (!checkForLicenseExpiryDate(ed)){
+                        expiryDate?.let { ed ->
+                            if (licenseType == "demo") {
+                                if (!checkForLicenseExpiryDate(ed)) {
                                     sendUniLicenseActivation(UiEvent.ShowSnackBar("Expired License"))
                                     _licenseKeyActivationError.value = "Expired License"
                                     return@collectLatest
@@ -1189,7 +1217,7 @@ open class RootViewModel @Inject constructor(
                 }
                 if (it == 180) {
                     sendSplashScreenEvent(
-                            UiEvent.ShowSnackBar("There have some error on reading Public Ip address. Please restart application")
+                        UiEvent.ShowSnackBar("There have some error on reading Public Ip address. Please restart application")
                     )
                     return@launch
                 }

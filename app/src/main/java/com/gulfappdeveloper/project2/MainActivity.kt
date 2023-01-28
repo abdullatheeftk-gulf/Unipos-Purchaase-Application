@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
 
         val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
-
+        Log.e(TAG, "onCreate: ${BuildConfig.DEBUG}", )
         setContent {
 
             Project2Theme {
