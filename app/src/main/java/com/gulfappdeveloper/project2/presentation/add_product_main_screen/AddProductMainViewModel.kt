@@ -329,7 +329,8 @@ class AddProductMainViewModel @Inject constructor(
             specification = _specification.value,
             tCategoryId = _taxCategory.value?.tCategoryId ?: 1,
             unitId = _productUnit.value?.unitId ?: 1,
-            userId = _userId.toInt()
+            userId = _userId.toInt(),
+            productUnits = multiUnitProductList
         )
         viewModelScope.launch(Dispatchers.IO) {
             useCase.addProductUseCase(url = url, addProduct = addProduct).collectLatest { result ->
@@ -342,6 +343,7 @@ class AddProductMainViewModel @Inject constructor(
                             sendAddProductEvent(UiEvent.AddedProduct(addedProduct))
                             sendAddProductEvent(UiEvent.Navigate(""))
                         }else{
+                            sendAddProductEvent(UiEvent.ShowAlertDialog(""))
                             clearAllAddProductProperties()
                         }
 
@@ -498,6 +500,10 @@ class AddProductMainViewModel @Inject constructor(
         multiUnitProductList.add(productUnit)
         clearMultiUnitDataEntryArea()
 
+    }
+
+    fun deleteOneItemFromMultiUnitList(index:Int){
+        multiUnitProductList.removeAt(index)
     }
 
     fun clearMultiUnitDataEntryArea(){

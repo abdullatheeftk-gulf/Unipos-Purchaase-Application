@@ -84,6 +84,15 @@ fun MultiUnitScreen(
                     }
                 }
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    addProductMainViewModel.clearMultiUnitDataEntryArea()
+                    addProductNavHostController.popBackStack()
+                }
+            ) {
+                Text(text = "Submit")
+            }
             Spacer(modifier = Modifier.height(300.dp))
         }
 

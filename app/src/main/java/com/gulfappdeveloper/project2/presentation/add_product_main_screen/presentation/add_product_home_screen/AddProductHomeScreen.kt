@@ -21,6 +21,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,11 +44,13 @@ fun AddProductHomeScreen(
     hideKeyboard: () -> Unit,
     addProductMainViewModel: AddProductMainViewModel
 ) {
-    val navFrom by rootViewModel.navFrom
+    // val navFrom by rootViewModel.navFrom
 
     val scaffoldState = rememberScaffoldState()
 
     val scope = rememberCoroutineScope()
+
+    val scrollState = rememberScrollState()
 
 
     val productName by addProductMainViewModel.productName
@@ -80,6 +83,8 @@ fun AddProductHomeScreen(
     val isInclusive by addProductMainViewModel.isInclusive
 
     val isScale by addProductMainViewModel.isScale
+
+    val multiUnitList =  addProductMainViewModel.multiUnitProductList
 
 
     var showProductNameError by remember {
@@ -114,6 +119,10 @@ fun AddProductHomeScreen(
         mutableStateOf(false)
     }
 
+    var showSuccessAlertDialog by remember {
+        mutableStateOf(false)
+    }
+
 
 
     LaunchedEffect(key1 = true) {
@@ -124,6 +133,9 @@ fun AddProductHomeScreen(
                 }
                 is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
+                }
+                is UiEvent.ShowAlertDialog -> {
+                    showSuccessAlertDialog = true
                 }
                 is UiEvent.AddedProduct -> {
                     rootViewModel.setProductSearchMode(false)
@@ -138,6 +150,16 @@ fun AddProductHomeScreen(
                 }
                 else -> Unit
             }
+        }
+    }
+
+    if (showSuccessAlertDialog) {
+        SuccessAlertDialog {
+            showSuccessAlertDialog = false
+            scope.launch {
+                scrollState.scrollTo(0)
+            }
+
         }
     }
 
@@ -184,7 +206,7 @@ fun AddProductHomeScreen(
                             showPurchasePriceError = true
                             errors = true
                         }
-                        if (sellingPrice.isEmpty()){
+                        if (sellingPrice.isEmpty()) {
                             showSellingPriceError = true
                             errors = true
                         }
@@ -216,7 +238,7 @@ fun AddProductHomeScreen(
         Column(
             modifier = Modifier
                 .padding(all = 8.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
@@ -489,6 +511,25 @@ fun AddProductHomeScreen(
                     addProductMainViewModel.setIsScale(value)
                 }
             )
+            
+
+
+            if (multiUnitList.isNotEmpty()){
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Multi Units",
+                    color = MaterialTheme.colors.primary,
+                    fontSize = MaterialTheme.typography.h6.fontSize,
+                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    textDecoration = TextDecoration.Underline
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                ShowMultiUnits(
+                    multiUnitList = multiUnitList,
+                    addProductMainViewModel = addProductMainViewModel
+                )
+            }
+
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
@@ -510,7 +551,7 @@ fun AddProductHomeScreen(
                         showPurchasePriceError = true
                         errors = true
                     }
-                    if (sellingPrice.isEmpty()){
+                    if (sellingPrice.isEmpty()) {
                         showSellingPriceError = true
                         errors = true
                     }

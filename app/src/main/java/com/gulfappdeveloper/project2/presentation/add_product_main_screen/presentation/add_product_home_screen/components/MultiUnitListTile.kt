@@ -1,14 +1,15 @@
-package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components
+package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,8 +22,8 @@ import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddPro
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
-fun ListTile(
-    item:ProductUnit,
+fun MultiUnitListTile(
+    item: ProductUnit,
     index:Int,
     addProductMainViewModel: AddProductMainViewModel
 ) {
@@ -68,20 +69,14 @@ fun ListTile(
             imageVector = Icons.Default.Delete,
             contentDescription = null,
             tint = MaterialTheme.colors.OrangeColor,
-            modifier = Modifier.width(48.dp).clickable {
-                addProductMainViewModel.deleteOneItemFromMultiUnitList(index)
-            }
+            modifier = Modifier
+                .width(48.dp)
+                .align(Alignment.Top)
+                .clickable {
+                   addProductMainViewModel.deleteOneItemFromMultiUnitList(index)
+                }
         )
 
 
     }
-
-
 }
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun TestPrev() {
-    Test()
-}*/

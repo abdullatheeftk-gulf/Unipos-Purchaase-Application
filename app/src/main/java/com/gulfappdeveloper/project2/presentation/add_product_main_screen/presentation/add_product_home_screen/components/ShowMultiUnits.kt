@@ -1,42 +1,40 @@
-package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components
+package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.Card
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.ProductUnit
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainViewModel
-import com.gulfappdeveloper.project2.ui.theme.OrangeColor
+import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components.ListTile
 
 @Composable
-fun ListArea(
-    addProductMainViewModel: AddProductMainViewModel,
+fun ShowMultiUnits(
+    multiUnitList:SnapshotStateList<ProductUnit>,
+    addProductMainViewModel: AddProductMainViewModel
 ) {
-
-    val multiUnitList =  addProductMainViewModel.multiUnitProductList
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp),
+           // .height(200.dp)
+        ,
         border = BorderStroke(width = Dp.Hairline, color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)),
-       // shape = RectangleShape
+        // shape = RectangleShape
     ) {
         Column(
             modifier = Modifier
@@ -87,26 +85,24 @@ fun ListArea(
                 Spacer(modifier = Modifier.width(48.dp))
             }
             Spacer(modifier = Modifier.height(8.dp))
-            LazyColumn(contentPadding = PaddingValues(
-                vertical = 0.dp
-            )) {
-                itemsIndexed(multiUnitList) {index, item ->
-                  ListTile(
-                      item = item,
-                      index = index,
-                      addProductMainViewModel = addProductMainViewModel
-                  )
-                }
+            multiUnitList.forEachIndexed {index,item->
+               MultiUnitListTile(
+                   item = item,
+                   index = index,
+                   addProductMainViewModel =addProductMainViewModel
+               )
             }
+           /* LazyColumn(
+                contentPadding = PaddingValues(
+                vertical = 0.dp
+            )
+            ) {
+                items(multiUnitList) { item ->
+                   MultiUnitListTile(item = item)
+                }
+            }*/
         }
 
     }
 
 }
-
-/*
-@Preview
-@Composable
-fun ListAreaPrev() {
-    ListArea()
-}*/

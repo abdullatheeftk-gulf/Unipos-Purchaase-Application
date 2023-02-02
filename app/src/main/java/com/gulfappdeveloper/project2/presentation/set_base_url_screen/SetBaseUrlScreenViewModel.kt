@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2.presentation.set_base_url_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -65,13 +66,18 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                         // check for license expired
                         if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
                             // demo license expired
-
-                            sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
+                            if (BuildConfig.DEBUG){
+                                sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                            }
+                           // sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
 
 
                         } else {
+                            if (BuildConfig.DEBUG){
+                                sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                            }
                             // demo license not expired
-                            sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
+                            //sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
                         }
                     }
                     if (licenseDetails.licenseType == "permanent") {
@@ -79,8 +85,11 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                         sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
                     }
                 } else {
+                    if (BuildConfig.DEBUG){
+                        sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                    }
                     //first time license activation
-                    sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
+                   // sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
                 }
             }
         }

@@ -307,10 +307,6 @@ fun DataEntryArea(
                 Text(text = "Clear List")
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Submit")
-        }
 
 
     }
