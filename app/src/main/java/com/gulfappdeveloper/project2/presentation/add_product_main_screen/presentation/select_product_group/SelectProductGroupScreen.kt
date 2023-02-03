@@ -123,26 +123,8 @@ fun SelectProductGroupScreen(
 
         LazyColumn {
             itemsIndexed(productGroupList) { index, productGroup ->
-                val categoryColor = when (index % 5) {
-                    0 -> {
-                        MaterialTheme.colors.Color1
-                    }
-                    1 -> {
-                        MaterialTheme.colors.Color2
-                    }
-                    2 -> {
-                        MaterialTheme.colors.Color3
-                    }
-                    3 -> {
-                        MaterialTheme.colors.Color4
-                    }
-                    4 -> {
-                        MaterialTheme.colors.Color5
-                    }
-                    else -> {
-                        MaterialTheme.colors.primary
-                    }
-                }
+
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -155,7 +137,7 @@ fun SelectProductGroupScreen(
                             addProductNavHostController.popBackStack()
                         },
                     shape = RoundedCornerShape(35),
-                    border = BorderStroke(width = 1.dp, color = categoryColor)
+                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary)
                 ) {
                     Text(
                         text = productGroup.pGroupName,

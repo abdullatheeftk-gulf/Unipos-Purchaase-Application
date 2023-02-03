@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -19,14 +20,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
 fun DataEntryArea(
     addProductMainViewModel: AddProductMainViewModel,
     hideKeyboard: () -> Unit,
-    onDataValidationError: () -> Unit
+    onDataValidationError: () -> Unit,
+    onScanButtonClicked: (ScanFrom) -> Unit
 ) {
 
 
@@ -44,7 +48,7 @@ fun DataEntryArea(
 
     val barcode by addProductMainViewModel.multiUnitBarcode
 
-    var showbarcodeError by remember {
+    var showBarcodeError by remember {
         mutableStateOf(false)
     }
 
@@ -83,7 +87,8 @@ fun DataEntryArea(
                     .weight(2f)
                     .padding(end = 4.dp)
             ) {
-                OutlinedTextField(value = selectedUnit?.unitName ?: "",
+                OutlinedTextField(
+                    value = selectedUnit?.unitName ?: "",
                     onValueChange = {},
                     enabled = false,
                     trailingIcon = {
@@ -141,7 +146,8 @@ fun DataEntryArea(
 
                 keyboardActions = KeyboardActions(onDone = {
                     hideKeyboard()
-                }), isError = showQtyError)
+                }), isError = showQtyError
+            )
 
         }
 
@@ -157,24 +163,46 @@ fun DataEntryArea(
             imeAction = ImeAction.Done
         ), keyboardActions = KeyboardActions(onDone = {
             hideKeyboard()
-        }), maxLines = 2, isError = showProductNameError)
+        }), maxLines = 2, isError = showProductNameError
+        )
 
         // Third row
         Row(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(value = barcode, onValueChange = { value ->
-                showbarcodeError = false
-                addProductMainViewModel.setMultiUnitBarcode(value)
-            }, enabled = true, modifier = Modifier
-                .weight(2f)
-                .padding(end = 4.dp), label = {
-                Text(text = "Barcode")
-            }, singleLine = true, maxLines = 1, keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Characters, imeAction = ImeAction.Done
-            ), keyboardActions = KeyboardActions(onDone = {
-                hideKeyboard()
-            }), textStyle = TextStyle(
-                color = MaterialTheme.colors.primary
-            ), isError = showbarcodeError)
+            OutlinedTextField(
+                value = barcode, onValueChange = { value ->
+                    showBarcodeError = false
+                    addProductMainViewModel.setMultiUnitBarcode(value)
+                }, enabled = true, modifier = Modifier
+                    .weight(2f)
+                    .padding(end = 4.dp), label = {
+                    Text(text = "Barcode")
+                },
+                singleLine = true,
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Characters, imeAction = ImeAction.Done
+                ), keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.primary
+                ),
+                isError = showBarcodeError,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            onScanButtonClicked(ScanFrom.MULTI_UNIT_SCREEN)
+                        }
+                    ) {
+                       Icon(
+                           painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
+                           contentDescription = null,
+                           tint = MaterialTheme.colors.OrangeColor
+                       )
+                    }
+                }
+            )
 
 
             OutlinedTextField(value = price, onValueChange = { value ->
@@ -190,7 +218,8 @@ fun DataEntryArea(
                 color = MaterialTheme.colors.primary, fontSize = 20.sp
             ), modifier = Modifier
                 .weight(2f)
-                .padding(start = 4.dp), isError = showPriceError)
+                .padding(start = 4.dp), isError = showPriceError
+            )
 
         }
         // 4 th row
@@ -262,7 +291,7 @@ fun DataEntryArea(
                         haveError = true
                     }
                     if (barcode.isEmpty() || barcode.isBlank()) {
-                        showbarcodeError = true
+                        showBarcodeError = true
                         haveError = true
                     }
                     if (price.isEmpty() || price.isBlank()) {

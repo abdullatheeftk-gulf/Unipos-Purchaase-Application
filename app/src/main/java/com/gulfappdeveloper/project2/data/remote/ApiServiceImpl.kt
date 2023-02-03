@@ -1599,7 +1599,9 @@ class ApiServiceImpl(
                     setBody(purchaseClass)
                 }
                 val statusCode = httpResponse.status.value
-                Log.i(TAG, "status code $statusCode")
+               // Log.w("Test", "purchaseFunction: $purchaseClass", )
+               // Log.d("Test", "purchaseFunction: $statusCode")
+                //Log.i(TAG, "status code $statusCode")
                 // Log.w(TAG, "addClientDetails body: ${httpResponse.bodyAsText()}")
                 when (statusCode) {
                     in 200..299 -> {
@@ -1623,7 +1625,7 @@ class ApiServiceImpl(
                                 GetDataFromRemote.Failed(
                                     error = com.gulfappdeveloper.project2.domain.models.remote.Error(
                                         code = statusCode,
-                                        message = "Duplicate Barcode"
+                                        message = httpResponse.status.description
                                     )
                                 )
                             )
@@ -1705,8 +1707,8 @@ class ApiServiceImpl(
                 )
             } catch (e: Exception) {
 
-                e.printStackTrace()
-                Log.e(TAG, "addProduct: $e")
+               // e.printStackTrace()
+             //   Log.e(TAG, "addProduct: $e")
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(

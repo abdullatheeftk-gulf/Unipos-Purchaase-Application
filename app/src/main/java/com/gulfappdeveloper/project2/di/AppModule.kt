@@ -1,8 +1,11 @@
 package com.gulfappdeveloper.project2.di
 
 import android.content.Context
+import com.google.firebase.firestore.FirebaseFirestore
 import com.gulfappdeveloper.project2.data.data_store.DataStoreServiceImpl
+import com.gulfappdeveloper.project2.data.firebase.FirebaseServiceImpl
 import com.gulfappdeveloper.project2.domain.services.DataStoreService
+import com.gulfappdeveloper.project2.domain.services.FirebaseService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,5 +22,15 @@ object AppModule {
     @Singleton
     fun provideDataSoreService(@ApplicationContext context: Context):DataStoreService{
         return DataStoreServiceImpl(context = context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFireStoreDb() = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseService(fdb: FirebaseFirestore): FirebaseService {
+        return FirebaseServiceImpl(fdb)
     }
 }

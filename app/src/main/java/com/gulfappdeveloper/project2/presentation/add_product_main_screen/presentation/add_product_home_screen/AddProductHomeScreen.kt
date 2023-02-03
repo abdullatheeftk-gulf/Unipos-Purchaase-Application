@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -26,12 +27,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.ProductGroup
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainViewModel
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.navigation.AddProductScreens
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.components.*
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -42,9 +46,10 @@ fun AddProductHomeScreen(
     navHostController: NavHostController,
     addProductNavHostController: NavHostController,
     hideKeyboard: () -> Unit,
-    addProductMainViewModel: AddProductMainViewModel
+    addProductMainViewModel: AddProductMainViewModel,
+    onScanButtonClicked:(ScanFrom)->Unit
 ) {
-    // val navFrom by rootViewModel.navFrom
+
 
     val scaffoldState = rememberScaffoldState()
 
@@ -431,7 +436,20 @@ fun AddProductHomeScreen(
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
                             capitalization = KeyboardCapitalization.Characters
-                        )
+                        ),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    onScanButtonClicked(ScanFrom.ADD_PRODUCT_SCREEN)
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colors.OrangeColor
+                                )
+                            }
+                        }
                     )
                     if (showBarcodeError) {
                         Text(

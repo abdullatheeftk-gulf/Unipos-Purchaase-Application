@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
+import com.gulfappdeveloper.project2.data.firebase.FirebaseConst
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
+import com.gulfappdeveloper.project2.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -45,16 +47,19 @@ import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 private const val TAG = "RootViewModel"
 
 @HiltViewModel
 open class RootViewModel @Inject constructor(
     private val useCase: UseCase,
-    private val commonMemory:CommonMemory
+    private val commonMemory: CommonMemory
 ) : ViewModel() {
 
     private var isInitialLoadingFinished = false
+
+    private var _publicIpAddress = ""
 
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
@@ -198,9 +203,9 @@ open class RootViewModel @Inject constructor(
     // Add Product screen navigation from which screen check
     // true is from mainScreen
     private val _addProductNavFrom = mutableStateOf(true)
-    val navFrom:State<Boolean> = _addProductNavFrom
+    val navFrom: State<Boolean> = _addProductNavFrom
 
-    fun setNavFrom(value:Boolean){
+    fun setNavFrom(value: Boolean) {
         _addProductNavFrom.value = value
         commonMemory.addProductNavFrom = value
     }
@@ -304,9 +309,18 @@ open class RootViewModel @Inject constructor(
                     val error = result.error
                     val errorMessage =
                         "code:- ${error.code}, message:- ${error.message}, url:- $url"
+
                     sendSplashScreenEvent(UiEvent.ShowSnackBar(message = errorMessage))
                     sendSplashScreenEvent(UiEvent.ShowButton1)
-                    // Log.e(TAG, "getWelcomeMessage: ${result.error.code} ${result.error.message}")
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "getWelcomeMessage,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = errorMessage,
+                            errorCode = error.code,
+                            ipAddress = _publicIpAddress
+                        )
+                    )
                 }
             }
         }
@@ -341,7 +355,7 @@ open class RootViewModel @Inject constructor(
 
                         // common memory user id set 25/01/2023
                         commonMemory.userId = _userId.toShort()
-                       // Log.d(TAG, "loginUser: $_userId")
+                        // Log.d(TAG, "loginUser: $_userId")
                         // update login counter
                         sendLoginScreenEvent(UiEvent.Navigate(route = RootNavScreens.MainScreen.route))
                         useCase.updateSerialNoUseCase()
@@ -351,7 +365,17 @@ open class RootViewModel @Inject constructor(
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
                         Log.e(TAG, "loginUser: $errorMessage")
+
                         sendLoginScreenEvent(UiEvent.ShowSnackBar(errorMessage))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "loginUser,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = errorMessage,
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress
+                            )
+                        )
                     }
                     else -> Unit
                 }
@@ -374,35 +398,6 @@ open class RootViewModel @Inject constructor(
         _selectedClient.value = value
     }
 
-    /* fun setPoNo(value: String) {
-         _poNo.value = value
-     }
-
-     fun setPayMode(value: PayMode) {
-         _payMode.value = value
-     }*/
-
-
-    /*fun setProductName(value: String) {
-        _productName.value = value
-    }*/
-
-    /*fun setQrCode(value: String) {
-        _barCode.value = value
-    }*/
-
-
-    /*fun setRate(value: String) {
-        _rate.value = value
-    }*/
-
-
-    /* fun setTax(value: String) {
-         _tax.value = value
-     }*/
-
-
-    private var _publicIpAddress = ""
 
     private fun getIp4Address() {
         val url = HttpRoutes.SEE_IP4
@@ -414,16 +409,21 @@ open class RootViewModel @Inject constructor(
                         _publicIpAddress = result.data.ip ?: ""
                     }
                     is GetDataFromRemote.Failed -> {
-                        /* useCase.insertErrorDataToFireStoreUseCase(
-                             collectionName = collectionName,
-                             documentName = "getIp4Address,${Date()}",
-                             errorData = FirebaseError(
-                                 errorCode = result.error.code,
-                                 errorMessage = result.error.message ?: "Error on Activation",
-                                 url = url,
-                                 ipAddress = publicIpAddress
-                             )
-                         )*/
+                        val error = result.error
+                        val errorMessage =
+                            "code:- ${error.code}, message:- ${error.message}, url:- $url"
+                        Log.e(TAG, "getIp4Address: $errorMessage")
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "loginUser,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = errorMessage,
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress
+                            )
+                        )
+
+
                     }
                     else -> Unit
                 }
@@ -460,6 +460,9 @@ open class RootViewModel @Inject constructor(
                         }
                     }
                     if (result is GetDataFromRemote.Failed) {
+                        val error = result.error
+                        val errorMessage =
+                            "code:- ${error.code}, message:- ${error.message}, url:- $url"
                         sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                         sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
                         isInitialLoadingFinished = false
@@ -467,6 +470,16 @@ open class RootViewModel @Inject constructor(
                             TAG,
                             "getClientDetails: ${result.error.code}, ${result.error.message}"
                         )*/
+
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "loginUser,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = errorMessage,
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress
+                            )
+                        )
                     }
                 }
         }
@@ -495,6 +508,9 @@ open class RootViewModel @Inject constructor(
                     }
                 }
                 if (result is GetDataFromRemote.Failed) {
+                    val error = result.error
+                    val errorMessage =
+                        "code:- ${error.code}, message:- ${error.message}, url:- $url"
                     sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                     sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
                     Log.e(
@@ -525,9 +541,13 @@ open class RootViewModel @Inject constructor(
                         unitsList.addAll(result.data)
                     }
                     is GetDataFromRemote.Failed -> {
-                        val error = "Error:- ${result.error.code}, ${result.error.message}, $url"
+
+                        val error2 = "Error:- ${result.error.code}, ${result.error.message}, $url"
                         // Log.e(TAG, "getAllUnits: $error")
-                        sendHomeScreenEvent(UiEvent.ShowSnackBar(error))
+                        val error = result.error
+                        val errorMessage =
+                            "code:- ${error.code}, message:- ${error.message}, url:- $url"
+                        sendHomeScreenEvent(UiEvent.ShowSnackBar(error2))
                     }
                     else -> Unit
                 }
@@ -811,7 +831,7 @@ open class RootViewModel @Inject constructor(
     fun submitFun() {
         val url = _baseUrl.value + HttpRoutes.SUBMIT_PRODUCT
         sendHomeScreenEvent(UiEvent.ShowProgressBar)
-        val date = SimpleDateFormat("yyyy-MM-d", Locale.getDefault()).format(_selectedDate.value)
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(_selectedDate.value)
         val time = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(_selectedDate.value)
         val purDate = date + "T" + time
 
@@ -823,9 +843,9 @@ open class RootViewModel @Inject constructor(
             partyAccId = _selectedClient.value?.clientId ?: 0,
             purDate = purDate,
             refInvNo = _billNo.value,
-            sequenceNo = 10,
+            sequenceNo = _serialNo.value,
             taxable = _subTotal.value,
-            terminal = "dsd",
+            terminal = _deviceIdSate.value,
             totalAmount = _grandTotal.value,
             totalTax = _totalVat.value,
             userId = _userId
@@ -856,6 +876,7 @@ open class RootViewModel @Inject constructor(
             )
         }
         viewModelScope.launch(Dispatchers.IO) {
+
             useCase.purchaseUseCase(
                 url = url,
                 purchaseClass = PurchaseClass(
@@ -871,11 +892,14 @@ open class RootViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Failed) {
                     val error =
                         result.error.message + ", code:- " + result.error.code + ", url:- $url"
-                    Log.e(TAG, "submitFun: $error")
+                    Log.e("Test", "submitFun: $error")
+
                     sendHomeScreenEvent(UiEvent.ShowSnackBar(message = error))
                 }
 
             }
+
+
         }
     }
 
@@ -1244,6 +1268,21 @@ open class RootViewModel @Inject constructor(
         readBaseUrl()
         isInitialLoadingFinished = false
 
+    }
+
+    // Barcode scanning
+
+    private val _addProductBarcodeScanned = mutableStateOf("")
+    val addProductBarcodeScanned:State<String> = _addProductBarcodeScanned
+
+    private val _multiUnitBarcodeScanned = mutableStateOf("")
+    val multiUnitBarcodeScanned:State<String> = _multiUnitBarcodeScanned
+    fun setAddProductBarcodeScanned(value: String){
+       _addProductBarcodeScanned.value = value
+    }
+
+    fun setMultiUnitBarcodeScanned(value:String){
+        _multiUnitBarcodeScanned.value = value
     }
 
 

@@ -20,13 +20,15 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainViewModel
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components.DataEntryArea
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components.ListArea
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import kotlinx.coroutines.launch
 
 @Composable
 fun MultiUnitScreen(
     addProductMainViewModel: AddProductMainViewModel,
     addProductNavHostController: NavHostController,
-    hideKeyboard:()->Unit
+    hideKeyboard:()->Unit,
+    onScanButtonClicked:(ScanFrom)->Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -82,7 +84,8 @@ fun MultiUnitScreen(
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar("Enter required values")
                     }
-                }
+                },
+                onScanButtonClicked = onScanButtonClicked
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(

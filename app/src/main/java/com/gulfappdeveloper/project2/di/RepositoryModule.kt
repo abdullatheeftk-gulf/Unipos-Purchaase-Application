@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2.di
 
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.repositories.DataStoreRepository
+import com.gulfappdeveloper.project2.repositories.FirebaseRepository
 import com.gulfappdeveloper.project2.repositories.RemoteRepository
 import com.gulfappdeveloper.project2.usecases.UseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_cases.ReadBaseUrlUseCase
@@ -16,6 +17,8 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counte
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counter_usecases.UpdateSerialNoUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseReadUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseSaveUseCase
+import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
+import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertGeneralDataToFirebaseUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllTaxCategoriesUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllUnitsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetProductGroupsUseCase
@@ -55,6 +58,7 @@ object RepositoryModule {
     fun provideUseCase(
         remoteRepository: RemoteRepository,
         dataStoreRepository: DataStoreRepository,
+        firebaseRepository: FirebaseRepository
     ): UseCase {
         return UseCase(
 
@@ -101,7 +105,10 @@ object RepositoryModule {
 
             // Stock adjustment
             getStockOfAProductUseCase = GetStockOfAProductUseCase(remoteRepository = remoteRepository),
-            adjustStocksOfProductListUseCase = AdjustStocksOfProductListUseCase(remoteRepository = remoteRepository)
+            adjustStocksOfProductListUseCase = AdjustStocksOfProductListUseCase(remoteRepository = remoteRepository),
+
+            insertErrorDataToFireStoreUseCase = InsertErrorDataToFireStoreUseCase(firebaseRepository = firebaseRepository),
+            insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(firebaseRepository = firebaseRepository)
 
         )
     }

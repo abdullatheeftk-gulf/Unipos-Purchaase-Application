@@ -23,10 +23,12 @@ import com.gulfappdeveloper.project2.usecases.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 private const val TAG = "AddProductMainViewModel"
 
@@ -173,10 +175,12 @@ class AddProductMainViewModel @Inject constructor(
     private var _userId: Short = -1
 
     init {
+
         _userId = commonMemory.userId
         _baseUrl.value = commonMemory.baseUrl
         _navFrom.value = commonMemory.addProductNavFrom
         getAllTaxCategories()
+        getProductGroups()
         getAllUnits()
     }
 
@@ -192,9 +196,11 @@ class AddProductMainViewModel @Inject constructor(
 
     fun getProductGroups() {
         try {
-            productGroupsList.removeAll {
-                true
+            val elapsedTime  = measureTimeMillis {
+                productGroupsList.clear()
             }
+            Log.e("Time", "getProductGroups: $elapsedTime", )
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -205,19 +211,15 @@ class AddProductMainViewModel @Inject constructor(
                 sendSelectedProductGroupEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        try {
-                            productGroupsList.removeAll {
-                                true
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+
                         productGroupsList.addAll(result.data)
-                        Log.w(TAG, "getProductGroups: ${result.data}")
+
+                        //Log.w(TAG, "getProductGroups: ${result.data}")
                         if (result.data.isEmpty()) {
                             sendSelectedProductGroupEvent(UiEvent.ShowEmptyList(true))
                         } else {
                             sendSelectedProductGroupEvent(UiEvent.ShowEmptyList(false))
+                            _selectedProductGroup.value = productGroupsList[0]
                         }
                     }
                     is GetDataFromRemote.Failed -> {

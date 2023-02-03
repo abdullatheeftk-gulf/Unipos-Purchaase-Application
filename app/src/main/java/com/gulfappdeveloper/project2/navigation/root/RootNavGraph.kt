@@ -129,7 +129,8 @@ fun RootNavGraph(
             AddProductMainScreen(
                 rootViewModel = rootViewModel,
                 hideKeyboard = hideKeyboard,
-                navHostController = navHostController
+                navHostController = navHostController,
+                onScanButtonClicked = onScanButtonClicked
             )
         }
 

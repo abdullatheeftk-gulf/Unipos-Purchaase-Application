@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -199,20 +198,17 @@ fun ItemSelectionRows(
                         start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
                     ),
                     trailingIcon = {
-                        Row(modifier = Modifier.padding(top = 8.dp)) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_qr_code_scanner_24),
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.OrangeColor,
-                                modifier = Modifier.clickable {
-                                    rootViewModel.setProductSearchMode(true)
-                                    rootViewModel.resetSelectedProduct()
-                                    onProductNameError()
-                                    onScanButtonClicked(ScanFrom.PURCHASE_SCREEN)
-                                }
-                            )
-
-                        }
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.OrangeColor,
+                            modifier = Modifier.clickable {
+                                rootViewModel.setProductSearchMode(true)
+                                rootViewModel.resetSelectedProduct()
+                                onProductNameError()
+                                onScanButtonClicked(ScanFrom.PURCHASE_SCREEN)
+                            }
+                        )
                     }
 
                 )

@@ -130,10 +130,9 @@ fun TopBar(
                     hideKeyboard()
                 }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.barcode_scan_icon),
+                        painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.surface,
-                        modifier = Modifier.padding(end = 4.dp)
+                        tint = MaterialTheme.colors.OrangeColor,
                     )
                 }
             }

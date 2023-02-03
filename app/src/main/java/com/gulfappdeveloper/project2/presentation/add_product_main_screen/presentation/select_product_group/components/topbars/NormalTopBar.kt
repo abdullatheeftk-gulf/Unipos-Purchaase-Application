@@ -16,7 +16,7 @@ fun NormalTopBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = "Client Details")
+            Text(text = "Product Groups")
         },
         navigationIcon = {
             IconButton(onClick = onBackButtonClicked) {

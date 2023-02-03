@@ -49,11 +49,21 @@ class MainActivity : ComponentActivity() {
                                // Log.w(TAG, "onCreate: ${it.contents}")
                                 Toast.makeText(this, it.contents, Toast.LENGTH_LONG).show()
                                 it.contents?.let { value ->
-                                    if (scanFrom == ScanFrom.PURCHASE_SCREEN) {
-                                        rootViewModel.searchProductByQrCode(value)
-                                    } else if (scanFrom == ScanFrom.STOCK_ADJUSTMENT_SCREEN) {
-                                        rootViewModel.searchProductByQrCodeForStockAdjustment(value = value)
+                                    when (scanFrom) {
+                                        ScanFrom.PURCHASE_SCREEN -> {
+                                            rootViewModel.searchProductByQrCode(value)
+                                        }
+                                        ScanFrom.STOCK_ADJUSTMENT_SCREEN -> {
+                                            rootViewModel.searchProductByQrCodeForStockAdjustment(value = value)
+                                        }
+                                        ScanFrom.ADD_PRODUCT_SCREEN -> {
+                                            rootViewModel.setAddProductBarcodeScanned(value)
+                                        }
+                                        ScanFrom.MULTI_UNIT_SCREEN -> {
+                                           rootViewModel.setMultiUnitBarcodeScanned(value)
+                                        }
                                     }
+
                                 }
                             } catch (e: Exception) {
                                 // Log.e(TAG, "onCreate: ${e.message}", )

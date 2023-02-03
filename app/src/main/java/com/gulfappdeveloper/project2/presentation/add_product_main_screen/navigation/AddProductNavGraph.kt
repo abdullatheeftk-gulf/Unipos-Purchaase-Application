@@ -3,6 +3,7 @@ package com.gulfappdeveloper.project2.presentation.add_product_main_screen.navig
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,6 +13,7 @@ import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddPro
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.AddProductHomeScreen
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.MultiUnitScreen
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.select_product_group.SelectProductGroupScreen
+import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 
 private const val TAG = "AddProductNavGraph"
 @Composable
@@ -20,9 +22,17 @@ fun AddProductNavGraph(
     navHostController: NavHostController,
     addProductNavHostController: NavHostController,
     hideKeyboard: () -> Unit,
-    addProductMainViewModel: AddProductMainViewModel = hiltViewModel()
+    addProductMainViewModel: AddProductMainViewModel = hiltViewModel(),
+    onScanButtonClicked:(ScanFrom)->Unit
 ) {
-
+    val addProductBarcodeScanned by rootViewModel.addProductBarcodeScanned
+    val multiUnitBarcodeScanned by rootViewModel.multiUnitBarcodeScanned
+    LaunchedEffect(key1 = addProductBarcodeScanned){
+        addProductMainViewModel.setBarcode(addProductBarcodeScanned)
+    }
+    LaunchedEffect(key1 = multiUnitBarcodeScanned){
+        addProductMainViewModel.setMultiUnitBarcode(multiUnitBarcodeScanned)
+    }
 
     NavHost(
         navController = addProductNavHostController,
@@ -34,7 +44,8 @@ fun AddProductNavGraph(
                 navHostController = navHostController,
                 addProductNavHostController = addProductNavHostController,
                 hideKeyboard = hideKeyboard,
-                addProductMainViewModel = addProductMainViewModel
+                addProductMainViewModel = addProductMainViewModel,
+                onScanButtonClicked = onScanButtonClicked
             )
         }
         composable(route = AddProductScreens.SelectProductGroupScreen.route) {
@@ -48,7 +59,8 @@ fun AddProductNavGraph(
             MultiUnitScreen(
                 hideKeyboard = hideKeyboard,
                 addProductMainViewModel = addProductMainViewModel,
-                addProductNavHostController = addProductNavHostController
+                addProductNavHostController = addProductNavHostController,
+                onScanButtonClicked = onScanButtonClicked
             )
         }
     }
