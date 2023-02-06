@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -85,12 +84,14 @@ fun ItemSelectionRows(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             // Product name
             Box(
                 modifier = Modifier
                     .weight(2f)
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
+                contentAlignment = Alignment.Center
             ) {
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
                     value = productName,
@@ -101,7 +102,7 @@ fun ItemSelectionRows(
                                 onProductNameError()
                                 // if length is less than or equal to 3, it will call
                                 if (value.length <= 3) {
-                                    Log.e(TAG, "ItemSelectionRows: ${value.length}")
+                                    //Log.e(TAG, "ItemSelectionRows: ${value.length}")
                                     rootViewModel.setProductName(
                                         value,
                                         isItFromHomeScreen = true,
@@ -111,7 +112,7 @@ fun ItemSelectionRows(
                             },
                             modifier = Modifier.fillMaxWidth(),
                             readOnly = !productSearchMode,
-                            maxLines = 2,
+                            //maxLines = 2,
                             textStyle = TextStyle(
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
                             ),
@@ -225,7 +226,7 @@ fun ItemSelectionRows(
             // Product Quantity box
             Box(
                 modifier = Modifier
-                    .weight(0.9f)
+                    .weight(1f)
                     .padding(
                         end = 2.dp
                     )
@@ -263,7 +264,7 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Qty",
-                            //  fontSize = 10.sp,
+                            fontSize = 10.sp,
                             textAlign = if (qty.isEmpty()) TextAlign.Center else TextAlign.Start,
                             modifier = if (qty.isEmpty()) Modifier.fillMaxWidth() else Modifier
                         )
@@ -283,7 +284,7 @@ fun ItemSelectionRows(
             // Product Unit box
             Box(
                 modifier = Modifier
-                    .weight(1.3f)
+                    .weight(1.1f)
                     .padding(
                         start = 2.dp, end = 2.dp
                     )
@@ -291,36 +292,50 @@ fun ItemSelectionRows(
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
                     value = unit,
                     innerTextField = {
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            val value = if (unit.length > 3) {
-                                unit.take(3)
-                            } else {
-                                unit
-                            }
-                            Text(
-                                text = value,
-                                modifier = Modifier.weight(1f),
-                                //fontSize = 12.sp,
+                        val value = if (unit.length > 3) {
+                            unit.take(3)
+                        } else {
+                            unit
+                        }
+                        BasicTextField(
+                            value = value,
+                            onValueChange = {},
+                            textStyle = TextStyle(
+                                textAlign = TextAlign.Center,
                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
-                            )
-                            /*Icon(
+                            ),
+                            readOnly = true
+                        )
+
+                        /* Row(
+                             verticalAlignment = Alignment.CenterVertically,
+                             horizontalArrangement = Arrangement.Center,
+                             modifier = Modifier.fillMaxWidth()
+                         ) {
+                             val value = if (unit.length > 3) {
+                                 unit.take(3)
+                             } else {
+                                 unit
+                             }
+                             Text(
+                                 text = value,
+                                 modifier = Modifier.weight(1f),
+                                 //fontSize = 12.sp,
+                                 color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                             )
+                             *//*Icon(
                                 imageVector = Icons.Default.KeyboardArrowDown,
                                 contentDescription = null,
                                 tint = MaterialTheme.colors.OrangeColor,
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickable(enabled = unitsList.isNotEmpty()) {
-                                        *//* if (productName.isNotEmpty() || productName.isNotBlank()) {
+                                        *//**//* if (productName.isNotEmpty() || productName.isNotBlank()) {
                                             showDropDownMenu = true
-                                        }*//*
+                                        }*//**//*
                                     }
-                            )*/
-                        }
+                            )*//*
+                        }*/
                     },
                     enabled = true,
                     singleLine = true,
@@ -330,7 +345,7 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Unit",
-                            //fontSize = 10.sp
+                            fontSize = 10.sp
                         )
                     },
                     placeholder = {
@@ -406,7 +421,7 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Rate",
-                            //fontSize = 10.sp,
+                            fontSize = 10.sp,
                         )
                     },
                     placeholder = {
@@ -462,13 +477,12 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Disc",
-                            //fontSize = 10.sp
+                            fontSize = 10.sp
                         )
                     },
                     placeholder = {
                         Text(
                             text = "0.0",
-                            // fontSize = 10.sp
                         )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
@@ -483,7 +497,7 @@ fun ItemSelectionRows(
             // Tax percentage box. read only
             Box(
                 modifier = Modifier
-                    .weight(0.9f)
+                    .weight(1f)
                     .padding(
                         start = 2.dp, end = 2.dp
                     )
@@ -510,7 +524,12 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = if (tax.isEmpty()) "Tax" else "Tax %",
-                            // fontSize = 10.sp
+                            fontSize = 10.sp
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            text = "NA",
                         )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
@@ -553,8 +572,13 @@ fun ItemSelectionRows(
                     label = {
                         Text(
                             text = "Net",
-                            // fontSize = 10.sp,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colors.OrangeColor,
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            text = "0.0",
                         )
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(

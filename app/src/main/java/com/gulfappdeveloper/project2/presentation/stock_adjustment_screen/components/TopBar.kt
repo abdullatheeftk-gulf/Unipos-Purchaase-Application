@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -46,8 +47,9 @@ fun TopBar(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = MaterialTheme.colors.primary,
-        shape = RectangleShape
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = RectangleShape,
+        elevation = 6.dp
     ) {
         Column(
             modifier = Modifier
@@ -55,13 +57,14 @@ fun TopBar(
                 .padding(top = 8.dp),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackButtonClicked) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.OrangeColor
                     )
                 }
                 BasicTextField(
@@ -101,10 +104,15 @@ fun TopBar(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp)
+                        .height(50.dp)
                         .weight(1f)
                         .padding(all = 4.dp)
                         .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colors.primary,
+                            shape = RoundedCornerShape(16.dp)
+                        )
                         .background(color = Color.White),
                     textStyle = TextStyle(
                         fontSize = 20.sp,
@@ -120,7 +128,7 @@ fun TopBar(
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.surface
+                        tint = MaterialTheme.colors.error
                     )
                 }
 

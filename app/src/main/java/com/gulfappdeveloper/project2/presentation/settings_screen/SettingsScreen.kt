@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "SettingsScreen"
@@ -84,8 +85,9 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Settings")
+                    Text(text = "Settings", color = MaterialTheme.colors.OrangeColor)
                 },
+                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(onClick = {
                         if (!showProgressBar) {
@@ -94,7 +96,8 @@ fun SettingsScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.OrangeColor
                         )
                     }
                 },
@@ -105,7 +108,7 @@ fun SettingsScreen(
                         },
                     ) {
                         Text(
-                            text = "LOGOUT",
+                            text = "LOGOUT", color = MaterialTheme.colors.error
                         )
                     }
                 }

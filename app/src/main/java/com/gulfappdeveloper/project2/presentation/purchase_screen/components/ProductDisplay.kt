@@ -50,7 +50,7 @@ fun ProductDisplay(
                 textAlign = TextAlign.Start,
                 fontSize = 11.sp,
                 maxLines = 2,
-                modifier = Modifier.weight(5.5f),
+                modifier = Modifier.weight(5.3f),
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colors.primary
             )
@@ -87,7 +87,7 @@ fun ProductDisplay(
                 text = productSelected.vat.toString(),
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1.3f),
                 color = MaterialTheme.colors.primary
             )
             roundOff = (productSelected.net * 100f).roundToInt() / 100f
@@ -104,7 +104,7 @@ fun ProductDisplay(
                 tint = MaterialTheme.colors.OrangeColor,
                 modifier = Modifier
                     .height(18.dp)
-                    .weight(0.85f)
+                    .weight(0.75f)
                     .clickable {
                         onItemClicked(count, productSelected)
                     }

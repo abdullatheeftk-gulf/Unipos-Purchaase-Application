@@ -68,7 +68,7 @@ fun ListTile(
             imageVector = Icons.Default.Delete,
             contentDescription = null,
             tint = MaterialTheme.colors.OrangeColor,
-            modifier = Modifier.width(48.dp).clickable {
+            modifier = Modifier.size(24.dp).clickable {
                 addProductMainViewModel.deleteOneItemFromMultiUnitList(index)
             }
         )

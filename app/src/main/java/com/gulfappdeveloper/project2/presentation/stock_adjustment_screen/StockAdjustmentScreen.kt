@@ -190,6 +190,9 @@ fun StockAdjustmentScreen(
             }
         } else {
             LazyColumn {
+                item { 
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 itemsIndexed(productList) { index, pair ->
                     Surface(
                         modifier = Modifier

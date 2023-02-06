@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
@@ -52,7 +53,7 @@ fun MainScreen(
                         Text(
                             text = "PURCHASE",
                             color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontSize = 18.sp,
                             fontStyle = MaterialTheme.typography.h6.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -77,9 +78,9 @@ fun MainScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "STOCK\n ADJUSTMENT",
+                            text = "STOCK ADJUSTMENT",
                             color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontSize = 18.sp,
                             fontStyle = MaterialTheme.typography.h6.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -108,7 +109,7 @@ fun MainScreen(
                         Text(
                             text = "ADD\nPRODUCT",
                             color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontSize = 18.sp,
                             fontStyle = MaterialTheme.typography.h6.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -136,7 +137,7 @@ fun MainScreen(
                         Text(
                             text = "ADD\nCLIENT",
                             color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontSize = 18.sp,
                             fontStyle = MaterialTheme.typography.h6.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -162,7 +163,7 @@ fun MainScreen(
                         Text(
                             text = "SETTINGS",
                             color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontSize = 18.sp,
                             fontStyle = MaterialTheme.typography.h6.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -190,7 +191,7 @@ fun MainScreen(
                         Text(
                             text = "LOGOUT",
                             color = Color.Black,
-                            fontSize = MaterialTheme.typography.h6.fontSize,
+                            fontSize = 18.sp,
                             fontStyle = MaterialTheme.typography.h6.fontStyle,
                             textAlign = TextAlign.Center
                         )

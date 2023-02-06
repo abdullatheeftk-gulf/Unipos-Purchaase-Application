@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.add_product_home_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,8 +8,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -34,6 +38,14 @@ fun PriceBlock(
     showSellingPriceError:Boolean,
     hideKeyboard: () -> Unit
 ) {
+
+    val focusRequester by remember {
+        mutableStateOf(FocusRequester())
+    }
+    var focusOnPriceOutlinedTextField by remember{
+        mutableStateOf(false)
+    }
+
     Spacer(modifier = Modifier.height(25.dp))
     Text(
         text = "Price Details",
@@ -54,9 +66,9 @@ fun PriceBlock(
                 value = purchasePrice,
                 onValueChange = onPurchasePriceChange,
                 label = {
-                    Row() {
-                        Text(text = "Purchase Price")
-                        Text(
+                   // Row() {
+                        Text(text = if( purchasePrice.isNotEmpty() || focusOnPriceOutlinedTextField) "Purch price" else "Purchase price")
+                       /* Text(
                             buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
@@ -67,8 +79,8 @@ fun PriceBlock(
                                     append("*")
                                 }
                             },
-                        )
-                    }
+                        )*/
+                  //  }
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -88,7 +100,12 @@ fun PriceBlock(
                 colors = TextFieldDefaults.textFieldColors(
                     textColor = MaterialTheme.colors.primary,
                     backgroundColor = MaterialTheme.colors.surface
-                )
+                ),
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .onFocusChanged {
+                        focusOnPriceOutlinedTextField = it.isFocused
+                    }
 
             )
         }
@@ -117,7 +134,7 @@ fun PriceBlock(
                 }
             },
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
+                imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Decimal
             ),
             singleLine = true,
@@ -129,7 +146,12 @@ fun PriceBlock(
                 textColor = MaterialTheme.colors.primary,
                 backgroundColor = MaterialTheme.colors.surface
             ),
-            isError = showSellingPriceError
+            isError = showSellingPriceError,
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    hideKeyboard()
+                }
+            )
         )
         OutlinedTextField(
             value = mrp,
@@ -138,24 +160,10 @@ fun PriceBlock(
                 .weight(1f)
                 .padding(start = 4.dp),
             label = {
-                // Row() {
                 Text(text = "MRP")
-                /* Text(
-                     buildAnnotatedString {
-                         withStyle(
-                             style = SpanStyle(
-                                 color = MaterialTheme.colors.error,
-                                 baselineShift = BaselineShift.Superscript
-                             )
-                         ) {
-                             append("*")
-                         }
-                     },
-                 )*/
-                //}
             },
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
+                imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Decimal
             ),
             singleLine = true,
@@ -166,6 +174,11 @@ fun PriceBlock(
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.primary,
                 backgroundColor = MaterialTheme.colors.surface
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    hideKeyboard()
+                }
             )
         )
     }
@@ -181,7 +194,7 @@ fun PriceBlock(
                 Text(text = "Purchase Discount")
             },
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
+                imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Decimal
             ),
             singleLine = true,
@@ -192,6 +205,11 @@ fun PriceBlock(
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.primary,
                 backgroundColor = MaterialTheme.colors.surface
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    hideKeyboard()
+                }
             )
         )
         OutlinedTextField(

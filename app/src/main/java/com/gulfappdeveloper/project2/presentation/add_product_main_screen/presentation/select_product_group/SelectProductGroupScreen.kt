@@ -3,10 +3,7 @@ package com.gulfappdeveloper.project2.presentation.add_product_main_screen.prese
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -122,6 +119,9 @@ fun SelectProductGroupScreen(
         }
 
         LazyColumn {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
             itemsIndexed(productGroupList) { index, productGroup ->
 
 
@@ -130,7 +130,7 @@ fun SelectProductGroupScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                         .clickable {
-                            
+
                             addProductMainViewModel.setSelectedProductGroups(productGroup = productGroup)
                             addProductMainViewModel.clearSearchText()
 

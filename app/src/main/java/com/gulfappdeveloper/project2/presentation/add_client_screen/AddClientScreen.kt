@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -34,7 +35,6 @@ fun AddClientScreen(
     navHostController: NavHostController,
     addClientViewModel: AddClientViewModel = hiltViewModel()
 ) {
-    val baseUrl by rootViewModel.baseUrl
 
     // Add client screen navigation popUp flag, false is for navigation from the main screen
     val addClientScreenNavPopUpFlag by rootViewModel.addClientScreenNavPopUpFlag
@@ -117,14 +117,20 @@ fun AddClientScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(title = {
-                Text(text = "Add Client")
-            },
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Add Client",
+                        color = MaterialTheme.colors.OrangeColor
+                    )
+                },
+                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.OrangeColor
                         )
                     }
                 })
@@ -175,9 +181,14 @@ fun AddClientScreen(
                 },
                 maxLines = 2,
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 ),
-                isError = showClientNameError
+                isError = showClientNameError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
+                )
             )
             if (showClientNameError) {
                 Text(
@@ -214,10 +225,15 @@ fun AddClientScreen(
                 },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
+                    imeAction = ImeAction.Done,
                     capitalization = KeyboardCapitalization.Characters
                 ),
-                isError = showClientIdError
+                isError = showClientIdError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
+                )
             )
             if (showClientIdError) {
                 Text(
@@ -237,7 +253,12 @@ fun AddClientScreen(
                 },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
                 )
             )
 
@@ -462,7 +483,7 @@ fun AddClientScreen(
                         showClientIdError = true
                         return@Button
                     }
-                    addClientViewModel.addClientFun(baseUrl = baseUrl)
+                    addClientViewModel.addClientFun()
                 },
                 enabled = !showProgressBar
             ) {

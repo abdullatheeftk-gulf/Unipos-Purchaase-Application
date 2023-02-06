@@ -8,11 +8,11 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +21,7 @@ import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddPro
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components.DataEntryArea
 import com.gulfappdeveloper.project2.presentation.add_product_main_screen.presentation.multi_product_screen.components.ListArea
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.launch
 
 @Composable
@@ -33,6 +34,8 @@ fun MultiUnitScreen(
     val scaffoldState = rememberScaffoldState()
 
     val scope = rememberCoroutineScope()
+
+
 
     LaunchedEffect(key1 = true){
         addProductMainViewModel.setUnitsForMultiUnitScreen()
@@ -48,8 +51,9 @@ fun MultiUnitScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Add Multi Unit")
+                    Text(text = "Add Multi Unit", color = MaterialTheme.colors.OrangeColor)
                 },
+                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(onClick = {
                         addProductMainViewModel.clearMultiUnitDataEntryArea()
@@ -58,10 +62,23 @@ fun MultiUnitScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.OrangeColor
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = {
+                        addProductMainViewModel.clearMultiUnitDataEntryArea()
+                        addProductNavHostController.popBackStack()
+                    }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Done,
+                            contentDescription = null,
+                        )
+                    }
+                }
 
             )
         }
@@ -94,7 +111,7 @@ fun MultiUnitScreen(
                     addProductNavHostController.popBackStack()
                 }
             ) {
-                Text(text = "Submit")
+                Text(text = "OK")
             }
             Spacer(modifier = Modifier.height(300.dp))
         }

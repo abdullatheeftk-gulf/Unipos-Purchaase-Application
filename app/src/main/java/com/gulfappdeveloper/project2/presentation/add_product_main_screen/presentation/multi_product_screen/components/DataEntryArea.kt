@@ -10,7 +10,10 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -39,6 +42,8 @@ fun DataEntryArea(
     var showUnitError by remember {
         mutableStateOf(false)
     }
+
+    val focusManager = LocalFocusManager.current
 
     val productName by addProductMainViewModel.multiUnitProductName
 
@@ -75,12 +80,18 @@ fun DataEntryArea(
 
     val unitList = addProductMainViewModel.multiUnitsList
 
+
+
+
+
     Column(
-        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // First row
         Row(
-            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
@@ -92,7 +103,11 @@ fun DataEntryArea(
                     onValueChange = {},
                     enabled = false,
                     trailingIcon = {
-                        IconButton(onClick = { showDropDownMenu = true }) {
+                        IconButton(
+                            onClick = {
+                                showDropDownMenu = true
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
                                 contentDescription = null,
@@ -109,79 +124,128 @@ fun DataEntryArea(
                     isError = showUnitError,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         disabledLabelColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
-                    )
+                    ),
                 )
-                DropdownMenu(expanded = showDropDownMenu, onDismissRequest = {
-
-                    showDropDownMenu = false
-                }) {
+                DropdownMenu(
+                    expanded = showDropDownMenu,
+                    onDismissRequest = {
+                        showDropDownMenu = false
+                    }
+                ) {
                     unitList.forEachIndexed { index, unit ->
-                        DropdownMenuItem(onClick = {
-                            showUnitError = false
-                            addProductMainViewModel.setSelectedMultiUnit(unit)
-                            showDropDownMenu = false
-                        }) {
+                        DropdownMenuItem(
+                            onClick = {
+                                showUnitError = false
+                                showBarcodeError = false
+                                showProductNameError = false
+                                showPriceError = false
+                                showQtyError = false
+
+                                addProductMainViewModel.setSelectedMultiUnit(unit)
+                                showDropDownMenu = false
+                            }) {
                             Text(text = unit.unitName)
                         }
                     }
                 }
             }
 
-            OutlinedTextField(value = qty, onValueChange = { value ->
-                showQtyError = false
-                addProductMainViewModel.setMultiUnitQty(value)
-            }, label = {
-                Text(
-                    text = "Qty",
-                )
-            }, keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done, keyboardType = KeyboardType.Decimal
-            ), modifier = Modifier
-                .weight(2f)
-                .padding(start = 4.dp), textStyle = TextStyle(
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.primary,
-                fontSize = 20.sp
-            ),
+            OutlinedTextField(
+                value = qty,
+                onValueChange = { value ->
 
-                keyboardActions = KeyboardActions(onDone = {
-                    hideKeyboard()
-                }), isError = showQtyError
+                    showUnitError = false
+                    showBarcodeError = false
+                    showProductNameError = false
+                    showPriceError = false
+                    showQtyError = false
+
+                    addProductMainViewModel.setMultiUnitQty(value)
+                },
+                label = {
+                    Text(
+                        text = "Qty",
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Decimal
+                ),
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(start = 4.dp),
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.primary,
+                    fontSize = 20.sp
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
+                ),
+                isError = showQtyError
             )
 
         }
 
         // Second row
-        OutlinedTextField(value = productName, onValueChange = { value ->
-            showProductNameError = false
-            addProductMainViewModel.setMultiUnitProductName(value)
-        }, modifier = Modifier.fillMaxWidth(), label = {
-            Text(text = "Product Name")
-        }, textStyle = TextStyle(
-            color = MaterialTheme.colors.primary
-        ), keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done
-        ), keyboardActions = KeyboardActions(onDone = {
-            hideKeyboard()
-        }), maxLines = 2, isError = showProductNameError
+        OutlinedTextField(
+            value = productName,
+            onValueChange = { value ->
+
+                showUnitError = false
+                showBarcodeError = false
+                showProductNameError = false
+                showPriceError = false
+                showQtyError = false
+
+                addProductMainViewModel.setMultiUnitProductName(value)
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            label = {
+                Text(text = "Product Name")
+            },
+            textStyle = TextStyle(
+                color = MaterialTheme.colors.primary
+            ),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                hideKeyboard()
+            }),
+            maxLines = 2,
+            isError = showProductNameError
         )
 
         // Third row
         Row(modifier = Modifier.fillMaxWidth()) {
+
             OutlinedTextField(
-                value = barcode, onValueChange = { value ->
+                value = barcode,
+                onValueChange = { value ->
+                    showUnitError = false
                     showBarcodeError = false
+                    showProductNameError = false
+                    showPriceError = false
+                    showQtyError = false
+
                     addProductMainViewModel.setMultiUnitBarcode(value)
-                }, enabled = true, modifier = Modifier
+                }, enabled = true,
+                modifier = Modifier
                     .weight(2f)
-                    .padding(end = 4.dp), label = {
+                    .padding(end = 4.dp),
+                label = {
                     Text(text = "Barcode")
                 },
                 singleLine = true,
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Characters, imeAction = ImeAction.Done
-                ), keyboardActions = KeyboardActions(
+                ),
+                keyboardActions = KeyboardActions(
                     onDone = {
                         hideKeyboard()
                     }),
@@ -195,30 +259,46 @@ fun DataEntryArea(
                             onScanButtonClicked(ScanFrom.MULTI_UNIT_SCREEN)
                         }
                     ) {
-                       Icon(
-                           painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
-                           contentDescription = null,
-                           tint = MaterialTheme.colors.OrangeColor
-                       )
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.OrangeColor
+                        )
                     }
                 }
             )
 
 
-            OutlinedTextField(value = price, onValueChange = { value ->
-                showPriceError = false
-                addProductMainViewModel.setMultiUnitPrice(value)
-            }, label = {
-                Text(text = "Sales Price")
-            }, keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done, keyboardType = KeyboardType.Decimal
-            ), keyboardActions = KeyboardActions(onDone = {
-                hideKeyboard()
-            }), textStyle = TextStyle(
-                color = MaterialTheme.colors.primary, fontSize = 20.sp
-            ), modifier = Modifier
-                .weight(2f)
-                .padding(start = 4.dp), isError = showPriceError
+            OutlinedTextField(
+                value = price,
+                onValueChange = { value ->
+
+                    showUnitError = false
+                    showBarcodeError = false
+                    showProductNameError = false
+                    showPriceError = false
+                    showQtyError = false
+
+                    addProductMainViewModel.setMultiUnitPrice(value)
+                },
+                label = {
+                    Text(text = "Sales Price")
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Decimal
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.primary, fontSize = 20.sp
+                ),
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(start = 4.dp),
+                isError = showPriceError
             )
 
         }
@@ -241,19 +321,31 @@ fun DataEntryArea(
                 fontSize = MaterialTheme.typography.h6.fontSize,
                 fontStyle = MaterialTheme.typography.h6.fontStyle,
             )
-            OutlinedTextField(value = openingStock, onValueChange = { value ->
-                addProductMainViewModel.setMultiUnitOpeningStock(value)
-            }, keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done, keyboardType = KeyboardType.Decimal
-            ), modifier = Modifier
-                .width(100.dp)
-                .padding(start = 4.dp), textStyle = TextStyle(
-                textAlign = TextAlign.Center, color = MaterialTheme.colors.primary
-            ), placeholder = {
-                Text(
-                    text = "0", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center
-                )
-            })
+            OutlinedTextField(
+                value = openingStock,
+                onValueChange = { value ->
+                    addProductMainViewModel.setMultiUnitOpeningStock(value)
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Decimal
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
+                ),
+                modifier = Modifier
+                    .width(100.dp)
+                    .padding(start = 4.dp),
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.primary
+                ),
+                placeholder = {
+                    Text(
+                        text = "0", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center
+                    )
+                })
         }
         // Check box row
         Row(
@@ -269,9 +361,12 @@ fun DataEntryArea(
                 fontStyle = MaterialTheme.typography.h6.fontStyle,
                 fontSize = MaterialTheme.typography.h6.fontSize
             )
-            Checkbox(checked = isInclusive, onCheckedChange = { value ->
-                addProductMainViewModel.setMultiUnitIsInclusive(value)
-            })
+            Checkbox(
+                checked = isInclusive,
+                onCheckedChange = { value ->
+                    addProductMainViewModel.setMultiUnitIsInclusive(value)
+                }
+            )
         }
 
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -305,7 +400,9 @@ fun DataEntryArea(
                     }
 
                     addProductMainViewModel.onAddToMultiUnitListClicked()
-                }, modifier = Modifier
+                    focusManager.clearFocus()
+                },
+                modifier = Modifier
                     .weight(1f)
                     .padding(end = 4.dp)
             ) {
@@ -314,6 +411,13 @@ fun DataEntryArea(
             Button(
                 onClick = {
                     addProductMainViewModel.clearMultiUnitDataEntryArea()
+                    focusManager.clearFocus()
+
+                    showUnitError = false
+                    showBarcodeError = false
+                    showProductNameError = false
+                    showPriceError = false
+                    showQtyError = false
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -329,6 +433,13 @@ fun DataEntryArea(
             Button(
                 onClick = {
                     addProductMainViewModel.clearMultiUnitProductList()
+                    focusManager.clearFocus()
+                    showUnitError = false
+                    showBarcodeError = false
+                    showProductNameError = false
+                    showPriceError = false
+                    showQtyError = false
+
                 }, modifier = Modifier
                     .weight(1f)
                     .padding(start = 4.dp)

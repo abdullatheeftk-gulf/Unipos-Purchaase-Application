@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -19,6 +20,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.components.LicenseInformationDisplayAlertDialog
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -96,9 +98,17 @@ fun UniLicenseActivationScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(title = {
-                Text("Activate App")
-            })
+            TopAppBar(
+                title = {
+                    Text(
+                        "Activate App",
+                        color = MaterialTheme.colors.OrangeColor,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                backgroundColor = MaterialTheme.colors.surface
+            )
         }
     ) {
         it.calculateTopPadding()
@@ -123,7 +133,7 @@ fun UniLicenseActivationScreen(
                     )
                 }
             }
-            uniLicense?.let {uniLicenseDetails: UniLicenseDetails ->
+            uniLicense?.let { uniLicenseDetails: UniLicenseDetails ->
                 Row {
                     Text(
                         text = "Application License:-   ",

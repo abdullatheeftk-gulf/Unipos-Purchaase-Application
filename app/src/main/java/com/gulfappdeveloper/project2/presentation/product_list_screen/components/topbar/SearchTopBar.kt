@@ -1,8 +1,10 @@
 package com.gulfappdeveloper.project2.presentation.product_list_screen.components.topbar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,7 +35,7 @@ fun SearchTopBar(
     hideKeyboard: () -> Unit,
 ) {
     val productSearchText by rootViewModel.productName
-    TopAppBar {
+    TopAppBar(backgroundColor = MaterialTheme.colors.surface) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -94,6 +96,7 @@ fun SearchTopBar(
                     .weight(1f)
                     .padding(all = 4.dp)
                     .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
+                    .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(16.dp))
                     .background(color = Color.White),
                 textStyle = TextStyle(
                     fontSize = 20.sp,

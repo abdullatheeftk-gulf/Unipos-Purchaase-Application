@@ -85,7 +85,7 @@ class AddProductMainViewModel @Inject constructor(
         _barcode.value = value
     }
 
-    private val _openingStock = mutableStateOf("")
+    private val _openingStock = mutableStateOf("0")
     val openingStock: State<String> = _openingStock
 
     fun setOpeningStock(value: String) {
@@ -113,14 +113,14 @@ class AddProductMainViewModel @Inject constructor(
         _mrp.value = value
     }
 
-    private val _purchaseDisc = mutableStateOf("")
+    private val _purchaseDisc = mutableStateOf("0")
     val purchaseDisc: State<String> = _purchaseDisc
 
     fun setPurchaseDisc(value: String) {
         _purchaseDisc.value = value
     }
 
-    private val _salesDisc = mutableStateOf("")
+    private val _salesDisc = mutableStateOf("0")
     val salesDisc: State<String> = _salesDisc
 
     fun setSalesDisc(value: String) {
@@ -273,6 +273,9 @@ class AddProductMainViewModel @Inject constructor(
                 when (result) {
                     is GetDataFromRemote.Success -> {
                         unitsList.addAll(result.data)
+                        if (unitsList.isNotEmpty()){
+                            _productUnit.value = unitsList[0]
+                        }
                     }
                     is GetDataFromRemote.Failed -> {
                         val error = "Error:- ${result.error.code}, ${result.error.message}, $url"
@@ -381,14 +384,14 @@ class AddProductMainViewModel @Inject constructor(
         _selectedProductGroup.value = null
         _specification.value = ""
         _barcode.value = ""
-        _openingStock.value = ""
+        _openingStock.value = "0"
         _purchasePrice.value = ""
         _sellingPrice.value = ""
         _mrp.value = ""
-        _purchaseDisc.value = ""
-        _salesDisc.value =""
+        _purchaseDisc.value = "0"
+        _salesDisc.value ="0"
         _taxCategory.value = taxCategoryList[0]
-        _productUnit.value = null
+        _productUnit.value = unitsList[0]
         _isInclusive.value = true
         _isScale.value = false
         multiUnitProductList.clear()
@@ -397,13 +400,12 @@ class AddProductMainViewModel @Inject constructor(
 
     // multi unit work
 
-    private val _multiUnitScreenEvent = Channel<MultiUnitScreenEvent>()
-    val multiUnitScreenEvent = _multiUnitScreenEvent.receiveAsFlow()
+    private val _selectedMultiUnit: MutableState<Units?> = mutableStateOf(null)
+    val selectedMultiUnit: State<Units?> = _selectedMultiUnit
 
-    private fun sendMultiUnitScreenEvent(uiEvent: UiEvent){
-        viewModelScope.launch (Dispatchers.IO){
-            _multiUnitScreenEvent.send(MultiUnitScreenEvent(uiEvent))
-        }
+    fun setSelectedMultiUnit(value: Units) {
+        _selectedMultiUnit.value = value
+        _multiUnitProductName.value = _productName.value + "_" + value.unitName
     }
 
     val multiUnitsList = mutableStateListOf<Units>()
@@ -416,17 +418,13 @@ class AddProductMainViewModel @Inject constructor(
                 unit.unitId == pUnit.unitId
             }
         }
+        // initial multi unit setting
+        setSelectedMultiUnit(multiUnitsList[0])
 
     }
 
 
-    private val _selectedMultiUnit: MutableState<Units?> = mutableStateOf(null)
-    val selectedMultiUnit: State<Units?> = _selectedMultiUnit
 
-    fun setSelectedMultiUnit(value: Units) {
-        _selectedMultiUnit.value = value
-        _multiUnitProductName.value = _productName.value + "_" + value.unitName
-    }
 
     private val _multiUnitBarcode = mutableStateOf("")
     val multiUnitBarcode: State<String> = _multiUnitBarcode

@@ -1,8 +1,10 @@
 package com.gulfappdeveloper.project2.presentation.client_screen.components.appbars
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
 fun SearchTopBar(
@@ -32,7 +35,7 @@ fun SearchTopBar(
 ) {
     val searchText by rootViewModel.clientSearchText
 
-    TopAppBar {
+    TopAppBar(backgroundColor = MaterialTheme.colors.surface) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -79,6 +82,7 @@ fun SearchTopBar(
                     .weight(1f)
                     .padding(all = 4.dp)
                     .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
+                    .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(16.dp))
                     .background(color = Color.White),
                 textStyle = TextStyle(
                     fontSize = 20.sp,
@@ -90,7 +94,11 @@ fun SearchTopBar(
                 rootViewModel.clientSearch()
                 hideKeyboard()
             }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.OrangeColor
+                )
             }
             IconButton(onClick = {
                 onClearButtonClicked()

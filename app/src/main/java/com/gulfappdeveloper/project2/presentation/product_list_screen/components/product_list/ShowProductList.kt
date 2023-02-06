@@ -3,7 +3,9 @@ package com.gulfappdeveloper.project2.presentation.product_list_screen.component
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -27,6 +29,7 @@ fun ShowProductList(
     //Log.i(TAG, "ShowProductList: ")
 
     LazyColumn {
+        item { Spacer(modifier = Modifier.height(4.dp)) }
         itemsIndexed(productList) { index, product ->
             Surface(
                 modifier = Modifier

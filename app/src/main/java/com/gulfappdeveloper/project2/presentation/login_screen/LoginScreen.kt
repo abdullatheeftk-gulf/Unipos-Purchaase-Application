@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
@@ -77,8 +78,14 @@ fun LoginScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Login")
+                    Text(
+                        text = "Login",
+                        color = MaterialTheme.colors.OrangeColor,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
                 },
+                backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) {

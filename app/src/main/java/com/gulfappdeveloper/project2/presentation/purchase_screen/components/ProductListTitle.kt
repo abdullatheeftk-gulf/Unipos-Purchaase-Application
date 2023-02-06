@@ -35,11 +35,11 @@ fun ProductListTitle() {
                // textDecoration = TextDecoration.Underline
             )
             Text(
-                text = "Product Unit Name",
+                text = "Product Name",
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(5.5f),
+                modifier = Modifier.weight(5.3f),
                 //textDecoration = TextDecoration.Underline
             )
             Text(
@@ -56,7 +56,7 @@ fun ProductListTitle() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
                 modifier = Modifier.weight(1.4f),
-                textDecoration = TextDecoration.Underline,
+              //  textDecoration = TextDecoration.Underline,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -81,7 +81,7 @@ fun ProductListTitle() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 9.sp,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1.3f),
               //  textDecoration = TextDecoration.Underline
             )
             Text(
@@ -96,7 +96,7 @@ fun ProductListTitle() {
                 text = "",
                 textAlign = TextAlign.Center,
                 fontSize = 11.sp,
-                modifier = Modifier.weight(0.85f)
+                modifier = Modifier.weight(0.75f)
             )
 
         }

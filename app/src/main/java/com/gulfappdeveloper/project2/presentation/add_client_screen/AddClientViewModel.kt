@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
@@ -24,7 +25,8 @@ private const val TAG = "AddClientViewModel"
 @HiltViewModel
 class AddClientViewModel
 @Inject constructor(
-    private val useCase: UseCase
+    private val useCase: UseCase,
+    private val commonMemory:CommonMemory
 ) : ViewModel() {
 
     private val _accountName = mutableStateOf("")
@@ -65,6 +67,12 @@ class AddClientViewModel
 
     private val _taxId = mutableStateOf("")
     val taxId: State<String> = _taxId
+
+    private var _baseUrl = ""
+
+    init {
+      _baseUrl = commonMemory.baseUrl
+    }
 
 
     fun setAccountName(value: String) {
@@ -122,9 +130,9 @@ class AddClientViewModel
     private val _addClientEvent = Channel<AddClientEvent>()
     val addClientEvent = _addClientEvent.receiveAsFlow()
 
-    fun addClientFun(baseUrl: String) {
+    fun addClientFun() {
         sendAddClientEvent(UiEvent.ShowProgressBar)
-        val url = baseUrl + HttpRoutes.GET_CLIENT_DETAILS
+        val url = _baseUrl + HttpRoutes.GET_CLIENT_DETAILS
         val addClient = AddClient(
             accountName = _accountName.value,
             buildingNumber = _buildingNumber.value,

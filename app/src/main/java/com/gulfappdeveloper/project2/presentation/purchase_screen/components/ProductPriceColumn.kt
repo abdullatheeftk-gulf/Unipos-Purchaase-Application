@@ -37,7 +37,7 @@ fun ProductPriceColumn(
         ) {
             Text(
                 text = "Sub Total",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(2f)
             )
             Text(
                 text = ":",
@@ -58,7 +58,7 @@ fun ProductPriceColumn(
         ) {
             Text(
                 text = "Discount Amount",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(2f)
             )
             Text(
                 text = ":",
@@ -79,7 +79,7 @@ fun ProductPriceColumn(
         ) {
             Text(
                 text = "Vat Amount",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(2f)
             )
             Text(
                 text = ":",
@@ -100,7 +100,7 @@ fun ProductPriceColumn(
         ) {
             Text(
                 text = "Grand Total",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(2f)
             )
             Text(
                 text = ":",

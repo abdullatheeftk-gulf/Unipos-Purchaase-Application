@@ -1,13 +1,11 @@
 package com.gulfappdeveloper.project2.presentation.client_screen.components.appbars
 
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
 fun NormalTopBar(
@@ -17,13 +15,15 @@ fun NormalTopBar(
 
     TopAppBar(
         title = {
-            Text(text = "Client Details")
+            Text(text = "Client Details", color = MaterialTheme.colors.OrangeColor)
         },
+        backgroundColor = MaterialTheme.colors.surface,
         navigationIcon = {
             IconButton(onClick = onBackButtonClicked) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.OrangeColor
                 )
             }
         },

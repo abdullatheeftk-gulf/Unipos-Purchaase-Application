@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -12,6 +13,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -20,7 +22,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun OpeningStockBlock(
     openingStock: String,
-    setOpeningStock: (String) -> Unit
+    setOpeningStock: (String) -> Unit,
+    hideKeyboard:()->Unit,
+
 ) {
     Spacer(modifier = Modifier.height(20.dp))
 
@@ -48,11 +52,16 @@ fun OpeningStockBlock(
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.primary,
                 backgroundColor = MaterialTheme.colors.surface
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    hideKeyboard()
+                }
             )
         )
     }

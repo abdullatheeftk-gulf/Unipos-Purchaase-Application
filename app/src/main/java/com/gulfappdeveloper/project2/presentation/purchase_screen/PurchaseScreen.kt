@@ -232,7 +232,7 @@ fun PurchaseScreen(
                 )
         ) {
 
-            Box(
+           /* Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(color = 0x93F1ECEC)),
@@ -245,9 +245,9 @@ fun PurchaseScreen(
                         .padding(vertical = 4.dp, horizontal = 4.dp),
                     color = MaterialTheme.colors.OrangeColor
                 )
-            }
+            }*/
 
-
+            Spacer(modifier = Modifier.height(4.dp))
 
 
             FirstThreeRows(
@@ -283,7 +283,7 @@ fun PurchaseScreen(
                         width = Dp.Hairline,
                         color = if (showProductListIsEmpty) MaterialTheme.colors.error else Color.LightGray
                     ),
-                elevation = 4.dp
+                elevation = 2.dp
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Spacer(modifier = Modifier.height(4.dp))

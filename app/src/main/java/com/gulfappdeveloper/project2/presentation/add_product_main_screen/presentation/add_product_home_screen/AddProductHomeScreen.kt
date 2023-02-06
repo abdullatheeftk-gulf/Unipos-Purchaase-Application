@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -16,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -47,9 +49,10 @@ fun AddProductHomeScreen(
     addProductNavHostController: NavHostController,
     hideKeyboard: () -> Unit,
     addProductMainViewModel: AddProductMainViewModel,
-    onScanButtonClicked:(ScanFrom)->Unit
+    onScanButtonClicked: (ScanFrom) -> Unit
 ) {
 
+    val focusManager = LocalFocusManager.current
 
     val scaffoldState = rememberScaffoldState()
 
@@ -89,7 +92,7 @@ fun AddProductHomeScreen(
 
     val isScale by addProductMainViewModel.isScale
 
-    val multiUnitList =  addProductMainViewModel.multiUnitProductList
+    val multiUnitList = addProductMainViewModel.multiUnitProductList
 
 
     var showProductNameError by remember {
@@ -180,8 +183,9 @@ fun AddProductHomeScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Add Product")
+                    Text(text = "Add Product", color = MaterialTheme.colors.OrangeColor)
                 },
+                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -192,7 +196,8 @@ fun AddProductHomeScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.OrangeColor
                         )
                     }
                 },
@@ -207,10 +212,7 @@ fun AddProductHomeScreen(
                             showBarcodeError = true
                             errors = true
                         }
-                        if (purchasePrice.isEmpty()) {
-                            showPurchasePriceError = true
-                            errors = true
-                        }
+
                         if (sellingPrice.isEmpty()) {
                             showSellingPriceError = true
                             errors = true
@@ -238,14 +240,14 @@ fun AddProductHomeScreen(
     ) {
         it.calculateTopPadding()
 
-
-
         Column(
             modifier = Modifier
                 .padding(all = 8.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Product name
+
             OutlinedTextField(
                 value = productName,
                 onValueChange = { value ->
@@ -272,13 +274,18 @@ fun AddProductHomeScreen(
                     }
                 },
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     textColor = MaterialTheme.colors.primary,
                     backgroundColor = MaterialTheme.colors.surface
                 ),
-                isError = showProductNameError
+                isError = showProductNameError,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
+                )
 
             )
 
@@ -290,6 +297,8 @@ fun AddProductHomeScreen(
                 )
             }
 
+            // Local name
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = localName,
                 onValueChange = { value ->
@@ -301,13 +310,21 @@ fun AddProductHomeScreen(
                     Text(text = "Local Name")
                 },
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     textColor = MaterialTheme.colors.primary,
                     backgroundColor = MaterialTheme.colors.surface
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
                 )
             )
+
+            // Product group
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = productGroup?.pGroupName ?: "",
                 onValueChange = {},
@@ -371,6 +388,8 @@ fun AddProductHomeScreen(
                 )
             }
 
+            //Product Specification
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = specification,
                 onValueChange = { value ->
@@ -383,11 +402,16 @@ fun AddProductHomeScreen(
                     Text(text = "Product Specification")
                 },
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     textColor = MaterialTheme.colors.primary,
                     backgroundColor = MaterialTheme.colors.surface
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        hideKeyboard()
+                    }
                 )
             )
 
@@ -434,7 +458,7 @@ fun AddProductHomeScreen(
                             backgroundColor = MaterialTheme.colors.surface
                         ),
                         keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next,
+                            imeAction = ImeAction.Done,
                             capitalization = KeyboardCapitalization.Characters
                         ),
                         trailingIcon = {
@@ -449,7 +473,12 @@ fun AddProductHomeScreen(
                                     tint = MaterialTheme.colors.OrangeColor
                                 )
                             }
-                        }
+                        },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                hideKeyboard()
+                            }
+                        )
                     )
                     if (showBarcodeError) {
                         Text(
@@ -466,7 +495,8 @@ fun AddProductHomeScreen(
                 openingStock = openingStock,
                 setOpeningStock = { value ->
                     addProductMainViewModel.setOpeningStock(value)
-                }
+                },
+                hideKeyboard = hideKeyboard,
             )
 
             // Price Details
@@ -529,10 +559,10 @@ fun AddProductHomeScreen(
                     addProductMainViewModel.setIsScale(value)
                 }
             )
-            
 
 
-            if (multiUnitList.isNotEmpty()){
+
+            if (multiUnitList.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Multi Units",
@@ -565,10 +595,6 @@ fun AddProductHomeScreen(
                         showBarcodeError = true
                         errors = true
                     }
-                    if (purchasePrice.isEmpty()) {
-                        showPurchasePriceError = true
-                        errors = true
-                    }
                     if (sellingPrice.isEmpty()) {
                         showSellingPriceError = true
                         errors = true
@@ -588,6 +614,7 @@ fun AddProductHomeScreen(
                         return@Button
                     }
                     addProductMainViewModel.addProduct()
+                    focusManager.clearFocus()
                 },
                 enabled = !showProgressBar
             ) {

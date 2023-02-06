@@ -13,11 +13,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -71,8 +73,14 @@ fun SetBaseUrlScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Set Base Url")
-                }
+                    Text(
+                        text = "Set Base Url",
+                        color = MaterialTheme.colors.OrangeColor,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) {

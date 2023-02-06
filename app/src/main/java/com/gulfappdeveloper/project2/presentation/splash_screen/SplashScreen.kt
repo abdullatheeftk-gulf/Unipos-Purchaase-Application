@@ -99,10 +99,7 @@ fun SplashScreen(
                 fontFamily = FontFamily.Serif,
                 color = MaterialTheme.colors.primary
             )
-            Spacer(modifier = Modifier.height(50.dp))
-            if (showProgressBar) {
-                CircularProgressIndicator()
-            }
+           
         }
 
         if (showUrlSetButton) {
@@ -121,6 +118,19 @@ fun SplashScreen(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }
+        }
+
+        
+        if (showProgressBar) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(50.dp))
+            }
+            
         }
 
 

@@ -1018,9 +1018,9 @@ class ApiServiceImpl(
                         if (statusCode == 400) {
                             emit(
                                 GetDataFromRemote.Failed(
-                                    error = com.gulfappdeveloper.project2.domain.models.remote.Error(
+                                    error = Error(
                                         code = statusCode,
-                                        message = "Duplicate Barcode"
+                                        message = httpResponse.status.description+", Duplicate Barcode"
                                     )
                                 )
                             )
@@ -1599,10 +1599,7 @@ class ApiServiceImpl(
                     setBody(purchaseClass)
                 }
                 val statusCode = httpResponse.status.value
-               // Log.w("Test", "purchaseFunction: $purchaseClass", )
-               // Log.d("Test", "purchaseFunction: $statusCode")
-                //Log.i(TAG, "status code $statusCode")
-                // Log.w(TAG, "addClientDetails body: ${httpResponse.bodyAsText()}")
+
                 when (statusCode) {
                     in 200..299 -> {
                         emit(
@@ -1623,7 +1620,7 @@ class ApiServiceImpl(
                         if (statusCode == 400) {
                             emit(
                                 GetDataFromRemote.Failed(
-                                    error = com.gulfappdeveloper.project2.domain.models.remote.Error(
+                                    error = Error(
                                         code = statusCode,
                                         message = httpResponse.status.description
                                     )
@@ -1694,9 +1691,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
-                // e.printStackTrace()
-                //  Log.e(TAG, "AddClient ${e.message}")
-                // Log.w(TAG, "added ClientDetails: $addClient", )
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1707,8 +1702,7 @@ class ApiServiceImpl(
                 )
             } catch (e: Exception) {
 
-               // e.printStackTrace()
-             //   Log.e(TAG, "addProduct: $e")
+
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1943,9 +1937,6 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
-                // e.printStackTrace()
-                //  Log.e(TAG, "AddClient ${e.message}")
-                // Log.w(TAG, "added ClientDetails: $addClient", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
