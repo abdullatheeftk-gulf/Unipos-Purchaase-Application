@@ -31,6 +31,8 @@ import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertGeneralDat
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.license.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.login.LoginUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.price_adjustment.GetProductForPriceAdjustmentUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.price_adjustment.PriceAdjustmentUseCase
 
 data class UseCase(
 
@@ -81,6 +83,9 @@ data class UseCase(
     // Stock adjustment
     val getStockOfAProductUseCase: GetStockOfAProductUseCase,
     val adjustStocksOfProductListUseCase: AdjustStocksOfProductListUseCase,
+
+    val getProductForPriceAdjustment: GetProductForPriceAdjustmentUseCase,
+    val priceAdjustmentUseCase: PriceAdjustmentUseCase,
 
 
     // Firebase

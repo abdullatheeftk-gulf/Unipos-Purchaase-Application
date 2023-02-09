@@ -24,6 +24,7 @@ object HttpRoutes {
     const val STOCK_ADJUSTMENT = "/api/stockadjustment/"
 
     const val PRICE_ADJUSTMENT = "/api/priceupdate"
+    const val PRODUCT_FOR_PRICE_ADJUSTMENT = "/api/priceupdate/"
 
     const val UNI_LICENSE_HEADER = "riolab123456"
     const val UNI_LICENSE_ACTIVATION_URL =

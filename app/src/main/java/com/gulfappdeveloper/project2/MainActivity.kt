@@ -62,6 +62,9 @@ class MainActivity : ComponentActivity() {
                                         ScanFrom.MULTI_UNIT_SCREEN -> {
                                            rootViewModel.setMultiUnitBarcodeScanned(value)
                                         }
+                                        ScanFrom.PRICE_ADJUSTMENT_SCREEN->{
+                                            rootViewModel.searchProductByQrCodeForPriceAdjustment(value = value)
+                                        }
                                     }
 
                                 }
@@ -88,7 +91,7 @@ class MainActivity : ComponentActivity() {
                         onScanButtonClicked = { scan ->
                             scanFrom = scan
                             val scanOption = ScanOptions().apply {
-                                setPrompt("Scan for the Invoice")
+                                setPrompt("Scan for the Barcode")
                                 setBeepEnabled(true)
                                 setOrientationLocked(true)
                                 captureActivity = CaptureAct::class.java

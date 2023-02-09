@@ -28,11 +28,13 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchCl
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.license.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.login.LoginUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.price_adjustment.GetProductForPriceAdjustmentUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailByBarcodeUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.product.GetProductDetailsByNameUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.welcome.GetWelcomeMessageUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_client.AddClientUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.add_product.AddProductUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.post.price_adjustment.PriceAdjustmentUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.post.purchase.PurchaseUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.AdjustStocksOfProductListUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.GetStockOfAProductUseCase
@@ -48,7 +50,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCommonMemory():CommonMemory{
+    fun provideCommonMemory(): CommonMemory {
         return CommonMemory
     }
 
@@ -107,8 +109,14 @@ object RepositoryModule {
             getStockOfAProductUseCase = GetStockOfAProductUseCase(remoteRepository = remoteRepository),
             adjustStocksOfProductListUseCase = AdjustStocksOfProductListUseCase(remoteRepository = remoteRepository),
 
+            // Price adjustment
+            priceAdjustmentUseCase = PriceAdjustmentUseCase(remoteRepository = remoteRepository),
+            getProductForPriceAdjustment = GetProductForPriceAdjustmentUseCase(remoteRepository = remoteRepository),
+
             insertErrorDataToFireStoreUseCase = InsertErrorDataToFireStoreUseCase(firebaseRepository = firebaseRepository),
-            insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(firebaseRepository = firebaseRepository)
+            insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(
+                firebaseRepository = firebaseRepository
+            )
 
         )
     }

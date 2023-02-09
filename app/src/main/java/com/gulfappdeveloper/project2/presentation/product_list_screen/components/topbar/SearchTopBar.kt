@@ -33,6 +33,7 @@ fun SearchTopBar(
     onClearButtonClicked: () -> Unit,
     onBackButtonClicked: () -> Unit,
     hideKeyboard: () -> Unit,
+    onSearchTextIsLessThanThree:()->Unit
 ) {
     val productSearchText by rootViewModel.productName
     TopAppBar(backgroundColor = MaterialTheme.colors.surface) {
@@ -59,6 +60,9 @@ fun SearchTopBar(
                 keyboardActions = KeyboardActions(
                     onSearch = {
                         hideKeyboard()
+                        if (productSearchText.length<3){
+                            onSearchTextIsLessThanThree()
+                        }
                         rootViewModel.setProductName(
                             value = productSearchText,
                             isItFromHomeScreen = false,

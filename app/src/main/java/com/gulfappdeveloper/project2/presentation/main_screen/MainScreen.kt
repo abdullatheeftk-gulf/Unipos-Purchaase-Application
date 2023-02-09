@@ -87,7 +87,6 @@ fun MainScreen(
                     }
                 }
             }
-
             item {
                 Card(
                     modifier = Modifier
@@ -116,6 +115,35 @@ fun MainScreen(
                     }
                 }
             }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .size(width = 150.dp, height = 150.dp)
+                        .padding(24.dp)
+                        .clip(shape = RoundedCornerShape(25))
+                        .clickable {
+                            navHostController.navigate(route = RootNavScreens.ShowProductForPriceAdjustmentScreen.route)
+                        },
+                    backgroundColor = Color(0xFFE4C08C),
+                    shape = RoundedCornerShape(25)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "PRICE ADJUSTMENT",
+                            color = Color.Black,
+                            fontSize = 18.sp,
+                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+
+
 
             item {
                 Card(
@@ -171,7 +199,7 @@ fun MainScreen(
                 }
             }
 
-            item {
+            /*item {
                 Card(
                     modifier = Modifier
                         .size(width = 150.dp, height = 150.dp)
@@ -197,7 +225,7 @@ fun MainScreen(
                         )
                     }
                 }
-            }
+            }*/
         }
         if (uniLicenseDetails?.licenseType != "permanent") {
             Column(

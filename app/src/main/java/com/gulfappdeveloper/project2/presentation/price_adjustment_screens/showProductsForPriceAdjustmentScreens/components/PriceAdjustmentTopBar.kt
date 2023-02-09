@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.components
+package com.gulfappdeveloper.project2.presentation.price_adjustment_screens.showProductsForPriceAdjustmentScreens.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,23 +26,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
-fun TopBar(
+fun PriceAdjustmentTopBar(
     rootViewModel: RootViewModel,
     onScanButtonClicked: (ScanFrom) -> Unit,
     onBackButtonClicked: () -> Unit,
     hideKeyboard: () -> Unit,
     onClearButtonClicked: () -> Unit
 ) {
-
-
-    val productSearchText by rootViewModel.productNameForStockAdjustment.value
+    val productSearchText by rootViewModel.productNameForPriceAdjustment.value
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -69,11 +66,11 @@ fun TopBar(
                 BasicTextField(
                     value = productSearchText,
                     onValueChange = { value ->
-                        rootViewModel.setProductNameForStockAdjustment(value)
+                        rootViewModel.setProductNameSearchForPriceAdjustment(value)
                     },
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            rootViewModel.searchProductListByNameForStockAdjustment()
+                            rootViewModel.searchProductListByNameForPriceAdjustment()
                             hideKeyboard()
                         }
                     ),
@@ -132,7 +129,7 @@ fun TopBar(
                 }
 
                 IconButton(onClick = {
-                    onScanButtonClicked(ScanFrom.STOCK_ADJUSTMENT_SCREEN)
+                    onScanButtonClicked(ScanFrom.PRICE_ADJUSTMENT_SCREEN)
                     onClearButtonClicked()
                     hideKeyboard()
                 }) {
@@ -152,7 +149,7 @@ fun TopBar(
                     Button(
                         onClick = {
                             hideKeyboard()
-                            rootViewModel.searchProductListByNameForStockAdjustment()
+                            rootViewModel.searchProductListByNameForPriceAdjustment()
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.OrangeColor
@@ -164,7 +161,7 @@ fun TopBar(
                     Button(
                         onClick = {
                             hideKeyboard()
-                            rootViewModel.searchProductByQrCodeForStockAdjustment(productSearchText)
+                            rootViewModel.searchProductByQrCodeForPriceAdjustment(productSearchText)
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.OrangeColor

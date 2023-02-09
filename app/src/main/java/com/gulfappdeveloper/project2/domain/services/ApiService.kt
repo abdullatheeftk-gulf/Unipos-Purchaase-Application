@@ -10,11 +10,13 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Un
 import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseRequestBody
 import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseResponse
 import com.gulfappdeveloper.project2.domain.models.remote.get.login.User
+import com.gulfappdeveloper.project2.domain.models.remote.get.price_adjustment.ProductForPriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.get.see_ip.SeeIp
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.AddProduct
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
+import com.gulfappdeveloper.project2.domain.models.remote.post.price_adjustment.PriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 import kotlinx.coroutines.flow.Flow
 
@@ -48,6 +50,12 @@ interface ApiService {
     // Stock adjustment
     suspend fun getStockOfAProduct(url: String):Flow<GetDataFromRemote<ProductStock?>>
     suspend fun adjustStocksOfProductList(url: String,stockAdjustment:StockAdjustment):Flow<GetDataFromRemote<StockAdjustment>>
+
+
+    // Price adjustment
+
+    suspend fun adjustProductPrice(url:String,priceAdjustment: PriceAdjustment):Flow<GetDataFromRemote<PriceAdjustment>>
+    suspend fun getProductForPriceAdjustment(url: String):Flow<GetDataFromRemote<ProductForPriceAdjustment>>
 
     // get ip address
     suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<SeeIp>>

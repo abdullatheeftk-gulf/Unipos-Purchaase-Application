@@ -18,6 +18,7 @@ import com.gulfappdeveloper.project2.presentation.product_list_screen.components
 import com.gulfappdeveloper.project2.presentation.product_list_screen.components.topbar.SearchTopBar
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 private const val TAG = "ProductListScreen"
 
@@ -36,6 +37,8 @@ fun ProductListScreen(
     var showProgressBar by remember {
         mutableStateOf(false)
     }
+
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         rootViewModel.resetNavCounter()
@@ -92,11 +95,11 @@ fun ProductListScreen(
                 onBackButtonClicked = {
                     navHostController.popBackStack()
                     navHostController.navigate(route = RootNavScreens.PurchaseScreen.route)
-                    /*navHostController.navigate(route = RootNavScreens.PurchaseScreen.route){
-                        popUpTo(RootNavScreens.PurchaseScreen.route){
-                            inclusive = true
-                        }
-                    }*/
+                },
+                onSearchTextIsLessThanThree = {
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar("Search text is less than 3")
+                    }
                 }
             )
         }

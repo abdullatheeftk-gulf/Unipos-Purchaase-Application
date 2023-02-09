@@ -80,7 +80,7 @@ fun SplashScreen(
             verticalArrangement = Arrangement.Top,
             modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(100.dp))
             Image(
                 painter = painterResource(id = R.drawable.outline_shopping_cart_24),
                 contentDescription = null,
@@ -90,7 +90,7 @@ fun SplashScreen(
                 )
             )
             Spacer(modifier = Modifier.height(50.dp))
-            Text(
+            /*Text(
                 text = welcomeMessage,
                 fontStyle = MaterialTheme.typography.h4.fontStyle,
                 fontSize = MaterialTheme.typography.h4.fontSize,
@@ -98,7 +98,16 @@ fun SplashScreen(
                 textAlign = TextAlign.Center,
                 fontFamily = FontFamily.Serif,
                 color = MaterialTheme.colors.primary
-            )
+            )*/
+
+            if (welcomeMessage.isNotEmpty()){
+                Image(
+                    painter = painterResource(id = R.drawable.app_logo),
+                    contentDescription = null,
+                    modifier = Modifier.width(200.dp).height(150.dp),
+                    alignment = Alignment.Center
+                )
+            }
            
         }
 

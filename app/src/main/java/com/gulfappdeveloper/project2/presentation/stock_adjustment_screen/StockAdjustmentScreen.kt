@@ -126,7 +126,6 @@ fun StockAdjustmentScreen(
         topBar = {
             TopBar(
                 rootViewModel = rootViewModel,
-                navHostController = navHostController,
                 onScanButtonClicked = onScanButtonClicked,
                 onBackButtonClicked = {
                     rootViewModel.resetAllStockAdjustmentData()

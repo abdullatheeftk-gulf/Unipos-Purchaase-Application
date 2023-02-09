@@ -19,15 +19,19 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
 import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseRequestBody
+import com.gulfappdeveloper.project2.domain.models.remote.get.price_adjustment.ProductForPriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseDetail
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseMaster
+import com.gulfappdeveloper.project2.domain.models.remote.post.price_adjustment.PriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 //import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.purchase_screen.util.HomeScreenEvent
 import com.gulfappdeveloper.project2.presentation.login_screen.util.LoginScreenEvent
+import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjust_price_screen.util.AdjustPriceScreenEvent
+import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.showProductsForPriceAdjustmentScreens.util.ShowProductsForPriceAdjustmentEvent
 import com.gulfappdeveloper.project2.presentation.product_list_screen.util.ProductListScreenEvent
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.util.StockAdjustmentScreenEvent
@@ -47,7 +51,6 @@ import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.system.measureTimeMillis
 
 private const val TAG = "RootViewModel"
 
@@ -1273,16 +1276,219 @@ open class RootViewModel @Inject constructor(
     // Barcode scanning
 
     private val _addProductBarcodeScanned = mutableStateOf("")
-    val addProductBarcodeScanned:State<String> = _addProductBarcodeScanned
+    val addProductBarcodeScanned: State<String> = _addProductBarcodeScanned
 
     private val _multiUnitBarcodeScanned = mutableStateOf("")
-    val multiUnitBarcodeScanned:State<String> = _multiUnitBarcodeScanned
-    fun setAddProductBarcodeScanned(value: String){
-       _addProductBarcodeScanned.value = value
+    val multiUnitBarcodeScanned: State<String> = _multiUnitBarcodeScanned
+    fun setAddProductBarcodeScanned(value: String) {
+        _addProductBarcodeScanned.value = value
     }
 
-    fun setMultiUnitBarcodeScanned(value:String){
+    fun setMultiUnitBarcodeScanned(value: String) {
         _multiUnitBarcodeScanned.value = value
+    }
+
+
+    // Price adjustment
+
+    private val _productNameForPriceAdjustment = lazy { mutableStateOf("") }
+    val productNameForPriceAdjustment: Lazy<State<String>> = _productNameForPriceAdjustment
+
+    fun setProductNameSearchForPriceAdjustment(value: String) {
+        _productNameForPriceAdjustment.value.value = value
+    }
+
+    private val _showProductsForPriceAdjustmentEvent =
+        Channel<ShowProductsForPriceAdjustmentEvent>()
+    val showProductsForPriceAdjustmentScreenEvent =
+        _showProductsForPriceAdjustmentEvent.receiveAsFlow()
+
+    fun sendShowProductsForPriceAdjustmentScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _showProductsForPriceAdjustmentEvent.send(ShowProductsForPriceAdjustmentEvent(uiEvent = uiEvent))
+        }
+    }
+
+    private val _adjustPriceScreenEvent = Channel<AdjustPriceScreenEvent>()
+    val adjustPriceScreenEvent = _adjustPriceScreenEvent.receiveAsFlow()
+
+    private fun sendAdjustPriceScreenEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
+            _adjustPriceScreenEvent.send(AdjustPriceScreenEvent(uiEvent = uiEvent))
+        }
+    }
+
+    val productListForPriceAdjustment = lazy { mutableStateListOf<Product>() }
+
+    private val _selectedProductForPriceAdjustment: Lazy<MutableState<ProductForPriceAdjustment?>> =
+        lazy { mutableStateOf(null) }
+    val selectedProductForPriceAdjustment: Lazy<State<ProductForPriceAdjustment?>> =
+        _selectedProductForPriceAdjustment
+
+    private val _purchasePriceForPriceAdjustment = lazy { mutableStateOf("") }
+    val purchasePriceForPriceAdjustment:Lazy<State<String>> = _purchasePriceForPriceAdjustment
+
+    fun setPurchasePriceForPriceAdjustment(value: String){
+        _purchasePriceForPriceAdjustment.value.value = value
+    }
+
+    private val _salePriceForPriceAdjustment = lazy { mutableStateOf("") }
+    val salePriceForPriceAdjustment:Lazy<State<String>> = _salePriceForPriceAdjustment
+
+    fun setSalePriceForPriceAdjustment(value: String){
+        _salePriceForPriceAdjustment.value.value = value
+    }
+
+    private val _mrpForPriceAdjustment = lazy { mutableStateOf("") }
+    val mrpForPriceAdjustment:Lazy<State<String>> = _mrpForPriceAdjustment
+
+    fun setMrpForPriceAdjustment(value: String){
+        _mrpForPriceAdjustment.value.value = value
+    }
+
+
+    fun searchProductListByNameForPriceAdjustment() {
+        sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowProgressBar)
+        val url =
+            _baseUrl.value + HttpRoutes.GET_PRODUCT_DETAILS + _productNameForPriceAdjustment.value.value
+        productListForPriceAdjustment.value.clear()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductDetailsUseCase(url = url)
+                .collectLatest { result ->
+                    sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.CloseProgressBar)
+                    //Log.w(TAG, "getProductDetails: $result")
+                    if (result is GetDataFromRemote.Success) {
+                        setProductNameSearchForPriceAdjustment("")
+                        if (result.data.isEmpty()) {
+                            sendShowProductsForPriceAdjustmentScreenEvent(
+                                UiEvent.ShowEmptyList(
+                                    value = true
+                                )
+                            )
+                        } else {
+                            productListForPriceAdjustment.value.clear()
+                            result.data.forEach { product ->
+                                productListForPriceAdjustment.value.add(product)
+                            }
+                            sendShowProductsForPriceAdjustmentScreenEvent(
+                                UiEvent.ShowEmptyList(
+                                    value = false
+                                )
+                            )
+                        }
+                    }
+                    if (result is GetDataFromRemote.Failed) {
+                        sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowEmptyList(value = true))
+                        sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
+                        Log.e(
+                            TAG,
+                            "getProductDetails: ${result.error.code}, ${result.error.message} "
+                        )
+                    }
+                }
+        }
+    }
+
+    fun searchProductByQrCodeForPriceAdjustment(value: String) {
+        productListForPriceAdjustment.value.clear()
+        sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowProgressBar)
+        val url = _baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
+                sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    setProductNameSearchForPriceAdjustment("")
+                    // Log.e(TAG, "searchProductByQrCode: ${result.data}")
+                    result.data?.let { product ->
+                        productListForPriceAdjustment.value.add(product)
+                        return@collectLatest
+                    }
+                    sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowSnackBar("No product with barcode $value"))
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
+                    // Log.e(TAG, "searchProductByQrCode: ${result.error}")
+                }
+            }
+
+        }
+    }
+
+    fun getProductForPriceAdjustment(barcode: String) {
+        sendAdjustPriceScreenEvent(UiEvent.ShowProgressBar)
+        val url = _baseUrl.value + HttpRoutes.PRODUCT_FOR_PRICE_ADJUSTMENT + barcode
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.getProductForPriceAdjustment(url = url).collectLatest { result ->
+                sendAdjustPriceScreenEvent(UiEvent.CloseProgressBar)
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        _selectedProductForPriceAdjustment.value.value = result.data
+                        setPurchasePriceForPriceAdjustment(result.data.purchasePrice.toString())
+                        setSalePriceForPriceAdjustment(result.data.salePrice.toString())
+                        setMrpForPriceAdjustment(result.data.mrp.toString())
+                        Log.e(TAG, "getProductForPriceAdjustment: ${result.data}", )
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        val error = result.error
+                        val errorCode = error.code
+                        val errorMessage = error.message
+                        Log.e(TAG, "getProductForPriceAdjustment: code: $errorCode message: $errorMessage, url:$url", )
+                        sendAdjustPriceScreenEvent(UiEvent.ShowSnackBar("code: $errorCode message: $errorMessage, url:$url"))
+                        /*useCase.insertErrorDataToFireStoreUseCase(
+
+                        )*/
+                    }
+                    else -> Unit
+                }
+            }
+
+        }
+    }
+
+    fun adjustPrice(priceAdjustment: PriceAdjustment) {
+        sendAdjustPriceScreenEvent(UiEvent.ShowProgressBar)
+        val url = _baseUrl.value + HttpRoutes.PRICE_ADJUSTMENT
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.priceAdjustmentUseCase(
+                url = url,
+                priceAdjustment = priceAdjustment
+            ).collectLatest { result ->
+                sendAdjustPriceScreenEvent(UiEvent.CloseProgressBar)
+                when (result) {
+                    is GetDataFromRemote.Success -> {
+                        Log.e(TAG, "adjustPrice: ${result.data}")
+                        sendAdjustPriceScreenEvent(UiEvent.ShowAlertDialog(""))
+                    }
+                    is GetDataFromRemote.Failed -> {
+                        val errorCode = result.error.code
+                        val errorMessage = result.error.message
+                        Log.e(TAG, "code: $errorCode, errorMessage: $errorMessage")
+                        sendAdjustPriceScreenEvent(
+                            UiEvent.ShowSnackBar(message = "errorCode: $errorCode, errorMessage: $errorMessage")
+                        )
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "adjustPrice ${Date()}",
+                            errorData = FirebaseError(
+                                errorCode = errorCode,
+                                errorMessage = errorMessage ?: "",
+                                url = url
+                            )
+                        )
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+
+    fun resetAllPriceAdjustmentData() {
+        productListForPriceAdjustment.value.clear()
+        _productNameForPriceAdjustment.value.value = ""
+        _selectedProductForPriceAdjustment.value.value = null
+
     }
 
 

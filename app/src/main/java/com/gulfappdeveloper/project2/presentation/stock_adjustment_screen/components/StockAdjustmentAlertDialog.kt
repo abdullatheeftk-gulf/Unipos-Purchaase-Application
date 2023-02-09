@@ -40,7 +40,7 @@ fun StockAdjustmentAlertDialog(
             ) {
                 Text(
                     text = "Stock Adjustment",
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colors.OrangeColor,
                     fontStyle = MaterialTheme.typography.h6.fontStyle,
                     fontSize = MaterialTheme.typography.h6.fontSize,
                     textDecoration = TextDecoration.Underline
