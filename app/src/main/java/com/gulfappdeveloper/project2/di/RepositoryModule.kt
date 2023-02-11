@@ -17,6 +17,7 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counte
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counter_usecases.UpdateSerialNoUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseReadUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseSaveUseCase
+import com.gulfappdeveloper.project2.usecases.firebase_usecases.GetFirebaseLicenseUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertGeneralDataToFirebaseUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllTaxCategoriesUseCase
@@ -116,7 +117,8 @@ object RepositoryModule {
             insertErrorDataToFireStoreUseCase = InsertErrorDataToFireStoreUseCase(firebaseRepository = firebaseRepository),
             insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(
                 firebaseRepository = firebaseRepository
-            )
+            ),
+            getFirebaseLicenseUseCase = GetFirebaseLicenseUseCase(firebaseRepository = firebaseRepository)
 
         )
     }

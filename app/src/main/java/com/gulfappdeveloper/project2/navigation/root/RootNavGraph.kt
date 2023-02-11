@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gulfappdeveloper.project2.presentation.add_client_screen.AddClientScreen
-import com.gulfappdeveloper.project2.presentation.add_product_main_screen.AddProductMainScreen
+import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainScreen
 import com.gulfappdeveloper.project2.presentation.client_screen.ClientListScreen
 import com.gulfappdeveloper.project2.presentation.purchase_screen.PurchaseScreen
 import com.gulfappdeveloper.project2.presentation.login_screen.LoginScreen
@@ -30,7 +30,6 @@ fun RootNavGraph(
     deviceId: String
 ) {
 
-    rootViewModel.saveDeviceId(value = deviceId)
     NavHost(
         navController = navHostController,
         startDestination = RootNavScreens.SplashScreen.route
@@ -40,7 +39,8 @@ fun RootNavGraph(
         composable(RootNavScreens.SplashScreen.route) {
             SplashScreen(
                 navHostController = navHostController,
-                rootViewModel = rootViewModel
+                rootViewModel = rootViewModel,
+                deviceId = deviceId
             )
         }
 

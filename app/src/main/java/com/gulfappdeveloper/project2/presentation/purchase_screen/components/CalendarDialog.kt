@@ -9,7 +9,6 @@ import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val TAG = "CalendarDialog"
 
 @Composable
 fun CalendarDialog(

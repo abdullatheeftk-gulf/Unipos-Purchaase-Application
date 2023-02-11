@@ -20,7 +20,6 @@ import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelec
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlin.math.roundToInt
 
-private const val TAG = "ProductDisplay"
 
 @Composable
 fun ProductDisplay(
@@ -28,7 +27,7 @@ fun ProductDisplay(
     count: Int,
     onItemClicked: (Int, ProductSelected) -> Unit
 ) {
-    var roundOff = 0f
+    var roundOff:Float
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(

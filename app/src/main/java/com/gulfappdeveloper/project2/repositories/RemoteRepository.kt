@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project2.repositories
 
+import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
+import com.gulfappdeveloper.project2.domain.models.remote.Error
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
@@ -20,12 +22,14 @@ import com.gulfappdeveloper.project2.domain.models.remote.post.price_adjustment.
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 import com.gulfappdeveloper.project2.domain.services.ApiService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RemoteRepository @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val commonMemory:CommonMemory
 ) {
 
     suspend fun getWelcomeMessage(url: String): Flow<GetDataFromRemote<WelcomeMessage>> {
@@ -93,10 +97,21 @@ class RemoteRepository @Inject constructor(
         url: String,
         purchaseClass: PurchaseClass
     ): Flow<GetDataFromRemote<PurchaseClass>> {
-        return apiService.purchaseFunction(
-            url = url,
-            purchaseClass = purchaseClass
-        )
+        return if (commonMemory.firebaseLicense) {
+            apiService.purchaseFunction(
+                url = url,
+                purchaseClass = purchaseClass
+            )
+        }else{
+            flow {
+                GetDataFromRemote.Failed(
+                    error = Error(
+                        code = 450,
+                        message = "App License Error"
+                    )
+                )
+            }
+        }
     }
 
     // Stock adjustments

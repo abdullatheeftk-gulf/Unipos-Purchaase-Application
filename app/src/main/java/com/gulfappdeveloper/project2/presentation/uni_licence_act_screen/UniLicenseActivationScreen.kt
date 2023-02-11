@@ -23,8 +23,6 @@ import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.compone
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun UniLicenseActivationScreen(
@@ -40,6 +38,7 @@ fun UniLicenseActivationScreen(
     }
 
     val uniLicense by rootViewModel.uniLicenseDetails
+
 
     val licenseKeyActivationError by rootViewModel.licenseKeyActivationError
 
@@ -136,7 +135,7 @@ fun UniLicenseActivationScreen(
             uniLicense?.let { uniLicenseDetails: UniLicenseDetails ->
                 Row {
                     Text(
-                        text = "Application License:-   ",
+                        text = "App License:-   ",
                         fontStyle = MaterialTheme.typography.h1.fontStyle,
                         fontSize = 20.sp
                     )
@@ -209,7 +208,6 @@ fun UniLicenseActivationScreen(
                         }
                         return@Button
                     }
-
 
                     rootViewModel.uniLicenseActivation(
                         deviceId = deviceId,

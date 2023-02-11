@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjust_price_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,7 +25,6 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "AdjustPriceScreen"
 @Composable
 fun AdjustPriceScreen(
     rootViewModel: RootViewModel,
@@ -52,29 +50,29 @@ fun AdjustPriceScreen(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(key1 = true ){
-        rootViewModel.adjustPriceScreenEvent.collectLatest {value ->
-            when(val event = value.uiEvent){
-                is UiEvent.ShowProgressBar->{
+    LaunchedEffect(key1 = true) {
+        rootViewModel.adjustPriceScreenEvent.collectLatest { value ->
+            when (val event = value.uiEvent) {
+                is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
                 }
-                is UiEvent.CloseProgressBar->{
+                is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
                 }
-                is UiEvent.ShowAlertDialog->{
+                is UiEvent.ShowAlertDialog -> {
                     showSuccessAlertDialog = true
                 }
-                is UiEvent.ShowSnackBar->{
+                is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(event.message)
                 }
 
-                else->Unit
+                else -> Unit
 
             }
         }
     }
 
-    if (showSuccessAlertDialog){
+    if (showSuccessAlertDialog) {
         ShowSuccessAlertDialog {
             rootViewModel.resetAllPriceAdjustmentData()
             navHostController.backQueue.clear()
@@ -199,7 +197,9 @@ fun AdjustPriceScreen(
                         showError = false
                         rootViewModel.setPurchasePriceForPriceAdjustment(value)
                     },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     keyboardActions = KeyboardActions(
                         onDone = {
                             hideKeyboard()
@@ -225,7 +225,9 @@ fun AdjustPriceScreen(
                         showError = false
                         rootViewModel.setSalePriceForPriceAdjustment(value)
                     },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     keyboardActions = KeyboardActions(
                         onDone = {
                             hideKeyboard()

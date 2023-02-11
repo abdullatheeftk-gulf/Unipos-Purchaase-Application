@@ -8,11 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
@@ -22,12 +18,12 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "SplashScreen"
 
 @Composable
 fun SplashScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
+    deviceId:String
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -54,6 +50,7 @@ fun SplashScreen(
                 }
                 is UiEvent.Navigate -> {
                     delay(2000L)
+                    rootViewModel.saveDeviceId(value = deviceId)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
                 }
@@ -90,15 +87,6 @@ fun SplashScreen(
                 )
             )
             Spacer(modifier = Modifier.height(50.dp))
-            /*Text(
-                text = welcomeMessage,
-                fontStyle = MaterialTheme.typography.h4.fontStyle,
-                fontSize = MaterialTheme.typography.h4.fontSize,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                fontFamily = FontFamily.Serif,
-                color = MaterialTheme.colors.primary
-            )*/
 
             if (welcomeMessage.isNotEmpty()){
                 Image(

@@ -24,7 +24,6 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "SettingsScreen"
 
 @Composable
 fun SettingsScreen(
@@ -44,6 +43,8 @@ fun SettingsScreen(
     var showProgressBar by remember {
         mutableStateOf(false)
     }
+
+    val uniLicenseDetails by rootViewModel.uniLicenseDetails
 
 
     val currentBaseUrl by rootViewModel.baseUrl
@@ -146,7 +147,6 @@ fun SettingsScreen(
 
                         hideKeyboard()
                         if (urlValidator(baseUrl = text)) {
-
                             settingScreenViewModel.setBaseUrl(value = text)
                         } else {
                             settingScreenViewModel.onErrorUrl(url = text)
@@ -176,6 +176,20 @@ fun SettingsScreen(
                 Text(text = "Set Base Url")
             }
             Spacer(modifier = Modifier.height(30.dp))
+            uniLicenseDetails?.let {uniLicense->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "App License")
+                    Text(text = " : ")
+                    Text(
+                        text = uniLicense.licenseKey,
+                        color = MaterialTheme.colors.OrangeColor
+                    )
+
+                }
+            }
         }
 
         if (showProgressBar) {

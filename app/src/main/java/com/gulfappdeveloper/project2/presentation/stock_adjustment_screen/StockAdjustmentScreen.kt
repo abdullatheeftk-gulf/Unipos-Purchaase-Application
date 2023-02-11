@@ -1,12 +1,10 @@
 package com.gulfappdeveloper.project2.presentation.stock_adjustment_screen
 
-import android.util.Log
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -28,7 +26,6 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "StockAdjustmentScreen"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -100,7 +97,6 @@ fun StockAdjustmentScreen(
                 },
                 hideKeyboard = {
                     hideKeyboard()
-                    Log.e(TAG, "StockAdjustmentScreen: ")
                 },
                 productForStockAdjustment = it,
                 index = indexSelectedForStockAdjustment

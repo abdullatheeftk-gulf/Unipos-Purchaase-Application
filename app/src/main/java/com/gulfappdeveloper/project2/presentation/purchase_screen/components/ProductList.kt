@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
-private const val TAG = "ProductList"
 
 @Composable
 fun ProductList(
@@ -23,10 +22,7 @@ fun ProductList(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
-        /*.clickable {
-            Log.e(TAG, "ProductList: df",)
-        }*/,
+            .fillMaxWidth(),
         contentPadding = PaddingValues(vertical = 4.dp),
         state = lazyColumnState
     ) {

@@ -3,6 +3,7 @@ package com.gulfappdeveloper.project2.presentation.settings_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
+import com.gulfappdeveloper.project2.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
@@ -12,6 +13,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,7 +45,7 @@ class SettingScreenViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
-                  /*  useCase.insertErrorDataToFireStoreUseCase(
+                    useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = collectionName,
                         documentName = "SettingScreen,getWelcomeMessage,${Date()}",
                         errorData = FirebaseError(
@@ -52,7 +54,7 @@ class SettingScreenViewModel @Inject constructor(
                             url = url,
                             ipAddress = ""
                         )
-                    )*/
+                    )
                 }
             }
         }

@@ -22,7 +22,8 @@ fun ProductButtonRow(
     onAdditionalDiscountAdded:()->Unit,
     onFreightChargeAdded:()->Unit,
     onQuantityError: (Boolean) -> Unit,
-    onBarcodeError: (Boolean) -> Unit
+    onClearButtonClicked:()->Unit,
+    onBarcodeError: (Boolean) -> Unit,
 ) {
     val productName by rootViewModel.productName
     val qty by rootViewModel.qty
@@ -49,6 +50,7 @@ fun ProductButtonRow(
                     return@Button
                 }
                 onProductAdded()
+
             },
             contentPadding = PaddingValues(
                 horizontal = 2.dp
@@ -66,6 +68,7 @@ fun ProductButtonRow(
         Button(
             onClick = {
                 rootViewModel.resetSelectedProduct()
+                onClearButtonClicked()
             },
             modifier = Modifier
                 .weight(1f)
@@ -80,9 +83,10 @@ fun ProductButtonRow(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = null,
-                modifier = Modifier.scale(0.8f)
+                modifier = Modifier.scale(0.8f),
+                tint = MaterialTheme.colors.surface
             )
-            Text(text = "Clear")
+            Text(text = "Clear", color = MaterialTheme.colors.surface)
 
         }
         Column(

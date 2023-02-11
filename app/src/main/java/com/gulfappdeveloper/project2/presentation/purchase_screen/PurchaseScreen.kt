@@ -1,7 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -14,11 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
@@ -26,12 +25,9 @@ import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.purchase_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
-import com.gulfappdeveloper.project2.presentation.ui_util.keyboardAsState
-import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-private const val TAG = "PurchaseScreen"
 
 @Composable
 fun PurchaseScreen(
@@ -39,13 +35,15 @@ fun PurchaseScreen(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: (ScanFrom) -> Unit,
     rootViewModel: RootViewModel,
-    purchaseScreenViewModel: PurchaseScreenViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
 
     val scaffoldState = rememberScaffoldState()
     val lazyColumState = rememberLazyListState()
+    val scrollState = rememberScrollState()
+
+    val fManager  = LocalFocusManager.current
 
     val selectedProductList = rootViewModel.selectedProductList
 
@@ -54,10 +52,6 @@ fun PurchaseScreen(
     val additionalDiscount by rootViewModel.additionalDiscount
 
 
-    val listState = rememberLazyListState()
-
-    val isKeyBoardOpen by keyboardAsState()
-
     var showCalendar by remember {
         mutableStateOf(false)
     }
@@ -65,9 +59,6 @@ fun PurchaseScreen(
         mutableStateOf(false)
     }
 
-    /* var showAddClientDialog by remember {
-         mutableStateOf(false)
-     }*/
 
     var showProductNameError by remember {
         mutableStateOf(false)
@@ -80,6 +71,7 @@ fun PurchaseScreen(
     var showListEditAlertDialog by remember {
         mutableStateOf(false)
     }
+
 
     var productSelectedForList: ProductSelected? by remember {
         mutableStateOf(null)
@@ -112,29 +104,7 @@ fun PurchaseScreen(
     }
 
 
-    LaunchedEffect(key1 = true) {
-        purchaseScreenViewModel.uiEvent.collectLatest { value ->
-            when (value) {
-                is UiEvent.AnimateWithKeyBoard -> {
-                    // Log.d(TAG, "event: AnimateWithKeyBoard ")
-                    listState.animateScrollToItem(2)
-                }
-                is UiEvent.AnimateBackWithKeyBoard -> {
-                    // Log.e(TAG, "event: AnimateBackWithKeyBoard ")
-                    listState.animateScrollToItem(0)
-                }
-                else -> Unit
-            }
-        }
-    }
 
-    LaunchedEffect(key1 = isKeyBoardOpen,
-        block = {
-            if (isKeyBoardOpen.name == "Closed") {
-                listState.scrollToItem(0)
-            }
-        }
-    )
 
     LaunchedEffect(key1 = true) {
         rootViewModel.homeScreenEvent.collectLatest { value ->
@@ -163,9 +133,6 @@ fun PurchaseScreen(
 
         }
     }
-
-
-    // Log.d(TAG, "PurchaseScreen: ${isKeyBoardOpen.name}")
 
 
     if (showCalendar) {
@@ -198,6 +165,10 @@ fun PurchaseScreen(
             rootViewModel.setShowAdditionalDiscount(false)
             rootViewModel.setShowFreightCharge(false)
             rootViewModel.resetAll()
+            scope.launch {
+                scrollState.scrollTo(0)
+            }
+            fManager.clearFocus()
         }
     }
 
@@ -219,6 +190,42 @@ fun PurchaseScreen(
                 navHostController = navHostController,
                 rootViewModel = rootViewModel
             )
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            val billNo by rootViewModel.billNo
+            val selectedClient by rootViewModel.selectedClient
+            Button(
+                onClick = {
+                    if (selectedProductList.isEmpty()) {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar("Product List is empty")
+                        }
+                        showProductListIsEmpty = true
+                        return@Button
+                    }
+
+                    if (billNo.isEmpty() || billNo.isBlank()) {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar("Bill no is not entered")
+                        }
+                        showBillNoError = true
+                        return@Button
+                    }
+                    if (selectedClient == null) {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar("Client is not selected")
+                        }
+                        showClientError = true
+                        return@Button
+                    }
+
+                    rootViewModel.submitFun()
+                },
+                enabled = !showProgressBar
+            ) {
+                Text(text = "Submit")
+            }
         }
     ) {
         it.calculateTopPadding()
@@ -228,24 +235,10 @@ fun PurchaseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(
-                    rememberScrollState()
+                    scrollState
                 )
         ) {
 
-           /* Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(color = 0x93F1ECEC)),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Text(
-                    text = "Enter purchase details :",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 4.dp),
-                    color = MaterialTheme.colors.OrangeColor
-                )
-            }*/
 
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -342,6 +335,7 @@ fun PurchaseScreen(
                             lazyColumState.scrollToItem(selectedProductList.size - 1)
                         }
                     }
+                    fManager.clearFocus()
                 },
                 onProductNameError = {
                     showProductNameError = true
@@ -362,6 +356,9 @@ fun PurchaseScreen(
                 },
                 onFreightChargeAdded = {
                     rootViewModel.setShowFreightCharge(true)
+                },
+                onClearButtonClicked = {
+                    fManager.clearFocus()
                 }
             )
 
@@ -441,43 +438,6 @@ fun PurchaseScreen(
             ProductPriceColumn(
                 rootViewModel = rootViewModel
             )
-
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            val billNo by rootViewModel.billNo
-            val selectedClient by rootViewModel.selectedClient
-            Button(
-                onClick = {
-                    if (selectedProductList.isEmpty()) {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Product List is empty")
-                        }
-                        showProductListIsEmpty = true
-                        return@Button
-                    }
-
-                    if (billNo.isEmpty() || billNo.isBlank()) {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Bill no is not entered")
-                        }
-                        showBillNoError = true
-                        return@Button
-                    }
-                    if (selectedClient == null) {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Client is not selected")
-                        }
-                        showClientError = true
-                        return@Button
-                    }
-
-                    rootViewModel.submitFun()
-                },
-                enabled = !showProgressBar
-            ) {
-                Text(text = "Submit")
-            }
 
             Spacer(modifier = Modifier.height(300.dp))
 

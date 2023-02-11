@@ -1,10 +1,11 @@
 package com.gulfappdeveloper.project2.presentation.ui_util
 
-import android.graphics.Rect
+/*import android.graphics.Rect
 import android.view.ViewTreeObserver
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalView*/
 
+/*
 enum class Keyboard {
     Opened, Closed
 }
@@ -33,4 +34,4 @@ fun keyboardAsState(): State<Keyboard> {
     }
 
     return keyboardState
-}
+}*/

@@ -13,8 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.gulfappdeveloper.project2.navigation.root.RootViewModel
-import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 
 @Composable
 fun ShowSuccessAlertDialog(
@@ -22,7 +20,7 @@ fun ShowSuccessAlertDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        shape = RoundedCornerShape(4),
+        shape = RoundedCornerShape(10),
         buttons = {
             Column(modifier = Modifier.padding(all = 12.dp)) {
                 Text(

@@ -134,6 +134,25 @@ fun AddClientScreen(
                         )
                     }
                 })
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            Button(
+                onClick = {
+                    if (accountName.isEmpty()) {
+                        showClientNameError = true
+                        return@Button
+                    }
+                    if (taxId.isEmpty()) {
+                        showClientIdError = true
+                        return@Button
+                    }
+                    addClientViewModel.addClientFun()
+                },
+                enabled = !showProgressBar
+            ) {
+                Text(text = "Add Client")
+            }
         }
     ) {
         if (showProgressBar) {
@@ -472,23 +491,6 @@ fun AddClientScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(25.dp))
-            Button(
-                onClick = {
-                    if (accountName.isEmpty()) {
-                        showClientNameError = true
-                        return@Button
-                    }
-                    if (taxId.isEmpty()) {
-                        showClientIdError = true
-                        return@Button
-                    }
-                    addClientViewModel.addClientFun()
-                },
-                enabled = !showProgressBar
-            ) {
-                Text(text = "Add")
-            }
 
             Spacer(modifier = Modifier.height(200.dp))
 

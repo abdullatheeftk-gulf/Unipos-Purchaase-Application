@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +10,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -24,14 +25,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-//import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import java.text.SimpleDateFormat
 import java.util.*
-
-private const val TAG = "FirstThreeRows"
 
 
 @Composable
@@ -47,19 +45,14 @@ fun FirstThreeRows(
     hideKeyboard: () -> Unit
 ) {
 
-    var showDropDownMenu by remember {
-        mutableStateOf(false)
-    }
 
     val selectedDate by rootViewModel.selectedDate
+
+
 
     val billNo by rootViewModel.billNo
 
     val selectedClient by rootViewModel.selectedClient
-
-   // val poNo by rootViewModel.poNo
-
-    //val payMode by rootViewModel.payMode
 
 
     val focusRequester = remember {
@@ -129,10 +122,6 @@ fun FirstThreeRows(
                         onSelectDateClicked()
                     }
                     .onFocusChanged {
-                        Log.e(
-                            TAG,
-                            "FirstThreeRows: ${it.hasFocus} ${it.hasFocus} ${it.isCaptured}",
-                        )
 
                         if (it.hasFocus) {
                             onSelectDateClicked()

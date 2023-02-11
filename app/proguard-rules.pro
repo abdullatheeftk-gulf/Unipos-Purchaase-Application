@@ -28,6 +28,6 @@
 }
 # lookup for plugin generated serializable classes
 -if @kotlinx.serialization.Serializable class com.gulfappdeveloper.project2.**
--keepclassmembers class com.gulfappdeveloper.project3.<1>$Companion {
+-keepclassmembers class com.gulfappdeveloper.project2.<1>$Companion {
     kotlinx.serialization.KSerializer serializer(...);
 }

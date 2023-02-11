@@ -2,6 +2,8 @@ package com.gulfappdeveloper.project2.domain.services
 
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseGeneralData
+import com.gulfappdeveloper.project2.domain.firebase.FirebaseLicense
+
 
 interface FirebaseService {
     suspend fun insertErrorDataToFireStore(
@@ -14,4 +16,6 @@ interface FirebaseService {
         collectionName: String,
         firebaseGeneralData: FirebaseGeneralData
     )
+
+    suspend fun getFirebaseLicense(onGetFirebaseLicense:(FirebaseLicense)->Unit)
 }

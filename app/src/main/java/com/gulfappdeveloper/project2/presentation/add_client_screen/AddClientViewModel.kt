@@ -26,7 +26,7 @@ private const val TAG = "AddClientViewModel"
 class AddClientViewModel
 @Inject constructor(
     private val useCase: UseCase,
-    private val commonMemory:CommonMemory
+    commonMemory:CommonMemory
 ) : ViewModel() {
 
     private val _accountName = mutableStateOf("")

@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -22,7 +21,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
@@ -32,7 +30,6 @@ import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlin.math.roundToInt
 
-private const val TAG = "ItemSelectionRows"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -70,12 +67,9 @@ fun ItemSelectionRows(
         MutableInteractionSource()
     }
 
-    var showDropDownMenu by remember {
-        mutableStateOf(false)
-    }
 
 
-    var roundOff = 0f
+    var roundOff:Float
 
 
     Column() {
@@ -102,7 +96,6 @@ fun ItemSelectionRows(
                                 onProductNameError()
                                 // if length is less than or equal to 3, it will call
                                 if (value.length <= 3) {
-                                    //Log.e(TAG, "ItemSelectionRows: ${value.length}")
                                     rootViewModel.setProductName(
                                         value,
                                         isItFromHomeScreen = true,
@@ -385,11 +378,6 @@ fun ItemSelectionRows(
                     )
             ) {
 
-                /*roundOff = if (rate.isNotEmpty()||rate.isNotBlank()) {
-                    ((rate.toFloat() * 100f).roundToInt()) / 100f
-                }else{
-                    0f
-                }*/
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
                     value = rate,
                     innerTextField = {
@@ -583,8 +571,8 @@ fun ItemSelectionRows(
                     },
                     contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
                         start = 8.dp,
-                        top = 8.dp,
-                        bottom = 8.dp,
+                        top = if (rate.isEmpty()) 9.dp else 8.dp,
+                        bottom = if (rate.isEmpty()) 9.dp else 8.dp,
                         end = 2.dp,
                     ),
                 )
@@ -593,7 +581,7 @@ fun ItemSelectionRows(
     }
 }
 
-@Composable
+/*@Composable
 fun AutoResizedText(
     modifier: Modifier = Modifier,
     text: String,
@@ -636,6 +624,6 @@ fun AutoResizedText(
             }
         }
     )
-}
+}*/
 
 

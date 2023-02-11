@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.booleanResource
 import androidx.navigation.compose.rememberNavController
 import com.gulfappdeveloper.project2.navigation.root.RootNavGraph
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
@@ -24,7 +25,7 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "MainActivity"
+//private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -35,12 +36,13 @@ class MainActivity : ComponentActivity() {
         val rootViewModel by viewModels<RootViewModel>()
         var scanFrom: ScanFrom = ScanFrom.PURCHASE_SCREEN
 
-        val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+        val deviceId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)+"AB"
 
-        Log.e(TAG, "onCreate: ${BuildConfig.DEBUG}", )
         setContent {
 
             Project2Theme {
+                val isTablet = booleanResource(id = R.bool.is_tablet)
+                Log.e("Test", "onCreate: $isTablet", )
 
                 val launcher =
                     rememberLauncherForActivityResult(contract = ScanContract(), onResult = {
@@ -69,7 +71,6 @@ class MainActivity : ComponentActivity() {
 
                                 }
                             } catch (e: Exception) {
-                                // Log.e(TAG, "onCreate: ${e.message}", )
                                 Toast.makeText(this, "Error in Scanning", Toast.LENGTH_LONG).show()
                             }
 

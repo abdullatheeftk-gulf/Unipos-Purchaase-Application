@@ -26,6 +26,7 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.stock_adjustment.Ge
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.serial_counter_usecases.UpdateSerialNoUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseReadUseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_save_use_cases.UniLicenseSaveUseCase
+import com.gulfappdeveloper.project2.usecases.firebase_usecases.GetFirebaseLicenseUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertGeneralDataToFirebaseUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
@@ -90,5 +91,6 @@ data class UseCase(
 
     // Firebase
     val insertGeneralDataToFirebaseUseCase: InsertGeneralDataToFirebaseUseCase,
-    val insertErrorDataToFireStoreUseCase: InsertErrorDataToFireStoreUseCase
+    val insertErrorDataToFireStoreUseCase: InsertErrorDataToFireStoreUseCase,
+    val getFirebaseLicenseUseCase: GetFirebaseLicenseUseCase
 )

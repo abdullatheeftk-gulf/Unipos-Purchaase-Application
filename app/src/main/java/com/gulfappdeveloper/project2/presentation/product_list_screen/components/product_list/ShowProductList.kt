@@ -1,14 +1,12 @@
 package com.gulfappdeveloper.project2.presentation.product_list_screen.components.product_list
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -17,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.*
 
-private const val TAG = "ShowProductList"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -26,11 +23,10 @@ fun ShowProductList(
 ) {
     val productList = rootViewModel.productList
 
-    //Log.i(TAG, "ShowProductList: ")
 
     LazyColumn {
         item { Spacer(modifier = Modifier.height(4.dp)) }
-        itemsIndexed(productList) { index, product ->
+        items(productList) {  product ->
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()

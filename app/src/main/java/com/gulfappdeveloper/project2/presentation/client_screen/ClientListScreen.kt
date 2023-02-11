@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.presentation.client_screen
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,6 @@ import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScree
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 
-private const val TAG = "ClientListScreen"
 
 @Composable
 fun ClientListScreen(
@@ -64,7 +62,6 @@ fun ClientListScreen(
     }
 
     BackHandler(true) {
-       // Log.e(TAG, "ClientListScreen: $normalAndSearchTobBarToggle")
         if (normalAndSearchTobBarToggle) {
             navHostController.popBackStack()
         } else {

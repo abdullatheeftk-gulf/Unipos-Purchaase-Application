@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.navigation.root
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -13,6 +12,7 @@ import com.gulfappdeveloper.project2.data.firebase.FirebaseConst
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseError
+import com.gulfappdeveloper.project2.domain.firebase.FirebaseGeneralData
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -26,7 +26,6 @@ import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseDetail
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseMaster
 import com.gulfappdeveloper.project2.domain.models.remote.post.price_adjustment.PriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
-//import com.gulfappdeveloper.project2.domain.models.util.PayMode
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.purchase_screen.util.HomeScreenEvent
 import com.gulfappdeveloper.project2.presentation.login_screen.util.LoginScreenEvent
@@ -52,7 +51,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "RootViewModel"
 
 @HiltViewModel
 open class RootViewModel @Inject constructor(
@@ -97,7 +95,6 @@ open class RootViewModel @Inject constructor(
     val productListScreenEvent = _productListScreenEvent.receiveAsFlow()
 
     private val _operationCount = mutableStateOf(0)
-    //protected val operationCount: State<Int> = _operationCount
 
 
     private val _baseUrl = mutableStateOf(HttpRoutes.BASE_URL)
@@ -122,17 +119,6 @@ open class RootViewModel @Inject constructor(
     private val _selectedClient: MutableState<ClientDetails?> = mutableStateOf(null)
     val selectedClient: State<ClientDetails?> = _selectedClient
 
-
-    /*// selected Po no
-    private val _poNo = mutableStateOf("")
-    val poNo: State<String> = _poNo*/
-
-    // Selected Pay mode
-/*    private val _payMode = mutableStateOf(PayMode.Cash)
-    val payMode: State<PayMode> = _payMode*/
-
-    /* Product selection addition rows*/
-
     // product search text to search products
     private val _productName = mutableStateOf("")
     val productName: State<String> = _productName
@@ -144,11 +130,8 @@ open class RootViewModel @Inject constructor(
     // Product  list
     val productList = mutableStateListOf<Product>()
 
-    /*  private val _selectedProduct: MutableState<Product?> = mutableStateOf(null)
-      val selectedProduct: State<Product?> = _selectedProduct*/
 
     private val _productId = mutableStateOf(0)
-    // private val productId: State<Int> = _productId
 
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
@@ -206,7 +189,7 @@ open class RootViewModel @Inject constructor(
     // Add Product screen navigation from which screen check
     // true is from mainScreen
     private val _addProductNavFrom = mutableStateOf(true)
-    val navFrom: State<Boolean> = _addProductNavFrom
+    //val navFrom: State<Boolean> = _addProductNavFrom
 
     fun setNavFrom(value: Boolean) {
         _addProductNavFrom.value = value
@@ -222,6 +205,15 @@ open class RootViewModel @Inject constructor(
         readBaseUrl()
         readSerialNo()
         readDeviceId()
+        getFirebaseLicense()
+    }
+
+    private fun getFirebaseLicense() {
+        viewModelScope.launch {
+            useCase.getFirebaseLicenseUseCase { firebaseLicense ->
+                commonMemory.firebaseLicense = firebaseLicense.license
+            }
+        }
     }
 
 
@@ -229,28 +221,24 @@ open class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readDeviceIdUseCase().collectLatest {
                 _deviceIdSate.value = it
-                Log.w(TAG, "readDeviceId: ${_deviceIdSate.value}")
             }
         }
     }
 
     fun saveDeviceId(value: String) {
         viewModelScope.launch {
-            useCase.saveDeviceIdUseCase(deviceId = value)
+            if (_deviceIdSate.value.isEmpty()) {
+                useCase.saveDeviceIdUseCase(deviceId = value)
+            }
         }
     }
 
 
     // No of login
     private fun readSerialNo() {
-        // Log.i(TAG, "readSerialNo: ")
         viewModelScope.launch {
             useCase.readSerialNoCountUseCase().collect {
-                // Log.d(TAG, "readSerialNo: $it")
-
                 _serialNo.value = it
-
-
             }
         }
     }
@@ -264,7 +252,6 @@ open class RootViewModel @Inject constructor(
     private fun readOperationCount() {
         viewModelScope.launch {
             useCase.readOperationCountUseCase().collectLatest {
-                // Log.d(TAG, "readOperationCount: $it")
                 _operationCount.value = it
             }
         }
@@ -273,11 +260,9 @@ open class RootViewModel @Inject constructor(
     private fun readBaseUrl() {
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collectLatest {
-                // Log.i(TAG, "readBaseUrl: $it")
                 _baseUrl.value = it
                 if (!isInitialLoadingFinished) {
                     getWelcomeMessage()
-                    getAllUnits()
                     getIp4Address()
                     isInitialLoadingFinished = true
                 }
@@ -299,9 +284,7 @@ open class RootViewModel @Inject constructor(
 
                     if (BuildConfig.DEBUG) {
                         sendSplashScreenEvent(
-                            UiEvent.Navigate(
-                                route = RootNavScreens.LoginScreen.route
-                            )
+                            UiEvent.Navigate(route = RootNavScreens.LoginScreen.route)
                         )
                     } else {
                         readUniLicenseKeyDetails()
@@ -312,7 +295,6 @@ open class RootViewModel @Inject constructor(
                     val error = result.error
                     val errorMessage =
                         "code:- ${error.code}, message:- ${error.message}, url:- $url"
-
                     sendSplashScreenEvent(UiEvent.ShowSnackBar(message = errorMessage))
                     sendSplashScreenEvent(UiEvent.ShowButton1)
                     useCase.insertErrorDataToFireStoreUseCase(
@@ -321,7 +303,8 @@ open class RootViewModel @Inject constructor(
                         errorData = FirebaseError(
                             errorMessage = errorMessage,
                             errorCode = error.code,
-                            ipAddress = _publicIpAddress
+                            ipAddress = _publicIpAddress,
+                            url = url
                         )
                     )
                 }
@@ -354,11 +337,11 @@ open class RootViewModel @Inject constructor(
                 sendLoginScreenEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
+                        getAllUnits()
                         _userId = result.data.userId
 
                         // common memory user id set 25/01/2023
                         commonMemory.userId = _userId.toShort()
-                        // Log.d(TAG, "loginUser: $_userId")
                         // update login counter
                         sendLoginScreenEvent(UiEvent.Navigate(route = RootNavScreens.MainScreen.route))
                         useCase.updateSerialNoUseCase()
@@ -367,7 +350,6 @@ open class RootViewModel @Inject constructor(
                         val error = result.error
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
-                        Log.e(TAG, "loginUser: $errorMessage")
 
                         sendLoginScreenEvent(UiEvent.ShowSnackBar(errorMessage))
                         useCase.insertErrorDataToFireStoreUseCase(
@@ -376,7 +358,8 @@ open class RootViewModel @Inject constructor(
                             errorData = FirebaseError(
                                 errorMessage = errorMessage,
                                 errorCode = error.code,
-                                ipAddress = _publicIpAddress
+                                ipAddress = _publicIpAddress,
+                                url = url
                             )
                         )
                     }
@@ -415,18 +398,16 @@ open class RootViewModel @Inject constructor(
                         val error = result.error
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
-                        Log.e(TAG, "getIp4Address: $errorMessage")
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
-                            documentName = "loginUser,${Date()}",
+                            documentName = "getIp4Address,${Date()}",
                             errorData = FirebaseError(
                                 errorMessage = errorMessage,
                                 errorCode = error.code,
-                                ipAddress = _publicIpAddress
+                                ipAddress = _publicIpAddress,
+                                url = url
                             )
                         )
-
-
                     }
                     else -> Unit
                 }
@@ -444,15 +425,10 @@ open class RootViewModel @Inject constructor(
     fun getClientDetails() {
         sendClientScreenEvent(UiEvent.ShowProgressBar)
         val url = _baseUrl.value + HttpRoutes.GET_CLIENT_DETAILS
-        try {
-            clientDetailsList.clear()
-        } catch (e: Exception) {
-            // Log.e(TAG, "getClientDetails: ${e.message}")
-        }
+        clientDetailsList.clear()
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getClientDetailsUseCase(url = url)
                 .collectLatest { result ->
-                    //Log.i(TAG, "getClientDetails: $result")
                     sendClientScreenEvent(UiEvent.CloseProgressBar)
                     if (result is GetDataFromRemote.Success) {
                         if (result.data.isEmpty()) {
@@ -469,18 +445,15 @@ open class RootViewModel @Inject constructor(
                         sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                         sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
                         isInitialLoadingFinished = false
-                        /*Log.e(
-                            TAG,
-                            "getClientDetails: ${result.error.code}, ${result.error.message}"
-                        )*/
 
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
-                            documentName = "loginUser,${Date()}",
+                            documentName = "getClientDetails,${Date()}",
                             errorData = FirebaseError(
                                 errorMessage = errorMessage,
                                 errorCode = error.code,
-                                ipAddress = _publicIpAddress
+                                ipAddress = _publicIpAddress,
+                                url = url
                             )
                         )
                     }
@@ -492,15 +465,10 @@ open class RootViewModel @Inject constructor(
     fun clientSearch() {
         sendClientScreenEvent(UiEvent.ShowProgressBar)
         val url = _baseUrl.value + HttpRoutes.SEARCH_CLIENT_DETAILS + _clientSearchText.value
-        try {
-            clientDetailsList.clear()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        clientDetailsList.clear()
 
         viewModelScope.launch(Dispatchers.IO) {
             useCase.searchClientDetailsUseCase(url = url).collectLatest { result ->
-                Log.w(TAG, "clientSearch: $result")
                 sendClientScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     if (result.data.isEmpty()) {
@@ -516,9 +484,15 @@ open class RootViewModel @Inject constructor(
                         "code:- ${error.code}, message:- ${error.message}, url:- $url"
                     sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                     sendClientScreenEvent(UiEvent.ShowEmptyList(value = true))
-                    Log.e(
-                        TAG,
-                        "clientSearch: $url, code:- ${result.error.code}, error: ${result.error.message}",
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "clientSearch,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = errorMessage,
+                            errorCode = error.code,
+                            ipAddress = _publicIpAddress,
+                            url = url
+                        )
                     )
                 }
             }
@@ -546,11 +520,20 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Failed -> {
 
                         val error2 = "Error:- ${result.error.code}, ${result.error.message}, $url"
-                        // Log.e(TAG, "getAllUnits: $error")
                         val error = result.error
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
                         sendHomeScreenEvent(UiEvent.ShowSnackBar(error2))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "getAllUnits,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = errorMessage,
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
+                        )
                     }
                     else -> Unit
                 }
@@ -558,10 +541,6 @@ open class RootViewModel @Inject constructor(
         }
     }
 
-    fun setUnit(value: Units) {
-        _unit.value = value.unitName
-        _unitId.value = value.unitId
-    }
 
     // Set product name and search
     private var navCounter = 0
@@ -575,7 +554,6 @@ open class RootViewModel @Inject constructor(
             sendProductListScreenEvent(UiEvent.ShowEmptyList(true))
         }
         if (_productName.value.length >= 3 && _productSearchMode.value) {
-            Log.i(TAG, "setProductName: ${_productName.value} ")
             searchProductListByName()
             if (isItFromHomeScreen && navCounter < 1) {
                 sendHomeScreenEvent(UiEvent.Navigate(route = RootNavScreens.ProductListScreen.route))
@@ -597,7 +575,6 @@ open class RootViewModel @Inject constructor(
             useCase.getProductDetailsUseCase(url = url)
                 .collectLatest { result ->
                     sendProductListScreenEvent(UiEvent.CloseProgressBar)
-                    // Log.w(TAG, "getProductDetails: $result")
                     if (result is GetDataFromRemote.Success) {
                         if (result.data.isEmpty()) {
                             sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
@@ -610,10 +587,17 @@ open class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Failed) {
                         sendProductListScreenEvent(UiEvent.ShowEmptyList(value = true))
                         sendProductListScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
-                        /* Log.e(
-                             TAG,
-                             "getProductDetails: ${result.error.code}, ${result.error.message} "
-                         )*/
+                        val error = result.error
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "searchProductListByName,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = error.message ?: "",
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
+                        )
                     }
                 }
         }
@@ -626,7 +610,6 @@ open class RootViewModel @Inject constructor(
             useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
                 sendHomeScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    Log.e(TAG, "searchProductByQrCode: ${result.data}")
                     result.data?.let { product ->
                         _productName.value = product.productName
                         _qty.value = "1"
@@ -638,7 +621,17 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendHomeScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
-                    Log.e(TAG, "searchProductByQrCode: ${result.error}")
+                    val error = result.error
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "searchProductByQrCode,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = error.message ?: "",
+                            errorCode = error.code,
+                            ipAddress = _publicIpAddress,
+                            url = url
+                        )
+                    )
                 }
             }
 
@@ -676,7 +669,7 @@ open class RootViewModel @Inject constructor(
             total = (total * 100) / 100f
             _net.value = total
         } catch (e: Exception) {
-            //Log.e(TAG, "calculateNet: ${e.message}")
+            e.message
         }
 
     }
@@ -771,7 +764,6 @@ open class RootViewModel @Inject constructor(
     }
 
     fun setSelectedProduct(product: Product) {
-        //_selectedProduct.value = product
         _productName.value = product.productName
         _unit.value = product.unitName
         _unitId.value = product.unitId
@@ -785,7 +777,6 @@ open class RootViewModel @Inject constructor(
 
     fun resetSelectedProduct() {
         setProductSearchMode(true)
-        //_selectedProduct.value = null
         _productName.value = ""
         _unit.value = ""
         _unitId.value = 0
@@ -855,11 +846,11 @@ open class RootViewModel @Inject constructor(
         )
         val purchaseDetails = mutableListOf<PurchaseDetail>()
         selectedProductList.forEach { selectedProduct ->
-            var taxAmount = selectedProduct.qty * selectedProduct.productRate / selectedProduct.vat
+            var taxAmount =
+                selectedProduct.qty * selectedProduct.productRate * (selectedProduct.vat / 100f)
             if (taxAmount.isInfinite() || taxAmount.isNaN()) {
                 taxAmount = 0f
             }
-            Log.w(TAG, "submitFun: $taxAmount")
 
             purchaseDetails.add(
                 element = PurchaseDetail(
@@ -879,7 +870,6 @@ open class RootViewModel @Inject constructor(
             )
         }
         viewModelScope.launch(Dispatchers.IO) {
-
             useCase.purchaseUseCase(
                 url = url,
                 purchaseClass = PurchaseClass(
@@ -889,15 +879,24 @@ open class RootViewModel @Inject constructor(
             ).collectLatest { result ->
                 sendHomeScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    Log.e(TAG, "submitFun: $")
                     sendHomeScreenEvent(UiEvent.ShowAlertDialog(message = "Purchase finished"))
                 }
                 if (result is GetDataFromRemote.Failed) {
                     val error =
                         result.error.message + ", code:- " + result.error.code + ", url:- $url"
-                    Log.e("Test", "submitFun: $error")
 
                     sendHomeScreenEvent(UiEvent.ShowSnackBar(message = error))
+                    val err = result.error
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "submitFun,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = err.message ?: "",
+                            errorCode = err.code,
+                            ipAddress = _publicIpAddress,
+                            url = url
+                        )
+                    )
                 }
 
             }
@@ -974,7 +973,6 @@ open class RootViewModel @Inject constructor(
             useCase.getProductDetailsUseCase(url = url)
                 .collectLatest { result ->
                     sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
-                    Log.w(TAG, "getProductDetails: $result")
                     if (result is GetDataFromRemote.Success) {
                         setProductNameForStockAdjustment("")
                         if (result.data.isEmpty()) {
@@ -994,9 +992,16 @@ open class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Failed) {
                         sendStockAdjustmentScreenEvent(UiEvent.ShowEmptyList(value = true))
                         sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
-                        Log.e(
-                            TAG,
-                            "getProductDetails: ${result.error.code}, ${result.error.message} "
+                        val err = result.error
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "searchProductListByNameForStockAdjustment,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = err.message ?: "",
+                                errorCode = err.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
                         )
                     }
                 }
@@ -1012,7 +1017,6 @@ open class RootViewModel @Inject constructor(
                 sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
                     setProductNameForStockAdjustment("")
-                    Log.e(TAG, "searchProductByQrCode: ${result.data}")
                     result.data?.let { product ->
                         productListForStockAdjustment.value.add(Pair(false, product))
                         return@collectLatest
@@ -1021,7 +1025,17 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendStockAdjustmentScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
-                    Log.e(TAG, "searchProductByQrCode: ${result.error}")
+                    val error = result.error
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "searchProductByQrCodeForStockAdjustment,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = error.message ?: "",
+                            errorCode = error.code,
+                            ipAddress = _publicIpAddress,
+                            url = url
+                        )
+                    )
                 }
             }
 
@@ -1055,8 +1069,17 @@ open class RootViewModel @Inject constructor(
                         val error = result.error
                         val errorData =
                             "Error code ${error.code}, message: ${error.message}, url: $url"
-                        Log.e(TAG, "getStockOfAProduct: $errorData")
                         sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar(errorData))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "getStockOfAProduct,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = error.message ?: "",
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
+                        )
                     }
                     else -> Unit
                 }
@@ -1080,16 +1103,24 @@ open class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        val success = result.data
-                        Log.d(TAG, "submitStockAdjustment: $success")
+                        // val success = result.data
                         sendStockAdjustmentScreenEvent(UiEvent.ShowAlertDialog("stock_adjust_submitted"))
                     }
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorData =
                             "Error code ${error.code}, message: ${error.message}, url: $url"
-                        Log.e(TAG, "getStockOfAProduct: $errorData")
                         sendStockAdjustmentScreenEvent(UiEvent.ShowSnackBar(errorData))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "submitStockAdjustment,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = error.message ?: "",
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
+                        )
                     }
                     else -> Unit
                 }
@@ -1158,6 +1189,7 @@ open class RootViewModel @Inject constructor(
                         expiryDate?.let { ed ->
                             if (licenseType == "demo") {
                                 if (!checkForLicenseExpiryDate(ed)) {
+                                    // EXPIRED LICENSE 10/02/2023
                                     sendUniLicenseActivation(UiEvent.ShowSnackBar("Expired License"))
                                     _licenseKeyActivationError.value = "Expired License"
                                     return@collectLatest
@@ -1172,10 +1204,21 @@ open class RootViewModel @Inject constructor(
                         )
 
                         _uniLicenseDetails.value = licenceInformation
+                        sendUniLicenseActivation(UiEvent.ShowAlertDialog(""))
 
                         val licenseString = Json.encodeToString(licenceInformation)
                         useCase.uniLicenseSaveUseCase(uniLicenseString = licenseString)
-                        sendUniLicenseActivation(UiEvent.ShowAlertDialog(""))
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            useCase.insertGeneralDataToFirebaseUseCase(
+                                collectionName = "UserInformation",
+                                firebaseGeneralData = FirebaseGeneralData(
+                                    deviceId = deviceId,
+                                    ipAddress = _publicIpAddress,
+                                    uniLicense = licenseKey
+                                )
+                            )
+                        }
                     }
                     is GetDataFromRemote.Failed -> {
 
@@ -1183,8 +1226,17 @@ open class RootViewModel @Inject constructor(
                         _licenseKeyActivationError.value = error.message ?: "Error on Activation"
                         val errorData =
                             "Error code ${error.code}, message: ${error.message}, url: $url"
-                        Log.e(TAG, "getStockOfAProduct: $errorData")
                         sendUniLicenseActivation(UiEvent.ShowSnackBar(errorData))
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "uniLicenseActivation,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = error.message ?: "",
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
+                        )
 
                     }
                     else -> Unit
@@ -1268,8 +1320,8 @@ open class RootViewModel @Inject constructor(
     fun setIsInitialLoadingIsNotFinished() {
         _message.value = ""
         unitsList.clear()
-        readBaseUrl()
         isInitialLoadingFinished = false
+        readBaseUrl()
 
     }
 
@@ -1303,7 +1355,7 @@ open class RootViewModel @Inject constructor(
     val showProductsForPriceAdjustmentScreenEvent =
         _showProductsForPriceAdjustmentEvent.receiveAsFlow()
 
-    fun sendShowProductsForPriceAdjustmentScreenEvent(uiEvent: UiEvent) {
+    private fun sendShowProductsForPriceAdjustmentScreenEvent(uiEvent: UiEvent) {
         viewModelScope.launch {
             _showProductsForPriceAdjustmentEvent.send(ShowProductsForPriceAdjustmentEvent(uiEvent = uiEvent))
         }
@@ -1326,23 +1378,23 @@ open class RootViewModel @Inject constructor(
         _selectedProductForPriceAdjustment
 
     private val _purchasePriceForPriceAdjustment = lazy { mutableStateOf("") }
-    val purchasePriceForPriceAdjustment:Lazy<State<String>> = _purchasePriceForPriceAdjustment
+    val purchasePriceForPriceAdjustment: Lazy<State<String>> = _purchasePriceForPriceAdjustment
 
-    fun setPurchasePriceForPriceAdjustment(value: String){
+    fun setPurchasePriceForPriceAdjustment(value: String) {
         _purchasePriceForPriceAdjustment.value.value = value
     }
 
     private val _salePriceForPriceAdjustment = lazy { mutableStateOf("") }
-    val salePriceForPriceAdjustment:Lazy<State<String>> = _salePriceForPriceAdjustment
+    val salePriceForPriceAdjustment: Lazy<State<String>> = _salePriceForPriceAdjustment
 
-    fun setSalePriceForPriceAdjustment(value: String){
+    fun setSalePriceForPriceAdjustment(value: String) {
         _salePriceForPriceAdjustment.value.value = value
     }
 
     private val _mrpForPriceAdjustment = lazy { mutableStateOf("") }
-    val mrpForPriceAdjustment:Lazy<State<String>> = _mrpForPriceAdjustment
+    val mrpForPriceAdjustment: Lazy<State<String>> = _mrpForPriceAdjustment
 
-    fun setMrpForPriceAdjustment(value: String){
+    private fun setMrpForPriceAdjustment(value: String) {
         _mrpForPriceAdjustment.value.value = value
     }
 
@@ -1357,7 +1409,6 @@ open class RootViewModel @Inject constructor(
             useCase.getProductDetailsUseCase(url = url)
                 .collectLatest { result ->
                     sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.CloseProgressBar)
-                    //Log.w(TAG, "getProductDetails: $result")
                     if (result is GetDataFromRemote.Success) {
                         setProductNameSearchForPriceAdjustment("")
                         if (result.data.isEmpty()) {
@@ -1381,9 +1432,16 @@ open class RootViewModel @Inject constructor(
                     if (result is GetDataFromRemote.Failed) {
                         sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowEmptyList(value = true))
                         sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
-                        Log.e(
-                            TAG,
-                            "getProductDetails: ${result.error.code}, ${result.error.message} "
+                        val error = result.error
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "searchProductListByNameForPriceAdjustment,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = error.message ?: "",
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
                         )
                     }
                 }
@@ -1408,7 +1466,17 @@ open class RootViewModel @Inject constructor(
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendShowProductsForPriceAdjustmentScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
-                    // Log.e(TAG, "searchProductByQrCode: ${result.error}")
+                    val error = result.error
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "searchProductByQrCodeForPriceAdjustment,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = error.message ?: "",
+                            errorCode = error.code,
+                            ipAddress = _publicIpAddress,
+                            url = url
+                        )
+                    )
                 }
             }
 
@@ -1427,17 +1495,22 @@ open class RootViewModel @Inject constructor(
                         setPurchasePriceForPriceAdjustment(result.data.purchasePrice.toString())
                         setSalePriceForPriceAdjustment(result.data.salePrice.toString())
                         setMrpForPriceAdjustment(result.data.mrp.toString())
-                        Log.e(TAG, "getProductForPriceAdjustment: ${result.data}", )
                     }
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorCode = error.code
                         val errorMessage = error.message
-                        Log.e(TAG, "getProductForPriceAdjustment: code: $errorCode message: $errorMessage, url:$url", )
                         sendAdjustPriceScreenEvent(UiEvent.ShowSnackBar("code: $errorCode message: $errorMessage, url:$url"))
-                        /*useCase.insertErrorDataToFireStoreUseCase(
-
-                        )*/
+                        useCase.insertErrorDataToFireStoreUseCase(
+                            collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                            documentName = "getProductForPriceAdjustment,${Date()}",
+                            errorData = FirebaseError(
+                                errorMessage = error.message ?: "",
+                                errorCode = error.code,
+                                ipAddress = _publicIpAddress,
+                                url = url
+                            )
+                        )
                     }
                     else -> Unit
                 }
@@ -1457,13 +1530,11 @@ open class RootViewModel @Inject constructor(
                 sendAdjustPriceScreenEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        Log.e(TAG, "adjustPrice: ${result.data}")
                         sendAdjustPriceScreenEvent(UiEvent.ShowAlertDialog(""))
                     }
                     is GetDataFromRemote.Failed -> {
                         val errorCode = result.error.code
                         val errorMessage = result.error.message
-                        Log.e(TAG, "code: $errorCode, errorMessage: $errorMessage")
                         sendAdjustPriceScreenEvent(
                             UiEvent.ShowSnackBar(message = "errorCode: $errorCode, errorMessage: $errorMessage")
                         )

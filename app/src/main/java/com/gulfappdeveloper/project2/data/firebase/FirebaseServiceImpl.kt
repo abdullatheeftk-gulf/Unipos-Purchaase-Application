@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseGeneralData
+import com.gulfappdeveloper.project2.domain.firebase.FirebaseLicense
 import com.gulfappdeveloper.project2.domain.services.FirebaseService
 import java.util.*
 
@@ -39,5 +40,24 @@ class FirebaseServiceImpl(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override suspend fun getFirebaseLicense(onGetFirebaseLicense: (FirebaseLicense) -> Unit) {
+
+        try {
+            fdb.collection("appLicense").document("unipos").get()
+                .addOnSuccessListener {
+                    val firebaseLicense =
+                        it.toObject(FirebaseLicense::class.java) ?: FirebaseLicense()
+                    onGetFirebaseLicense(firebaseLicense)
+                }
+                .addOnFailureListener {
+                    onGetFirebaseLicense(FirebaseLicense())
+                }
+                .addOnCanceledListener { }
+        } catch (e: Exception) {
+            e.message
+        }
+
     }
 }

@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2.repositories
 
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseError
 import com.gulfappdeveloper.project2.domain.firebase.FirebaseGeneralData
+import com.gulfappdeveloper.project2.domain.firebase.FirebaseLicense
 import com.gulfappdeveloper.project2.domain.services.FirebaseService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,5 +32,9 @@ class FirebaseRepository @Inject constructor(
             collectionName = collectionName,
             firebaseGeneralData = firebaseGeneralData
         )
+    }
+
+    suspend fun getFirebaseLicense(onGetFirebaseLicense: (FirebaseLicense) -> Unit) {
+        firebaseService.getFirebaseLicense(onGetFirebaseLicense)
     }
 }

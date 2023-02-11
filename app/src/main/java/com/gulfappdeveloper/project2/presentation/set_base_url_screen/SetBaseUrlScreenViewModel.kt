@@ -30,7 +30,6 @@ class SetBaseUrlScreenViewModel @Inject constructor(
 
     fun setBaseUrl(value: String) {
         viewModelScope.launch {
-            useCase.saveBaseUrlUseCase(baseUrl = value)
             getWelcomeMessage(value = value)
         }
     }
@@ -42,7 +41,12 @@ class SetBaseUrlScreenViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 sendUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
-                    readUniLicenseKeyDetails()
+                    useCase.saveBaseUrlUseCase(baseUrl = value)
+                    if (BuildConfig.DEBUG) {
+                        sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                    } else {
+                        readUniLicenseKeyDetails()
+                    }
                 }
                 if (result is GetDataFromRemote.Failed) {
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
@@ -56,28 +60,17 @@ class SetBaseUrlScreenViewModel @Inject constructor(
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
                 if (value.isNotEmpty() && value.isNotBlank()) {
-
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
-
-
                     // check saved license is demo
                     if (licenseDetails.licenseType == "demo" && licenseDetails.expiryDate.isNotEmpty()) {
 
                         // check for license expired
                         if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
-                            // demo license expired
-                            if (BuildConfig.DEBUG){
-                                sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
-                            }
-                           // sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
-
-
-                        } else {
-                            if (BuildConfig.DEBUG){
-                                sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
-                            }
                             // demo license not expired
-                            //sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
+                            sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                        } else {
+                            // demo license expired
+                            sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
                         }
                     }
                     if (licenseDetails.licenseType == "permanent") {
@@ -85,11 +78,7 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                         sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
                     }
                 } else {
-                    if (BuildConfig.DEBUG){
-                        sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
-                    }
-                    //first time license activation
-                   // sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
+                    sendUiEvent(UiEvent.Navigate(route = RootNavScreens.UniLicenseActivationScreen.route))
                 }
             }
         }

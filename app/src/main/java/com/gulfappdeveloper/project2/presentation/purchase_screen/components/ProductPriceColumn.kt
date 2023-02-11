@@ -22,7 +22,7 @@ fun ProductPriceColumn(
     val vat by rootViewModel.totalVat
     val grandTotal by rootViewModel.grandTotal
 
-    var roundOff = 0f
+    var roundOff:Float
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -119,9 +119,3 @@ fun ProductPriceColumn(
     }
 }
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun ProductPriceColumnPrev() {
-    ProductPriceColumn()
-}*/
