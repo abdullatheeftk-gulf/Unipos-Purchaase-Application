@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.navigation.root
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -126,6 +127,13 @@ open class RootViewModel @Inject constructor(
     // Product search mode. which used in product name box
     private val _productSearchMode = mutableStateOf(true)
     val productSearchMode: State<Boolean> = _productSearchMode
+
+    private val _isCashPurchase = mutableStateOf(false)
+    val isCashPurchase: State<Boolean> = _isCashPurchase
+
+    fun setIsCashPurchase(value: Boolean) {
+        _isCashPurchase.value = value
+    }
 
     // Product  list
     val productList = mutableStateListOf<Product>()
@@ -282,13 +290,13 @@ open class RootViewModel @Inject constructor(
                     // Set common memory base url 25/01/2022
                     commonMemory.baseUrl = _baseUrl.value
 
-                    if (BuildConfig.DEBUG) {
+                    /*if (BuildConfig.DEBUG) {
                         sendSplashScreenEvent(
                             UiEvent.Navigate(route = RootNavScreens.LoginScreen.route)
                         )
-                    } else {
-                        readUniLicenseKeyDetails()
-                    }
+                    } else {*/
+                    readUniLicenseKeyDetails()
+                    // }
                 }
                 if (result is GetDataFromRemote.Failed) {
                     isInitialLoadingFinished = false
@@ -842,7 +850,8 @@ open class RootViewModel @Inject constructor(
             terminal = _deviceIdSate.value,
             totalAmount = _grandTotal.value,
             totalTax = _totalVat.value,
-            userId = _userId
+            userId = _userId,
+            isCashPurchase = _isCashPurchase.value
         )
         val purchaseDetails = mutableListOf<PurchaseDetail>()
         selectedProductList.forEach { selectedProduct ->
@@ -918,6 +927,7 @@ open class RootViewModel @Inject constructor(
         _grandTotal.value = 0f
         _totalDiscount.value = 0f
         _totalVat.value = 0f
+        _isCashPurchase.value = false
     }
 
 
@@ -1186,16 +1196,31 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         val licenseType = result.data.message.licenseType
                         val expiryDate = result.data.message.expiryDate
+                        // Log.e("Test", "before expiry date null check")
+                        // Checking for license information demo and expiry date
+                        if (licenseType == "demo") {
+                            if (expiryDate.isNullOrEmpty() || expiryDate.isBlank()) {
+                                sendUniLicenseActivation(UiEvent.ShowSnackBar("License is Demo But invalid expiry date"))
+                                return@collectLatest
+                            }
+                        }
                         expiryDate?.let { ed ->
+                            //  Log.i("Test", "expiry date null check success $ed")
                             if (licenseType == "demo") {
-                                if (!checkForLicenseExpiryDate(ed)) {
+                                //  Log.w("Test", "expiry date demo $ed")
+                                if (isUniPosLicenseExpired(ed)) {
+                                    // Log.e("Test", "expiry date demo and expired $ed")
                                     // EXPIRED LICENSE 10/02/2023
                                     sendUniLicenseActivation(UiEvent.ShowSnackBar("Expired License"))
                                     _licenseKeyActivationError.value = "Expired License"
                                     return@collectLatest
+                                } else {
+                                    // Log.d("Test", "expiry date demo and not expired $ed")
                                 }
                             }
                         }
+                        // Log.e("Test", "after expiry date null check")
+
 
                         val licenceInformation = UniLicenseDetails(
                             licenseType = result.data.message.licenseType,
@@ -1257,10 +1282,10 @@ open class RootViewModel @Inject constructor(
                     _uniLicenseDetails.value = licenseDetails
 
                     // check saved license is demo
-                    if (licenseDetails.licenseType == "demo" && licenseDetails.expiryDate.isNotEmpty()) {
+                    if (licenseDetails.licenseType == "demo" && !licenseDetails.expiryDate.isNullOrBlank() && licenseDetails.expiryDate.isNotEmpty()) {
 
                         // check for license expired
-                        if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
+                        if (isUniPosLicenseExpired(licenseDetails.expiryDate)) {
                             // demo license expired
                             checkForPublicIpAddressStatus()
 
@@ -1307,14 +1332,18 @@ open class RootViewModel @Inject constructor(
 
     }
 
-    private fun checkForLicenseExpiryDate(eDate: String): Boolean {
+    private fun isUniPosLicenseExpired(eDate: String): Boolean {
 
-        val expDate: Date = SimpleDateFormat(
-            "dd-MM-yyyy",
-            Locale.getDefault()
-        ).parse(eDate)!!
-
-        return expDate >= Date()
+        return try {
+            val expDate: Date = SimpleDateFormat(
+                "dd-MM-yyyy",
+                Locale.getDefault()
+            ).parse(eDate)!!
+            // checking for current date is more than or equal to expiry date
+            Date()>=expDate
+        } catch (e: Exception) {
+            true
+        }
     }
 
     fun setIsInitialLoadingIsNotFinished() {

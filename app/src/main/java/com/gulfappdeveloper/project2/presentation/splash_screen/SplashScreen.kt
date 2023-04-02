@@ -1,5 +1,9 @@
 package com.gulfappdeveloper.project2.presentation.splash_screen
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -7,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -23,12 +28,21 @@ import kotlinx.coroutines.flow.collectLatest
 fun SplashScreen(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    deviceId:String
+    deviceId: String
 ) {
 
     val scaffoldState = rememberScaffoldState()
 
     val welcomeMessage by rootViewModel.message
+
+    var showLogoImage by remember {
+        mutableStateOf(false)
+    }
+    if (welcomeMessage.isNotEmpty()) {
+        showLogoImage = true
+    }
+
+    val density = LocalDensity.current
 
     var showProgressBar by remember {
         mutableStateOf(false)
@@ -88,15 +102,39 @@ fun SplashScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
 
-            if (welcomeMessage.isNotEmpty()){
+            /*  if (showLogoImage){
+                  Image(
+                      painter = painterResource(id = R.drawable.app_logo),
+                      contentDescription = null,
+                      modifier = Modifier.width(200.dp).height(150.dp),
+                      alignment = Alignment.Center
+                  )
+              }*/
+
+            AnimatedVisibility(
+                visible = showLogoImage,
+                enter = slideInVertically {
+                    with(density) {
+                        100.dp.roundToPx()
+                    }
+                } + expandVertically(
+                    expandFrom = Alignment.Top,
+
+                )
+                        + fadeIn(initialAlpha = 0.3f),
+                exit = slideOutVertically() + shrinkVertically() + fadeOut()
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
-                    modifier = Modifier.width(200.dp).height(150.dp),
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(150.dp),
                     alignment = Alignment.Center
                 )
             }
-           
+
+
         }
 
         if (showUrlSetButton) {
@@ -117,7 +155,7 @@ fun SplashScreen(
             }
         }
 
-        
+
         if (showProgressBar) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -127,7 +165,7 @@ fun SplashScreen(
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(50.dp))
             }
-            
+
         }
 
 

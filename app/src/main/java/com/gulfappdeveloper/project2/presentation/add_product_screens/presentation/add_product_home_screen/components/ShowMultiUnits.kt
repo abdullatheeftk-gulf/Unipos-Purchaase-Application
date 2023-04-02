@@ -35,7 +35,7 @@ fun ShowMultiUnits(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = 8.dp),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(

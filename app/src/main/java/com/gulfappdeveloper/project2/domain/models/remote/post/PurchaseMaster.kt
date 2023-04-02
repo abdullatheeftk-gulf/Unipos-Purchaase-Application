@@ -19,5 +19,6 @@ data class PurchaseMaster(
     @SerialName("totalAmnt")
     val totalAmount: Float,
     val totalTax: Float,
-    val userId: Int
+    val userId: Int,
+    val isCashPurchase:Boolean = false
 )

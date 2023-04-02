@@ -30,7 +30,7 @@ fun LicenseInformationDisplayAlertDialog(
     val expDateString = uniLicense?.expiryDate
     expDateString?.let {
         if (it.isNotEmpty() || it.isNotBlank()) {
-            if (isLicenseExpired(it)) {
+            if (isUniposLicenseExpired(it)) {
                 AlertDialog(
                     onDismissRequest = onLicenseExpired,
                     buttons = {
@@ -134,12 +134,12 @@ fun LicenseInformationDisplayAlertDialog(
     )
 }
 
-private fun isLicenseExpired(eDate: String): Boolean {
+private fun isUniposLicenseExpired(eDate: String): Boolean {
 
     val expDate: Date = SimpleDateFormat(
         "dd-MM-yyyy",
         Locale.getDefault()
     ).parse(eDate)!!
 
-    return expDate <= Date()
+    return Date()>=expDate
 }

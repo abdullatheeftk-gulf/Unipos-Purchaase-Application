@@ -3,7 +3,7 @@ package com.gulfappdeveloper.project2
 import android.content.Context
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
+//import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
             Project2Theme {
                 val isTablet = booleanResource(id = R.bool.is_tablet)
-                Log.e("Test", "onCreate: $isTablet", )
+                //Log.e("Test", "onCreate: $isTablet", )
 
                 val launcher =
                     rememberLauncherForActivityResult(contract = ScanContract(), onResult = {

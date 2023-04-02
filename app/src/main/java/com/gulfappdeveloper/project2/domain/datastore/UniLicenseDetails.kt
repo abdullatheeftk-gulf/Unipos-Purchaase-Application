@@ -4,5 +4,5 @@ package com.gulfappdeveloper.project2.domain.datastore
 data class UniLicenseDetails(
     val licenseKey: String,
     val licenseType: String,
-    val expiryDate: String
+    val expiryDate: String?
 )

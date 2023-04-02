@@ -573,7 +573,7 @@ fun ItemSelectionRows(
                         start = 8.dp,
                         top = if (rate.isEmpty()) 9.dp else 8.dp,
                         bottom = if (rate.isEmpty()) 9.dp else 8.dp,
-                        end = 2.dp,
+                        end = 8.dp,
                     ),
                 )
             }

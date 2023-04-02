@@ -33,10 +33,11 @@ object NetWorkModule {
                     }
                 )
             }
+            /*
             install(Logging){
                 level = LogLevel.ALL
             }
-
+            */
             engine {
                 connectTimeout = 60_000
                 socketTimeout = 60_000

@@ -28,7 +28,7 @@ fun ListTile(
         modifier = Modifier
             .fillMaxWidth()
             .height(if (item.productUnitName.length>20) 45.dp else 30.dp),
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         Text(

@@ -14,11 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
@@ -43,13 +46,15 @@ fun PurchaseScreen(
     val lazyColumState = rememberLazyListState()
     val scrollState = rememberScrollState()
 
-    val fManager  = LocalFocusManager.current
+    val fManager = LocalFocusManager.current
 
     val selectedProductList = rootViewModel.selectedProductList
 
     val coroutineScope = rememberCoroutineScope()
 
     val additionalDiscount by rootViewModel.additionalDiscount
+
+    val isCashPurchase by rootViewModel.isCashPurchase
 
 
     var showCalendar by remember {
@@ -276,12 +281,12 @@ fun PurchaseScreen(
                         width = Dp.Hairline,
                         color = if (showProductListIsEmpty) MaterialTheme.colors.error else Color.LightGray
                     ),
-                elevation = 2.dp
+                elevation = 0.dp
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     ProductListTitle()
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     ProductList(
                         rootViewModel = rootViewModel,
                         onProductListItemClicked = { i, productSelected ->
@@ -410,7 +415,7 @@ fun PurchaseScreen(
                         color = MaterialTheme.colors.primary,
                         fontStyle = MaterialTheme.typography.h6.fontStyle,
                         fontSize = MaterialTheme.typography.h6.fontSize,
-                         modifier = Modifier.weight(3f)
+                        modifier = Modifier.weight(3f)
                     )
                     OutlinedTextField(
                         value = freightCharge,
@@ -434,10 +439,46 @@ fun PurchaseScreen(
                 }
             }
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Is Cash Purchase",
+                    color = MaterialTheme.colors.primary,
+                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    fontSize = if (booleanResource(id = R.bool.is_tablet)) 20.sp else 16.sp
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Checkbox(
+                    checked = isCashPurchase,
+                    onCheckedChange = { value ->
+                        rootViewModel.setIsCashPurchase(value)
+                    }
+                )
+
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .padding(horizontal = 10.dp)
+                    .border(
+                        width = 0.25.dp,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                    )
+            ) {}
+            Spacer(modifier = Modifier.height(10.dp))
+
 
             ProductPriceColumn(
                 rootViewModel = rootViewModel
             )
+
 
             Spacer(modifier = Modifier.height(300.dp))
 

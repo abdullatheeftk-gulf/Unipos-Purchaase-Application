@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.set_base_url_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project2.BuildConfig
@@ -41,14 +42,16 @@ class SetBaseUrlScreenViewModel @Inject constructor(
             useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
                 sendUiEvent(UiEvent.CloseProgressBar)
                 if (result is GetDataFromRemote.Success) {
+                    Log.e("Test", "getWelcomeMessage: success", )
                     useCase.saveBaseUrlUseCase(baseUrl = value)
-                    if (BuildConfig.DEBUG) {
+                   /* if (BuildConfig.DEBUG) {
                         sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
-                    } else {
+                    } else {*/
                         readUniLicenseKeyDetails()
-                    }
+                   // }
                 }
                 if (result is GetDataFromRemote.Failed) {
+                    Log.d("Test", "getWelcomeMessage: Failed ${result.error}")
                     sendUiEvent(UiEvent.ShowSnackBar(message = "This Server with $url is down"))
                 }
             }
@@ -62,10 +65,10 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                 if (value.isNotEmpty() && value.isNotBlank()) {
                     val licenseDetails = Json.decodeFromString<UniLicenseDetails>(value)
                     // check saved license is demo
-                    if (licenseDetails.licenseType == "demo" && licenseDetails.expiryDate.isNotEmpty()) {
+                    if (licenseDetails.licenseType == "demo" && !licenseDetails.expiryDate.isNullOrBlank() && licenseDetails.expiryDate.isNotEmpty()) {
 
                         // check for license expired
-                        if (!checkForLicenseExpiryDate(licenseDetails.expiryDate)) {
+                        if (!isUniposLicenseExpired(licenseDetails.expiryDate)) {
                             // demo license not expired
                             sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
                         } else {
@@ -84,14 +87,17 @@ class SetBaseUrlScreenViewModel @Inject constructor(
         }
     }
 
-    private fun checkForLicenseExpiryDate(eDate: String): Boolean {
+    private fun isUniposLicenseExpired(eDate: String): Boolean {
+        return try {
+            val expDate: Date = SimpleDateFormat(
+                "dd-MM-yyyy",
+                Locale.getDefault()
+            ).parse(eDate)!!
 
-        val expDate: Date = SimpleDateFormat(
-            "dd-MM-yyyy",
-            Locale.getDefault()
-        ).parse(eDate)!!
-
-        return expDate >= Date()
+            expDate >= Date()
+        }catch (e:Exception){
+            true
+        }
     }
 
     fun onErrorUrl(url: String) {
