@@ -1,4 +1,4 @@
-package com.gulfappdeveloper.project2.presentation.splash_screen
+package com.gulfappdeveloper.project2.presentation.splash_screen2
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
@@ -20,14 +20,12 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
-
 @Composable
-fun SplashScreen(
+fun SplashScreen2(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-    deviceId: String
+   // deviceId: String
 ) {
-
     val scaffoldState = rememberScaffoldState()
 
     val welcomeMessage by rootViewModel.message
@@ -51,7 +49,7 @@ fun SplashScreen(
 
 
     LaunchedEffect(key1 = true) {
-        rootViewModel.splashScreenEvent.collectLatest { event ->
+        rootViewModel.splashScreenEvent2.collectLatest { event ->
             when (event.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
@@ -61,7 +59,7 @@ fun SplashScreen(
                 }
                 is UiEvent.Navigate -> {
                     delay(2000L)
-                    rootViewModel.saveDeviceId(value = deviceId)
+                   // rootViewModel.saveDeviceId(value = deviceId)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
                 }
@@ -100,7 +98,6 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(50.dp))
 
 
-
             AnimatedVisibility(
                 visible = showLogoImage,
                 enter = slideInVertically {
@@ -110,7 +107,7 @@ fun SplashScreen(
                 } + expandVertically(
                     expandFrom = Alignment.Top,
 
-                )
+                    )
                         + fadeIn(initialAlpha = 0.3f),
                 exit = slideOutVertically() + shrinkVertically() + fadeOut()
             ) {
@@ -160,5 +157,4 @@ fun SplashScreen(
 
 
     }
-
 }

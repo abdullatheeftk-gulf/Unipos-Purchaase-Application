@@ -2,6 +2,7 @@ package com.gulfappdeveloper.project2.navigation.root
 
 sealed class RootNavScreens(val route: String) {
     object SplashScreen : RootNavScreens("splash_screen")
+    object SplashScreen2 : RootNavScreens("splash_screen2")
     object UrlSetScreen : RootNavScreens("url_set_screen")
     object UniLicenseActivationScreen : RootNavScreens("uni_license_activation_screen")
     object LoginScreen : RootNavScreens("login_screen")

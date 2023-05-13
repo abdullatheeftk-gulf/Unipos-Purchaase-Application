@@ -16,6 +16,7 @@ import com.gulfappdeveloper.project2.presentation.product_list_screen.ProductLis
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.settings_screen.SettingsScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
+import com.gulfappdeveloper.project2.presentation.splash_screen2.SplashScreen2
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.StockAdjustmentScreen
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.UniLicenseActivationScreen
@@ -41,6 +42,14 @@ fun RootNavGraph(
                 navHostController = navHostController,
                 rootViewModel = rootViewModel,
                 deviceId = deviceId
+            )
+        }
+
+        composable(RootNavScreens.SplashScreen2.route) {
+            SplashScreen2(
+                navHostController = navHostController,
+                rootViewModel = rootViewModel,
+              //  deviceId = deviceId
             )
         }
 

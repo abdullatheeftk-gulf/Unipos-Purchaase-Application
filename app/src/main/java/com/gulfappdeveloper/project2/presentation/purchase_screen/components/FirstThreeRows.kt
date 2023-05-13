@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,6 +32,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val TAG = "FirstThreeRows"
 
 @Composable
 fun FirstThreeRows(
@@ -47,7 +49,6 @@ fun FirstThreeRows(
 
 
     val selectedDate by rootViewModel.selectedDate
-
 
 
     val billNo by rootViewModel.billNo
@@ -125,7 +126,7 @@ fun FirstThreeRows(
 
                         if (it.hasFocus) {
                             onSelectDateClicked()
-                            focusManager.clearFocus()
+                            //focusManager.clearFocus()
                         }
                     }
                     .focusRequester(focusRequester),

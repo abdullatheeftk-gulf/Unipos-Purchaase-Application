@@ -1,13 +1,11 @@
 package com.gulfappdeveloper.project2.navigation.root
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.data.firebase.FirebaseConst
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
@@ -28,12 +26,13 @@ import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseMaster
 import com.gulfappdeveloper.project2.domain.models.remote.post.price_adjustment.PriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
-import com.gulfappdeveloper.project2.presentation.purchase_screen.util.HomeScreenEvent
 import com.gulfappdeveloper.project2.presentation.login_screen.util.LoginScreenEvent
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjust_price_screen.util.AdjustPriceScreenEvent
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.showProductsForPriceAdjustmentScreens.util.ShowProductsForPriceAdjustmentEvent
 import com.gulfappdeveloper.project2.presentation.product_list_screen.util.ProductListScreenEvent
+import com.gulfappdeveloper.project2.presentation.purchase_screen.util.HomeScreenEvent
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
+import com.gulfappdeveloper.project2.presentation.splash_screen2.util.SplashScreenEvent2
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.util.StockAdjustmentScreenEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.util.UniLicenseActivationUiEvent
@@ -59,16 +58,26 @@ open class RootViewModel @Inject constructor(
     private val commonMemory: CommonMemory
 ) : ViewModel() {
 
-    private var isInitialLoadingFinished = false
+    private var _isInitialLoadingFinished = false
+
+    private val _isLicenseActivationCheckPassed = mutableStateOf(false)
+    //val isLicenseActivationCheckPassed: State<Boolean> = _isLicenseActivationCheckPassed
 
     private var _publicIpAddress = ""
 
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
-
     private fun sendSplashScreenEvent(event: UiEvent) {
         viewModelScope.launch {
             _splashScreenEvent.send(SplashScreenEvent(event))
+        }
+    }
+
+    private val _splashScreenEvent2 = Channel<SplashScreenEvent2>()
+    val splashScreenEvent2 = _splashScreenEvent2.receiveAsFlow()
+    private fun sendSplashScreenEvent2(event: UiEvent) {
+        viewModelScope.launch {
+            _splashScreenEvent2.send(SplashScreenEvent2(event))
         }
     }
 
@@ -269,10 +278,11 @@ open class RootViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collectLatest {
                 _baseUrl.value = it
-                if (!isInitialLoadingFinished) {
+                if (!_isInitialLoadingFinished) {
                     getWelcomeMessage()
+                    // readUniLicenseKeyDetails()
                     getIp4Address()
-                    isInitialLoadingFinished = true
+                    _isInitialLoadingFinished = true
                 }
             }
         }
@@ -299,7 +309,7 @@ open class RootViewModel @Inject constructor(
                     // }
                 }
                 if (result is GetDataFromRemote.Failed) {
-                    isInitialLoadingFinished = false
+                    _isInitialLoadingFinished = false
                     val error = result.error
                     val errorMessage =
                         "code:- ${error.code}, message:- ${error.message}, url:- $url"
@@ -452,7 +462,7 @@ open class RootViewModel @Inject constructor(
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
                         sendClientScreenEvent(UiEvent.ShowSnackBar(message = "url:- $url, code:- ${result.error.code}, error: ${result.error.message}"))
                         sendClientScreenEvent(UiEvent.ShowEmptyList(value = false))
-                        isInitialLoadingFinished = false
+                        _isInitialLoadingFinished = false
 
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
@@ -684,29 +694,87 @@ open class RootViewModel @Inject constructor(
 
     // Add Product to the product list
     fun addToProductList() {
-        if (qty.value.isNotEmpty()) {
-            val productSelected = ProductSelected(
-                productId = _productId.value,
-                productName = _productName.value,
-                qty = _qty.value.toFloat(),
-                productRate = if (_rate.value.isNotBlank() || _rate.value.isNotEmpty()) _rate.value.toFloat() else 0f,
-                vat = if (_tax.value.isNotBlank() || _tax.value.isNotEmpty()) _tax.value.toFloat() else 0f,
-                barcode = _barCode.value,
-                unit = _unit.value,
-                unitId = _unitId.value,
-                disc = if (_disc.value.isNotBlank() || _disc.value.isNotEmpty()) _disc.value.toFloat() else 0f,
-                net = _net.value,
-            )
-            if (_selectedProductListIndex.value < 0) {
-                selectedProductList.add(productSelected)
+        try {
+            if (qty.value.isNotEmpty()) {
+                val productSelected = ProductSelected(
+                    productId = _productId.value,
+                    productName = _productName.value,
+                    qty = if (_qty.value.isNotEmpty() || _qty.value.isNotEmpty()) _qty.value.toFloat() else 0f,
+                    productRate = if (_rate.value.isNotBlank() || _rate.value.isNotEmpty()) _rate.value.toFloat() else 0f,
+                    vat = if (_tax.value.isNotBlank() || _tax.value.isNotEmpty()) _tax.value.toFloat() else 0f,
+                    barcode = _barCode.value,
+                    unit = _unit.value,
+                    unitId = _unitId.value,
+                    disc = if (_disc.value.isNotBlank() || _disc.value.isNotEmpty()) _disc.value.toFloat() else 0f,
+                    net = _net.value,
+                )
+                if (_selectedProductListIndex.value < 0) {
+                    try {
+                        selectedProductList.add(productSelected)
+                    } catch (e: Exception) {
+                        sendHomeScreenEvent(
+                            UiEvent.ShowSnackBar(
+                                message = e.toString()
+                            )
+                        )
+                        viewModelScope.launch {
+                            useCase.insertErrorDataToFireStoreUseCase(
+                                collectionName = FirebaseConst.COLLECTION_NAME_FOR_CRASH,
+                                documentName = "addToProductList -add,${Date()}",
+                                errorData = FirebaseError(
+                                    errorMessage = e.toString(),
+                                    errorCode = 0,
+                                    ipAddress = _publicIpAddress,
+                                )
+                            )
+                        }
+                    }
+                } else {
+                    try {
+                        selectedProductList[_selectedProductListIndex.value] = productSelected
+                        _selectedProductListIndex.value = -1
+                    } catch (e: Exception) {
+                        sendHomeScreenEvent(
+                            UiEvent.ShowSnackBar(
+                                message = e.toString()
+                            )
+                        )
+                        viewModelScope.launch {
+                            useCase.insertErrorDataToFireStoreUseCase(
+                                collectionName = FirebaseConst.COLLECTION_NAME_FOR_CRASH,
+                                documentName = "addToProductList -edit,${Date()}",
+                                errorData = FirebaseError(
+                                    errorMessage = e.toString(),
+                                    errorCode = 0,
+                                    ipAddress = _publicIpAddress,
+                                )
+                            )
+                        }
+                    }
+                }
+                calculateTotal()
+                resetSelectedProduct()
             } else {
-                selectedProductList[_selectedProductListIndex.value] = productSelected
-                _selectedProductListIndex.value = -1
+                sendHomeScreenEvent(UiEvent.ShowSnackBar("Qty is not Added"))
             }
-            calculateTotal()
-            resetSelectedProduct()
-        } else {
-            sendHomeScreenEvent(UiEvent.ShowSnackBar("Qty is not Added"))
+        } catch (e: Exception) {
+            sendHomeScreenEvent(
+                UiEvent.ShowSnackBar(
+                    message = e.toString()
+                )
+            )
+            viewModelScope.launch {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = FirebaseConst.COLLECTION_NAME_FOR_CRASH,
+                    documentName = "addToProductList,${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.toString(),
+                        errorCode = 0,
+                        ipAddress = _publicIpAddress,
+                    )
+                )
+            }
+
         }
     }
 
@@ -723,22 +791,37 @@ open class RootViewModel @Inject constructor(
     val grandTotal: State<Float> = _grandTotal
 
     private fun calculateTotal() {
-        _subTotal.value = 0f
-        _totalVat.value = 0f
-        _totalDiscount.value = 0f
-        _grandTotal.value = 0f
+        try {
+            _subTotal.value = 0f
+            _totalVat.value = 0f
+            _totalDiscount.value = 0f
+            _grandTotal.value = 0f
 
-        selectedProductList.forEach { sp ->
-            _subTotal.value += sp.qty * sp.productRate
-            _totalDiscount.value += sp.disc * sp.qty
-            _totalVat.value += sp.vat * sp.qty * sp.productRate / 100
-        }
-        _grandTotal.value += (_subTotal.value
-                - _totalDiscount.value
-                + _totalVat.value
-                + if (_freightCharge.value.isEmpty() || _freightCharge.value.isBlank()) 0f else _freightCharge.value.toFloat()
-                - if (_additionalDiscount.value.isEmpty() || _additionalDiscount.value.isBlank()) 0f else _additionalDiscount.value.toFloat()
+            selectedProductList.forEach { sp ->
+                _subTotal.value += sp.qty * sp.productRate
+                _totalDiscount.value += sp.disc * sp.qty
+                _totalVat.value += sp.vat * sp.qty * sp.productRate / 100
+            }
+            _grandTotal.value += (_subTotal.value
+                    - _totalDiscount.value
+                    + _totalVat.value
+                    + if (_freightCharge.value.isEmpty() || _freightCharge.value.isBlank()) 0f else _freightCharge.value.toFloat()
+                    - if (_additionalDiscount.value.isEmpty() || _additionalDiscount.value.isBlank()) 0f else _additionalDiscount.value.toFloat()
+                    )
+        } catch (e: Exception) {
+            sendHomeScreenEvent(UiEvent.ShowSnackBar(e.message.toString()))
+            viewModelScope.launch {
+                useCase.insertErrorDataToFireStoreUseCase(
+                    collectionName = FirebaseConst.COLLECTION_NAME_FOR_CRASH,
+                    documentName = "calculateTotal,${Date()}",
+                    errorData = FirebaseError(
+                        errorMessage = e.toString(),
+                        errorCode = 0,
+                        ipAddress = _publicIpAddress,
+                    )
                 )
+            }
+        }
     }
 
 
@@ -1340,7 +1423,7 @@ open class RootViewModel @Inject constructor(
                 Locale.getDefault()
             ).parse(eDate)!!
             // checking for current date is more than or equal to expiry date
-            Date()>=expDate
+            Date() >= expDate
         } catch (e: Exception) {
             true
         }
@@ -1349,7 +1432,7 @@ open class RootViewModel @Inject constructor(
     fun setIsInitialLoadingIsNotFinished() {
         _message.value = ""
         unitsList.clear()
-        isInitialLoadingFinished = false
+        _isInitialLoadingFinished = false
         readBaseUrl()
 
     }

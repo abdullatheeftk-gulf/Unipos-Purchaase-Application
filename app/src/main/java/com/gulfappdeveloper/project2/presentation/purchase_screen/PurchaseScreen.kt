@@ -145,6 +145,7 @@ fun PurchaseScreen(
             rootViewModel = rootViewModel,
             onDismissRequest = {
                 showCalendar = false
+                fManager.clearFocus()
             }
         )
     }
