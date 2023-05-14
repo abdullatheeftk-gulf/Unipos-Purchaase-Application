@@ -31,3 +31,6 @@
 -keepclassmembers class com.gulfappdeveloper.project2.<1>$Companion {
     kotlinx.serialization.KSerializer serializer(...);
 }
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn org.slf4j.impl.StaticLoggerBinder

@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
@@ -33,6 +34,7 @@ fun LicenseInformationDisplayAlertDialog(
             if (isUniposLicenseExpired(it)) {
                 AlertDialog(
                     onDismissRequest = onLicenseExpired,
+                    shape = RoundedCornerShape(8),
                     buttons = {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -136,10 +138,24 @@ fun LicenseInformationDisplayAlertDialog(
 
 private fun isUniposLicenseExpired(eDate: String): Boolean {
 
-    val expDate: Date = SimpleDateFormat(
-        "dd-MM-yyyy",
-        Locale.getDefault()
-    ).parse(eDate)!!
+    return try {
+        val expDate: Date = SimpleDateFormat(
+            "dd-MM-yyyy",
+            Locale.getDefault()
+        ).parse(eDate)!!
 
-    return Date()>=expDate
+        val year = SimpleDateFormat("yyyy",Locale.getDefault()).format(Date())
+        val month = SimpleDateFormat("MM",Locale.getDefault()).format(Date())
+        val day = SimpleDateFormat("dd",Locale.getDefault()).format(Date())
+
+        val currentDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse("${day}-${month}-${year}")
+
+        val comparison = currentDate?.after(expDate)!!
+
+
+        comparison
+    } catch (e: Exception) {
+        Log.e("Test", "isUniPosLicenseExpired: $e", )
+        true
+    }
 }

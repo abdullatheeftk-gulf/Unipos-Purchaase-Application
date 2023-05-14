@@ -44,11 +44,8 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                 if (result is GetDataFromRemote.Success) {
                     Log.e("Test", "getWelcomeMessage: success", )
                     useCase.saveBaseUrlUseCase(baseUrl = value)
-                   /* if (BuildConfig.DEBUG) {
-                        sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
-                    } else {*/
-                        readUniLicenseKeyDetails()
-                   // }
+
+                    sendUiEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
                 }
                 if (result is GetDataFromRemote.Failed) {
                     Log.d("Test", "getWelcomeMessage: Failed ${result.error}")
@@ -58,7 +55,7 @@ class SetBaseUrlScreenViewModel @Inject constructor(
         }
     }
 
-    private fun readUniLicenseKeyDetails() {
+   /* private fun readUniLicenseKeyDetails() {
         viewModelScope.launch {
             useCase.uniLicenseReadUseCase().collectLatest { value ->
                 // checking for saved license details
@@ -85,9 +82,9 @@ class SetBaseUrlScreenViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
-    private fun isUniposLicenseExpired(eDate: String): Boolean {
+   /* private fun isUniposLicenseExpired(eDate: String): Boolean {
         return try {
             val expDate: Date = SimpleDateFormat(
                 "dd-MM-yyyy",
@@ -98,7 +95,7 @@ class SetBaseUrlScreenViewModel @Inject constructor(
         }catch (e:Exception){
             true
         }
-    }
+    }*/
 
     fun onErrorUrl(url: String) {
         sendUiEvent(UiEvent.ShowSnackBar(message = "Typed url $url is in wrong format"))

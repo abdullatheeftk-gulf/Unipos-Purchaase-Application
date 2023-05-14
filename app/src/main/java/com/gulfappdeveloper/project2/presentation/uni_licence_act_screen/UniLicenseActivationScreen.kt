@@ -85,8 +85,14 @@ fun UniLicenseActivationScreen(
     if (showAlertDialog) {
         LicenseInformationDisplayAlertDialog(
             onDismissRequest = {
+
+                //Trigger base url and welcome message
+
+
                 navHostController.popBackStack()
-                navHostController.navigate(route = RootNavScreens.LoginScreen.route)
+               // navHostController.navigate(route = RootNavScreens.LoginScreen.route)
+                navHostController.navigate(route = RootNavScreens.SplashScreen2.route)
+                rootViewModel.readBaseUrl2()
             },
             onLicenseExpired = {
                 showAlertDialog = false

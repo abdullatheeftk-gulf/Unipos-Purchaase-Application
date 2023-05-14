@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -15,6 +16,8 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.splash_screen.componenets.LicenseExpiryAlertDialog
+import com.gulfappdeveloper.project2.presentation.splash_screen.componenets.NoLicenseAlertDialog
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.delay
@@ -35,6 +38,15 @@ fun SplashScreen(
     var showLogoImage by remember {
         mutableStateOf(false)
     }
+
+    var showLicenseExpiryAlertDialog by remember{
+        mutableStateOf(false)
+    }
+
+    var showNoLicenseAlertDialog by remember{
+        mutableStateOf(false)
+    }
+
     if (welcomeMessage.isNotEmpty()) {
         showLogoImage = true
     }
@@ -49,6 +61,12 @@ fun SplashScreen(
         mutableStateOf(false)
     }
 
+    var showPleaseWaitText by remember{
+        mutableStateOf(false)
+    }
+
+
+
 
     LaunchedEffect(key1 = true) {
         rootViewModel.splashScreenEvent.collectLatest { event ->
@@ -61,6 +79,7 @@ fun SplashScreen(
                 }
                 is UiEvent.Navigate -> {
                     delay(2000L)
+                    showPleaseWaitText = false
                     rootViewModel.saveDeviceId(value = deviceId)
                     navHostController.popBackStack()
                     navHostController.navigate(route = event.uiEvent.route)
@@ -73,8 +92,33 @@ fun SplashScreen(
                         message = event.uiEvent.message
                     )
                 }
+                is UiEvent.ShowAlertDialog->{
+                    val message = event.uiEvent.message
+                    if(message == "License_Expired") {
+                        showLicenseExpiryAlertDialog = true
+                    }
+                    else{
+                        showNoLicenseAlertDialog = true
+                    }
+                }
+                is UiEvent.ShowPleaseWaitText->{
+                    showPleaseWaitText = true
+                }
                 else -> Unit
             }
+        }
+    }
+
+    if (showLicenseExpiryAlertDialog){
+        LicenseExpiryAlertDialog {
+            rootViewModel.sendFetchingIPV4AddressMessageToSplashScreen()
+            showLicenseExpiryAlertDialog = false
+        }
+    }
+    if (showNoLicenseAlertDialog){
+        NoLicenseAlertDialog {
+            rootViewModel.sendFetchingIPV4AddressMessageToSplashScreen()
+            showNoLicenseAlertDialog = false
         }
     }
 
@@ -121,6 +165,13 @@ fun SplashScreen(
                         .width(200.dp)
                         .height(150.dp),
                     alignment = Alignment.Center
+                )
+            }
+            if(showPleaseWaitText){
+                Text(
+                    text = "Please wait while we retrieve your public IP address.",
+                    color = Color.Red,
+                    modifier = Modifier.padding(16.dp),
                 )
             }
 

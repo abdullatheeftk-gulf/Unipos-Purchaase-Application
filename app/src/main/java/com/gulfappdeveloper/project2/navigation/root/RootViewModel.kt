@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.navigation.root
 
+//import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -60,8 +61,6 @@ open class RootViewModel @Inject constructor(
 
     private var _isInitialLoadingFinished = false
 
-    private val _isLicenseActivationCheckPassed = mutableStateOf(false)
-    //val isLicenseActivationCheckPassed: State<Boolean> = _isLicenseActivationCheckPassed
 
     private var _publicIpAddress = ""
 
@@ -75,11 +74,7 @@ open class RootViewModel @Inject constructor(
 
     private val _splashScreenEvent2 = Channel<SplashScreenEvent2>()
     val splashScreenEvent2 = _splashScreenEvent2.receiveAsFlow()
-    private fun sendSplashScreenEvent2(event: UiEvent) {
-        viewModelScope.launch {
-            _splashScreenEvent2.send(SplashScreenEvent2(event))
-        }
-    }
+
 
     // Add client screen navigation popUp flag, false is for navigation from the main screen
     private val _addClientScreenNavPopUpFlag = mutableStateOf(false)
@@ -213,16 +208,28 @@ open class RootViewModel @Inject constructor(
         commonMemory.addProductNavFrom = value
     }
 
+    // License information
+
+    private val _uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
+    val uniLicenseDetails: State<UniLicenseDetails?> = _uniLicenseDetails
+
+    private val _licenseKeyActivationError = mutableStateOf("")
+    val licenseKeyActivationError: State<String> = _licenseKeyActivationError
+
 
     init {
         sendSplashScreenEvent(UiEvent.ShowProgressBar)
 
         saveOperationCount()
         readOperationCount()
-        readBaseUrl()
         readSerialNo()
         readDeviceId()
         getFirebaseLicense()
+
+        // readBaseUrl()
+        readUniLicenseKeyDetails()
+
+
     }
 
     private fun getFirebaseLicense() {
@@ -274,6 +281,7 @@ open class RootViewModel @Inject constructor(
         }
     }
 
+
     private fun readBaseUrl() {
         viewModelScope.launch {
             useCase.readBaseUrlUseCase().collectLatest {
@@ -300,13 +308,8 @@ open class RootViewModel @Inject constructor(
                     // Set common memory base url 25/01/2022
                     commonMemory.baseUrl = _baseUrl.value
 
-                    /*if (BuildConfig.DEBUG) {
-                        sendSplashScreenEvent(
-                            UiEvent.Navigate(route = RootNavScreens.LoginScreen.route)
-                        )
-                    } else {*/
-                    readUniLicenseKeyDetails()
-                    // }
+                    sendSplashScreenEvent(UiEvent.Navigate(RootNavScreens.LoginScreen.route))
+
                 }
                 if (result is GetDataFromRemote.Failed) {
                     _isInitialLoadingFinished = false
@@ -364,6 +367,7 @@ open class RootViewModel @Inject constructor(
                         sendLoginScreenEvent(UiEvent.Navigate(route = RootNavScreens.MainScreen.route))
                         useCase.updateSerialNoUseCase()
                     }
+
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorMessage =
@@ -381,6 +385,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
 
@@ -412,6 +417,7 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         _publicIpAddress = result.data.ip ?: ""
                     }
+
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorMessage =
@@ -427,6 +433,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
 
@@ -535,6 +542,7 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         unitsList.addAll(result.data)
                     }
+
                     is GetDataFromRemote.Failed -> {
 
                         val error2 = "Error:- ${result.error.code}, ${result.error.message}, $url"
@@ -553,6 +561,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
             }
@@ -1158,6 +1167,7 @@ open class RootViewModel @Inject constructor(
                         _productStockForStockAdjustment.value.value = result.data
                         sendStockAdjustmentScreenEvent(UiEvent.ShowAlertDialog("stock_adjusted"))
                     }
+
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorData =
@@ -1174,6 +1184,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
             }
@@ -1199,6 +1210,7 @@ open class RootViewModel @Inject constructor(
                         // val success = result.data
                         sendStockAdjustmentScreenEvent(UiEvent.ShowAlertDialog("stock_adjust_submitted"))
                     }
+
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorData =
@@ -1215,6 +1227,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
 
@@ -1235,11 +1248,6 @@ open class RootViewModel @Inject constructor(
         uni license Activation block
     */
 
-    private val _uniLicenseDetails: MutableState<UniLicenseDetails?> = mutableStateOf(null)
-    val uniLicenseDetails: State<UniLicenseDetails?> = _uniLicenseDetails
-
-    private val _licenseKeyActivationError = mutableStateOf("")
-    val licenseKeyActivationError: State<String> = _licenseKeyActivationError
 
     private val _uniLicenseActivationUiEvent = Channel<UniLicenseActivationUiEvent>()
     val uniLicenseActivationUiEvent = _uniLicenseActivationUiEvent.receiveAsFlow()
@@ -1279,7 +1287,6 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         val licenseType = result.data.message.licenseType
                         val expiryDate = result.data.message.expiryDate
-                        // Log.e("Test", "before expiry date null check")
                         // Checking for license information demo and expiry date
                         if (licenseType == "demo") {
                             if (expiryDate.isNullOrEmpty() || expiryDate.isBlank()) {
@@ -1288,21 +1295,16 @@ open class RootViewModel @Inject constructor(
                             }
                         }
                         expiryDate?.let { ed ->
-                            //  Log.i("Test", "expiry date null check success $ed")
                             if (licenseType == "demo") {
-                                //  Log.w("Test", "expiry date demo $ed")
                                 if (isUniPosLicenseExpired(ed)) {
-                                    // Log.e("Test", "expiry date demo and expired $ed")
                                     // EXPIRED LICENSE 10/02/2023
                                     sendUniLicenseActivation(UiEvent.ShowSnackBar("Expired License"))
                                     _licenseKeyActivationError.value = "Expired License"
                                     return@collectLatest
-                                } else {
-                                    // Log.d("Test", "expiry date demo and not expired $ed")
                                 }
                             }
                         }
-                        // Log.e("Test", "after expiry date null check")
+
 
 
                         val licenceInformation = UniLicenseDetails(
@@ -1328,6 +1330,7 @@ open class RootViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is GetDataFromRemote.Failed -> {
 
                         val error = result.error
@@ -1347,6 +1350,7 @@ open class RootViewModel @Inject constructor(
                         )
 
                     }
+
                     else -> Unit
                 }
             }
@@ -1369,21 +1373,25 @@ open class RootViewModel @Inject constructor(
 
                         // check for license expired
                         if (isUniPosLicenseExpired(licenseDetails.expiryDate)) {
-                            // demo license expired
                             checkForPublicIpAddressStatus()
+                            sendSplashScreenEvent(UiEvent.ShowAlertDialog("License_Expired"))
+                            // demo license expired
+
 
                         } else {
                             // demo license not expired
-                            sendSplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
+                            readBaseUrl()
                         }
                     }
                     if (licenseDetails.licenseType == "permanent") {
                         // license is permanent
-                        sendSplashScreenEvent(UiEvent.Navigate(route = RootNavScreens.LoginScreen.route))
 
+                        // Need to be checked baseurl
+                        readBaseUrl()
                     }
                 } else {
                     checkForPublicIpAddressStatus()
+                    sendSplashScreenEvent(UiEvent.ShowAlertDialog(""))
                 }
             }
         }
@@ -1399,13 +1407,14 @@ open class RootViewModel @Inject constructor(
                     return@launch
                 }
                 delay(1000L)
-                if (it % 30 == 0) {
+                if (it % 5 == 0) {
                     getIp4Address()
                 }
                 if (it == 180) {
                     sendSplashScreenEvent(
                         UiEvent.ShowSnackBar("There have some error on reading Public Ip address. Please restart application")
                     )
+                    sendSplashScreenEvent(UiEvent.CloseProgressBar)
                     return@launch
                 }
             }
@@ -1422,8 +1431,18 @@ open class RootViewModel @Inject constructor(
                 "dd-MM-yyyy",
                 Locale.getDefault()
             ).parse(eDate)!!
-            // checking for current date is more than or equal to expiry date
-            Date() >= expDate
+
+            val year = SimpleDateFormat("yyyy",Locale.getDefault()).format(Date())
+            val month = SimpleDateFormat("MM",Locale.getDefault()).format(Date())
+            val day = SimpleDateFormat("dd",Locale.getDefault()).format(Date())
+
+            val currentDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse("${day}-${month}-${year}")
+
+
+            val comparison = currentDate?.after(expDate)!!
+
+
+            comparison
         } catch (e: Exception) {
             true
         }
@@ -1608,6 +1627,7 @@ open class RootViewModel @Inject constructor(
                         setSalePriceForPriceAdjustment(result.data.salePrice.toString())
                         setMrpForPriceAdjustment(result.data.mrp.toString())
                     }
+
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorCode = error.code
@@ -1624,6 +1644,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
             }
@@ -1644,6 +1665,7 @@ open class RootViewModel @Inject constructor(
                     is GetDataFromRemote.Success -> {
                         sendAdjustPriceScreenEvent(UiEvent.ShowAlertDialog(""))
                     }
+
                     is GetDataFromRemote.Failed -> {
                         val errorCode = result.error.code
                         val errorMessage = result.error.message
@@ -1660,6 +1682,7 @@ open class RootViewModel @Inject constructor(
                             )
                         )
                     }
+
                     else -> Unit
                 }
             }
@@ -1672,6 +1695,70 @@ open class RootViewModel @Inject constructor(
         _productNameForPriceAdjustment.value.value = ""
         _selectedProductForPriceAdjustment.value.value = null
 
+    }
+
+    fun sendFetchingIPV4AddressMessageToSplashScreen() {
+        viewModelScope.launch {
+            delay(1000L)
+            //sendSplashScreenEvent(UiEvent.ShowSnackBar("Please wait while we retrieve your public IP address."))
+            sendSplashScreenEvent(UiEvent.ShowPleaseWaitText)
+        }
+    }
+
+    fun readBaseUrl2() {
+        sendSplashScreenEvent2(UiEvent.ShowProgressBar)
+        viewModelScope.launch {
+            useCase.readBaseUrlUseCase().collectLatest {
+                _baseUrl.value = it
+                if (!_isInitialLoadingFinished) {
+                    getWelcomeMessage2()
+                    _isInitialLoadingFinished = true
+                }
+            }
+        }
+    }
+
+    private fun getWelcomeMessage2() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val url = _baseUrl.value + HttpRoutes.WELCOME_MESSAGE
+            useCase.getWelcomeMessageUseCase(url = url).collectLatest { result ->
+                sendSplashScreenEvent2(UiEvent.CloseProgressBar)
+                if (result is GetDataFromRemote.Success) {
+                    _message.value = result.data.message
+                    // Set common memory base url 13/05/2023
+                    commonMemory.baseUrl = _baseUrl.value
+
+
+                    sendSplashScreenEvent2(UiEvent.Navigate(RootNavScreens.LoginScreen.route))
+
+
+                }
+                if (result is GetDataFromRemote.Failed) {
+                    _isInitialLoadingFinished = false
+                    val error = result.error
+                    val errorMessage =
+                        "code:- ${error.code}, message:- ${error.message}, url:- $url"
+                    sendSplashScreenEvent2(UiEvent.ShowSnackBar(message = errorMessage))
+                    sendSplashScreenEvent2(UiEvent.ShowButton1)
+                    useCase.insertErrorDataToFireStoreUseCase(
+                        collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
+                        documentName = "getWelcomeMessage2,${Date()}",
+                        errorData = FirebaseError(
+                            errorMessage = errorMessage,
+                            errorCode = error.code,
+                            ipAddress = _publicIpAddress,
+                            url = url
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun sendSplashScreenEvent2(event: UiEvent) {
+        viewModelScope.launch {
+            _splashScreenEvent2.send(SplashScreenEvent2(event))
+        }
     }
 
 

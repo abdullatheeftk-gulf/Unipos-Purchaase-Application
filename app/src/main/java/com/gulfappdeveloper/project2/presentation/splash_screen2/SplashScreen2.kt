@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.splash_screen2
 
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -50,6 +51,7 @@ fun SplashScreen2(
 
     LaunchedEffect(key1 = true) {
         rootViewModel.splashScreenEvent2.collectLatest { event ->
+            Log.i("Test", "Spl ")
             when (event.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
@@ -58,6 +60,7 @@ fun SplashScreen2(
                     showProgressBar = false
                 }
                 is UiEvent.Navigate -> {
+                    Log.w("Test", "SplashScreen2: ", )
                     delay(2000L)
                    // rootViewModel.saveDeviceId(value = deviceId)
                     navHostController.popBackStack()
