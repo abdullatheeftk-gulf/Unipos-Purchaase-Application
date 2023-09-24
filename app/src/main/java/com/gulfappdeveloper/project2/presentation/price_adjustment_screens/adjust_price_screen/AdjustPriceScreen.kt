@@ -75,10 +75,14 @@ fun AdjustPriceScreen(
     if (showSuccessAlertDialog) {
         ShowSuccessAlertDialog {
             rootViewModel.resetAllPriceAdjustmentData()
-            navHostController.backQueue.clear()
+           // navHostController.backQueue.clear()
             navHostController.navigate(
                 route = RootNavScreens.MainScreen.route
-            )
+            ){
+                popUpTo(route = RootNavScreens.MainScreen.route){
+                    inclusive = true
+                }
+            }
         }
     }
 
