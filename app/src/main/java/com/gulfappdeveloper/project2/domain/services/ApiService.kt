@@ -58,7 +58,7 @@ interface ApiService {
     suspend fun getProductForPriceAdjustment(url: String):Flow<GetDataFromRemote<ProductForPriceAdjustment>>
 
     // get ip address
-    suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<SeeIp>>
+    suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<String>>
 
 
 

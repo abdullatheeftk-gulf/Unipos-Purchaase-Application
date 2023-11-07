@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.data.remote
 
+import android.util.Log
 import com.gulfappdeveloper.project2.domain.models.remote.Error
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -31,7 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.net.ConnectException
 
-
+private const val TAG = "ApiServiceImpl"
 class ApiServiceImpl(
     private val client: HttpClient
 ) : ApiService {
@@ -252,6 +253,9 @@ class ApiServiceImpl(
         url: String,
         licenseRequestBody: LicenseRequestBody
     ): Flow<GetDataFromRemote<LicenseResponse>> {
+        Log.w(TAG, "uniLicenseActivation: $rioLabKey", )
+        Log.w(TAG, "uniLicenseActivation: $url", )
+        Log.i(TAG, "uniLicenseActivation: $licenseRequestBody")
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
@@ -262,6 +266,7 @@ class ApiServiceImpl(
 
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
+                        Log.d(TAG, "uniLicenseActivation: ${httpResponse.body<LicenseResponse>()}")
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
@@ -277,6 +282,9 @@ class ApiServiceImpl(
                         )
                     }
                     in 400..499 -> {
+                        Log.e(TAG, "uniLicenseActivation: ${httpResponse.bodyAsText()}", )
+                        Log.d(TAG, "uniLicenseActivation: ${httpResponse.status.description}")
+                        Log.e(TAG, "uniLicenseActivation: $statusCode", )
                         var str = ""
                         try {
                             str = httpResponse.bodyAsText()
@@ -316,6 +324,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
+                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -326,7 +335,7 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-
+                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -336,7 +345,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-
+                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -346,7 +355,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
-
+                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -356,6 +365,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: Exception) {
+                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1821,14 +1831,14 @@ class ApiServiceImpl(
     }
 
 
-    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+    override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return flow {
             try {
                 val httpResponse = client.get(urlString = url)
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
                         emit(
-                            GetDataFromRemote.Success(httpResponse.body())
+                            GetDataFromRemote.Success(httpResponse.bodyAsText())
                         )
                     }
                     in 300..399 -> {

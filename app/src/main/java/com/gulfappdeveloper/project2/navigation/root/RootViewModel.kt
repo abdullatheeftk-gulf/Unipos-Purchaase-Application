@@ -1,6 +1,7 @@
 package com.gulfappdeveloper.project2.navigation.root
 
 //import android.util.Log
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -52,7 +53,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-
+private const val TAG = "RootViewModel"
 @HiltViewModel
 open class RootViewModel @Inject constructor(
     private val useCase: UseCase,
@@ -415,13 +416,15 @@ open class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        _publicIpAddress = result.data.ip ?: ""
+                        _publicIpAddress = result.data.toString() ?: "nil"
+                        Log.i(TAG, "getIp4Address: $_publicIpAddress")
                     }
 
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
+                        Log.e(TAG, "getIp4Address: $errorMessage", )
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
                             documentName = "getIp4Address,${Date()}",
@@ -1285,8 +1288,8 @@ open class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        val licenseType = result.data.message.licenseType
-                        val expiryDate = result.data.message.expiryDate
+                        val licenseType = result.data.licenseType
+                        val expiryDate = result.data.expiryDate
                         // Checking for license information demo and expiry date
                         if (licenseType == "demo") {
                             if (expiryDate.isNullOrEmpty() || expiryDate.isBlank()) {
@@ -1300,7 +1303,7 @@ open class RootViewModel @Inject constructor(
                                     // EXPIRED LICENSE 10/02/2023
                                     sendUniLicenseActivation(UiEvent.ShowSnackBar("Expired License"))
                                     _licenseKeyActivationError.value = "Expired License"
-                                    return@collectLatest
+                                    return@let
                                 }
                             }
                         }
@@ -1308,9 +1311,9 @@ open class RootViewModel @Inject constructor(
 
 
                         val licenceInformation = UniLicenseDetails(
-                            licenseType = result.data.message.licenseType,
+                            licenseType = result.data.licenseType,
                             licenseKey = licenseKey,
-                            expiryDate = result.data.message.expiryDate ?: ""
+                            expiryDate = result.data.expiryDate ?: ""
                         )
 
                         _uniLicenseDetails.value = licenceInformation
@@ -1704,6 +1707,7 @@ open class RootViewModel @Inject constructor(
             sendSplashScreenEvent(UiEvent.ShowPleaseWaitText)
         }
     }
+
 
     fun readBaseUrl2() {
         sendSplashScreenEvent2(UiEvent.ShowProgressBar)

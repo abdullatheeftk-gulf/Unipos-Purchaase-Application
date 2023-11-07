@@ -41,7 +41,7 @@ class RemoteRepository @Inject constructor(
     }
 
 
-    suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<SeeIp>> {
+    suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return apiService.getIp4Address(url = url)
     }
 
