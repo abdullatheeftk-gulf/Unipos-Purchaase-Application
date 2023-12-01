@@ -929,6 +929,7 @@ class ApiServiceImpl(
         url: String,
         addProduct: AddProduct
     ): Flow<GetDataFromRemote<Product>> {
+        Log.d(TAG, "addProduct: $addProduct", )
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
@@ -953,11 +954,19 @@ class ApiServiceImpl(
                     }
                     in 400..499 -> {
                         if (statusCode == 400) {
+                            Log.e(TAG, "url: $url", )
+                            Log.d(TAG, "addProduct: $addProduct", )
+                            try {
+                                Log.e(TAG, "addProduct: ${httpResponse.bodyAsText()}", )
+                            }catch (e:Exception){
+                                e.printStackTrace()
+                            }
+
                             emit(
                                 GetDataFromRemote.Failed(
                                     error = Error(
                                         code = statusCode,
-                                        message = httpResponse.status.description + ", Duplicate Barcode"
+                                        message = httpResponse.status.description
                                     )
                                 )
                             )
@@ -1834,6 +1843,7 @@ class ApiServiceImpl(
     override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return flow {
             try {
+                Log.d(TAG, "getIp4Address: $url")
                 val httpResponse = client.get(urlString = url)
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {

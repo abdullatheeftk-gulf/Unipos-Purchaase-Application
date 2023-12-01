@@ -203,20 +203,27 @@ class AddProductMainViewModel @Inject constructor(
         }
         sendSelectedProductGroupEvent(UiEvent.ShowProgressBar)
         val url = _baseUrl.value + HttpRoutes.GET_PRODUCT_GROUPS
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             useCase.getProductGroupsUseCase(url = url).collectLatest { result ->
                 sendSelectedProductGroupEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
-
-                        productGroupsList.addAll(result.data)
+                        try {
+                            productGroupsList.addAll(result.data)
+                        }catch (e:Exception){
+                            e.printStackTrace()
+                        }
 
                         //Log.w(TAG, "getProductGroups: ${result.data}")
                         if (result.data.isEmpty()) {
                             sendSelectedProductGroupEvent(UiEvent.ShowEmptyList(true))
                         } else {
                             sendSelectedProductGroupEvent(UiEvent.ShowEmptyList(false))
-                            _selectedProductGroup.value = productGroupsList[0]
+                            try {
+                                _selectedProductGroup.value = productGroupsList[0]
+                            }catch (e:Exception){
+                                e.printStackTrace()
+                            }
                         }
                     }
                     is GetDataFromRemote.Failed -> {
@@ -285,11 +292,16 @@ class AddProductMainViewModel @Inject constructor(
 
     private fun getAllTaxCategories() {
         val url = _baseUrl.value + HttpRoutes.GET_ALL_TAX_CATEGORIES
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             useCase.getAllTaxCategoriesUseCase(url = url).collectLatest { result ->
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        taxCategoryList.addAll(result.data)
+                        try {
+                            taxCategoryList.addAll(result.data)
+                        }catch (e:Exception){
+                            e.printStackTrace()
+                        }
+
                         if (taxCategoryList.isNotEmpty()) {
                             _taxCategory.value = taxCategoryList[0]
                         }
@@ -328,7 +340,7 @@ class AddProductMainViewModel @Inject constructor(
             tCategoryId = _taxCategory.value?.tCategoryId ?: 1,
             unitId = _productUnit.value?.unitId ?: 1,
             userId = _userId.toInt(),
-            productUnits = multiUnitProductList
+            productUnits = multiUnitProductList.toList()
         )
         viewModelScope.launch(Dispatchers.IO) {
             useCase.addProductUseCase(url = url, addProduct = addProduct).collectLatest { result ->

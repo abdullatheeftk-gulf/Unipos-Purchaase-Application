@@ -3,7 +3,7 @@ package com.gulfappdeveloper.project2
 import android.content.Context
 import android.os.Bundle
 import android.provider.Settings
-//import android.util.Log
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -25,7 +25,8 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import dagger.hilt.android.AndroidEntryPoint
 
-//private const val TAG = "MainActivity"
+
+private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navHostController = rememberNavController()
+                    Log.e(TAG, "screenSize: ${com.gulfappdeveloper.project2.presentation.ui_util.screenSize()}")
 
                     RootNavGraph(
                         navHostController = navHostController,
