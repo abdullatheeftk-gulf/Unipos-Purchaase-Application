@@ -3,6 +3,7 @@ package com.gulfappdeveloper.project2.di
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.repositories.DataStoreRepository
 import com.gulfappdeveloper.project2.repositories.FirebaseRepository
+import com.gulfappdeveloper.project2.repositories.LocalDataRepository
 import com.gulfappdeveloper.project2.repositories.RemoteRepository
 import com.gulfappdeveloper.project2.usecases.UseCase
 import com.gulfappdeveloper.project2.usecases.data_store_use_cases.base_url_use_cases.ReadBaseUrlUseCase
@@ -20,6 +21,12 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_s
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.GetFirebaseLicenseUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertGeneralDataToFirebaseUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_detail_use_cases.DeleteAllLocalPurchaseDetailsUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_detail_use_cases.GetAllLocalPurchaseDetailsUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_detail_use_cases.InsertLocalPurchaseDetailUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.DeleteLocalPurchaseMasterUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.GetLocalPurchaseMasterUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.InsertLocalPurchaseMasterUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllTaxCategoriesUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllUnitsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetProductGroupsUseCase
@@ -61,7 +68,8 @@ object RepositoryModule {
     fun provideUseCase(
         remoteRepository: RemoteRepository,
         dataStoreRepository: DataStoreRepository,
-        firebaseRepository: FirebaseRepository
+        firebaseRepository: FirebaseRepository,
+        localDataRepository: LocalDataRepository
     ): UseCase {
         return UseCase(
 
@@ -118,7 +126,17 @@ object RepositoryModule {
             insertGeneralDataToFirebaseUseCase = InsertGeneralDataToFirebaseUseCase(
                 firebaseRepository = firebaseRepository
             ),
-            getFirebaseLicenseUseCase = GetFirebaseLicenseUseCase(firebaseRepository = firebaseRepository)
+            getFirebaseLicenseUseCase = GetFirebaseLicenseUseCase(firebaseRepository = firebaseRepository),
+
+
+            // local database
+            insertLocalPurchaseDetailUseCase = InsertLocalPurchaseDetailUseCase(localDataRepository = localDataRepository),
+            getAllLocalPurchaseDetailsUseCase = GetAllLocalPurchaseDetailsUseCase(localDataRepository = localDataRepository),
+            deleteAllLocalPurchaseDetailsUseCase = DeleteAllLocalPurchaseDetailsUseCase(localDataRepository = localDataRepository),
+
+            insertLocalPurchaseMasterUseCase = InsertLocalPurchaseMasterUseCase(localDataRepository = localDataRepository),
+            getLocalPurchaseMasterUseCase = GetLocalPurchaseMasterUseCase(localDataRepository = localDataRepository),
+            deleteLocalPurchaseMasterUseCase = DeleteLocalPurchaseMasterUseCase(localDataRepository)
 
         )
     }

@@ -53,6 +53,10 @@ fun UniLicenseActivationScreen(
         mutableStateOf(false)
     }
 
+   /* var showSampleAlertDialog by remember {
+        mutableStateOf(false)
+    }*/
+
     val scope = rememberCoroutineScope()
 
     val focusRequester by remember {
@@ -100,6 +104,13 @@ fun UniLicenseActivationScreen(
             uniLicense = uniLicense
         )
     }
+
+    /*if (showSampleAlertDialog){
+        ShowSampleDialog {
+            showSampleAlertDialog = false
+
+        }
+    }*/
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -230,6 +241,10 @@ fun UniLicenseActivationScreen(
                 Text(text = "Activate")
             }
 
+            /*Button(onClick = { showSampleAlertDialog     = true }) {
+                Text(text = "Show sample Dialog")
+            }*/
+
         }
 
         if (showProgressBar) {
@@ -251,4 +266,24 @@ fun UniLicenseActivationScreen(
 private fun licenseKeyValidation(value: String): Boolean {
     return value.startsWith('P', ignoreCase = false)
 }
+
+/*@Composable
+fun ShowSampleDialog(
+    onDismissRequest:()->Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        buttons = {
+            Card(elevation = 10.dp,) {
+                Column {
+                    Text(text = "Sample Text")
+                    Button(onClick = onDismissRequest) {
+                        Text(text = "Dismiss")
+                    }
+                }
+            }
+
+        }
+    )
+}*/
 

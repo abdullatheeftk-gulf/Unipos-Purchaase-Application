@@ -29,6 +29,12 @@ import com.gulfappdeveloper.project2.usecases.data_store_use_cases.uni_license_s
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.GetFirebaseLicenseUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertErrorDataToFireStoreUseCase
 import com.gulfappdeveloper.project2.usecases.firebase_usecases.InsertGeneralDataToFirebaseUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_detail_use_cases.DeleteAllLocalPurchaseDetailsUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_detail_use_cases.GetAllLocalPurchaseDetailsUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_detail_use_cases.InsertLocalPurchaseDetailUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.DeleteLocalPurchaseMasterUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.GetLocalPurchaseMasterUseCase
+import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.InsertLocalPurchaseMasterUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.license.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.login.LoginUseCase
@@ -92,5 +98,15 @@ data class UseCase(
     // Firebase
     val insertGeneralDataToFirebaseUseCase: InsertGeneralDataToFirebaseUseCase,
     val insertErrorDataToFireStoreUseCase: InsertErrorDataToFireStoreUseCase,
-    val getFirebaseLicenseUseCase: GetFirebaseLicenseUseCase
+    val getFirebaseLicenseUseCase: GetFirebaseLicenseUseCase,
+
+
+    // Local database
+    val insertLocalPurchaseDetailUseCase: InsertLocalPurchaseDetailUseCase,
+    val getAllLocalPurchaseDetailsUseCase: GetAllLocalPurchaseDetailsUseCase,
+    val deleteAllLocalPurchaseDetailsUseCase: DeleteAllLocalPurchaseDetailsUseCase,
+
+    val insertLocalPurchaseMasterUseCase: InsertLocalPurchaseMasterUseCase,
+    val getLocalPurchaseMasterUseCase: GetLocalPurchaseMasterUseCase,
+    val deleteLocalPurchaseMasterUseCase: DeleteLocalPurchaseMasterUseCase
 )

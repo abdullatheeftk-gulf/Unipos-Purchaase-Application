@@ -369,7 +369,7 @@ fun PurchaseScreen(
             )
 
 
-            if (showAdditionalDiscount) {
+            if (showAdditionalDiscount || additionalDiscount.isNotEmpty()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -404,7 +404,7 @@ fun PurchaseScreen(
                     )
                 }
             }
-            if (showFreightCharge) {
+            if (showFreightCharge || freightCharge.isNotEmpty() ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

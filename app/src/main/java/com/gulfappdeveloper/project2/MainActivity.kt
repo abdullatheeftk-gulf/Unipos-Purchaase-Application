@@ -25,8 +25,12 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import dagger.hilt.android.AndroidEntryPoint
 
+//import dagger.hilt.android.AndroidEntryPoint
+
 
 private const val TAG = "MainActivity"
+
+//@AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

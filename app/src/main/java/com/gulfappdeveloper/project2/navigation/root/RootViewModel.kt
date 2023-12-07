@@ -27,6 +27,8 @@ import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseDetail
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseMaster
 import com.gulfappdeveloper.project2.domain.models.remote.post.price_adjustment.PriceAdjustment
 import com.gulfappdeveloper.project2.domain.models.remote.post.stoke_adjustment.StockAdjustment
+import com.gulfappdeveloper.project2.domain.models.room.LocalPurchaseDetail
+import com.gulfappdeveloper.project2.domain.models.room.LocalPurchaseMaster
 import com.gulfappdeveloper.project2.presentation.client_screen.util.ClientScreenEvent
 import com.gulfappdeveloper.project2.presentation.login_screen.util.LoginScreenEvent
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjust_price_screen.util.AdjustPriceScreenEvent
@@ -54,6 +56,7 @@ import java.util.*
 import javax.inject.Inject
 
 private const val TAG = "RootViewModel"
+
 @HiltViewModel
 open class RootViewModel @Inject constructor(
     private val useCase: UseCase,
@@ -424,7 +427,7 @@ open class RootViewModel @Inject constructor(
                         val error = result.error
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
-                        Log.e(TAG, "getIp4Address: $errorMessage", )
+                        Log.e(TAG, "getIp4Address: $errorMessage")
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
                             documentName = "getIp4Address,${Date()}",
@@ -1199,7 +1202,7 @@ open class RootViewModel @Inject constructor(
         sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
         viewModelScope.launch(Dispatchers.IO) {
             val stockAdjustment = StockAdjustment(
-                stockAdjustments = stockAdjustedProductList.value,
+                stockAdjustments = stockAdjustedProductList.value.toList(),
                 userId = _userId
             )
             useCase.adjustStocksOfProductListUseCase(
@@ -1307,7 +1310,6 @@ open class RootViewModel @Inject constructor(
                                 }
                             }
                         }
-
 
 
                         val licenceInformation = UniLicenseDetails(
@@ -1435,11 +1437,12 @@ open class RootViewModel @Inject constructor(
                 Locale.getDefault()
             ).parse(eDate)!!
 
-            val year = SimpleDateFormat("yyyy",Locale.getDefault()).format(Date())
-            val month = SimpleDateFormat("MM",Locale.getDefault()).format(Date())
-            val day = SimpleDateFormat("dd",Locale.getDefault()).format(Date())
+            val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(Date())
+            val month = SimpleDateFormat("MM", Locale.getDefault()).format(Date())
+            val day = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
 
-            val currentDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse("${day}-${month}-${year}")
+            val currentDate =
+                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse("${day}-${month}-${year}")
 
 
             val comparison = currentDate?.after(expDate)!!
@@ -1762,6 +1765,145 @@ open class RootViewModel @Inject constructor(
     private fun sendSplashScreenEvent2(event: UiEvent) {
         viewModelScope.launch {
             _splashScreenEvent2.send(SplashScreenEvent2(event))
+        }
+    }
+
+    // Developed on 06/12/2023
+    fun saveProductPurchaseSessionToRoom() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                //Deleting previous records
+                useCase.deleteLocalPurchaseMasterUseCase()
+                useCase.deleteAllLocalPurchaseDetailsUseCase()
+
+
+                val localPurchaseDetails = mutableStateListOf<LocalPurchaseDetail>()
+                selectedProductList.forEach { productSelected ->
+                    val localPurchaseDetail = LocalPurchaseDetail(
+                        productId = productSelected.productId,
+                        productName = productSelected.productName,
+                        productRate = productSelected.productRate,
+                        unit = productSelected.unit,
+                        unitId = productSelected.unitId,
+                        barcode = productSelected.barcode,
+                        vat = productSelected.vat,
+                        qty = productSelected.qty,
+                        disc = productSelected.disc,
+                        net = productSelected.net
+                    )
+                    localPurchaseDetails.add(localPurchaseDetail)
+                }
+                useCase.insertLocalPurchaseDetailUseCase(localPurchaseDetails)
+
+                val localPurchaseMaster = LocalPurchaseMaster(
+                    additionalAmount = 0f,
+                    additionalDiscount = if (_additionalDiscount.value.isNotEmpty() || _additionalDiscount.value.isNotBlank()) _additionalDiscount.value.toFloat() else 0f,
+                    discountAmount = _totalDiscount.value,
+                    freight = if (_freightCharge.value.isNotBlank() || _freightCharge.value.isNotEmpty()) _freightCharge.value.toFloat() else 0f,
+                    clientId = _selectedClient.value?.clientId ?: 0,
+                    clientName = _selectedClient.value?.clientName ?: "",
+                    purDate = _selectedDate.value,
+                    refInvNo = _billNo.value,
+                    sequenceNo = _serialNo.value,
+                    taxable = _subTotal.value,
+                    terminal = _deviceIdSate.value,
+                    totalAmount = _grandTotal.value,
+                    totalTax = _totalVat.value,
+                    userId = _userId,
+                    isCashPurchase = _isCashPurchase.value
+                )
+
+                useCase.insertLocalPurchaseMasterUseCase(localPurchaseMaster)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "saveProductPurchaseSessionToRoom: ${e.message}")
+                sendHomeScreenEvent(
+                    UiEvent.ShowSnackBar(
+                        message = e.message ?: "There have problem on saving session data"
+                    )
+                )
+            }
+
+        }
+
+    }
+
+    fun loadProductPurchaseSessionFromRoom() {
+        viewModelScope.launch {
+            try {
+                launch(Dispatchers.IO) {
+                    useCase.getLocalPurchaseMasterUseCase(userId = _userId)
+                        .collectLatest { localPurchaseMaster ->
+                            setDate(localPurchaseMaster.purDate)
+                            setBillNo(localPurchaseMaster.refInvNo)
+
+
+                            val localClientName = localPurchaseMaster.clientName
+                            val localClientId = localPurchaseMaster.clientId
+                            if(localClientId!=0 && localClientName.isNotEmpty()) {
+                                setClientDetails(
+                                    value = ClientDetails(
+                                        clientId = localPurchaseMaster.clientId,
+                                        clientName = localPurchaseMaster.clientName
+                                    )
+                                )
+                            }
+
+                            setIsCashPurchase(localPurchaseMaster.isCashPurchase)
+
+                            val localAdditionalDiscount = localPurchaseMaster.additionalDiscount
+                            if(localAdditionalDiscount!=0f) {
+                                setAdditionalDiscount(localAdditionalDiscount.toString())
+                            }else{
+                                setAdditionalDiscount("")
+                            }
+
+                            val localFreightCharge = localPurchaseMaster.freight
+                            if(localFreightCharge!=0f) {
+                                setFreightCharge(localPurchaseMaster.freight.toString())
+                            }else{
+                                setFreightCharge("")
+                            }
+
+                            _totalDiscount.value = localPurchaseMaster.discountAmount
+                            _subTotal.value = localPurchaseMaster.taxable
+                            _totalVat.value = localPurchaseMaster.totalTax
+                            _grandTotal.value = localPurchaseMaster.totalAmount
+
+
+                        }
+                }
+                launch(Dispatchers.IO) {
+                   useCase.getAllLocalPurchaseDetailsUseCase().collectLatest {localPurchaseDetails->
+                       selectedProductList.clear()
+
+                       localPurchaseDetails.forEach {localPurchaseDetail ->
+
+                           val productSelected = ProductSelected(
+                               productId = localPurchaseDetail.productId,
+                               productName = localPurchaseDetail.productName,
+                               productRate = localPurchaseDetail.productRate,
+                               unit = localPurchaseDetail.unit,
+                               unitId = localPurchaseDetail.unitId,
+                               barcode = localPurchaseDetail.barcode,
+                               vat = localPurchaseDetail.vat,
+                               qty = localPurchaseDetail.qty,
+                               disc = localPurchaseDetail.disc,
+                               net = localPurchaseDetail.net
+                           )
+                           selectedProductList.add(productSelected)
+                       }
+                   }
+                }
+
+            } catch (e: Exception) {
+                Log.e(TAG, "saveProductPurchaseSessionToRoom: ${e.message}")
+                sendHomeScreenEvent(
+                    UiEvent.ShowSnackBar(
+                        message = e.message ?: "There have problem on saving session data"
+                    )
+                )
+            }
         }
     }
 

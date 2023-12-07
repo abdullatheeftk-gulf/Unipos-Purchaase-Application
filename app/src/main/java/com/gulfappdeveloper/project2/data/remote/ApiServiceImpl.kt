@@ -1724,6 +1724,8 @@ class ApiServiceImpl(
         url: String,
         stockAdjustment: StockAdjustment
     ): Flow<GetDataFromRemote<StockAdjustment>> {
+        Log.d(TAG, "adjustStocksOfProductList: $url", )
+        Log.d(TAG, "adjustStocksOfProductList: $stockAdjustment")
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
@@ -1752,7 +1754,7 @@ class ApiServiceImpl(
                                 GetDataFromRemote.Failed(
                                     error = Error(
                                         code = statusCode,
-                                        message = "Duplicate Barcode"
+                                        message = httpResponse.bodyAsText()
                                     )
                                 )
                             )
