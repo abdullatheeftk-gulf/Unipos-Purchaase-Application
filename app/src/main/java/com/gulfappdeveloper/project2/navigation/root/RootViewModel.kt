@@ -1628,10 +1628,14 @@ open class RootViewModel @Inject constructor(
                 sendAdjustPriceScreenEvent(UiEvent.CloseProgressBar)
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        _selectedProductForPriceAdjustment.value.value = result.data
-                        setPurchasePriceForPriceAdjustment(result.data.purchasePrice.toString())
-                        setSalePriceForPriceAdjustment(result.data.salePrice.toString())
-                        setMrpForPriceAdjustment(result.data.mrp.toString())
+                        try {
+                            _selectedProductForPriceAdjustment.value.value = result.data
+                            setPurchasePriceForPriceAdjustment(result.data.purchasePrice.toString())
+                            setSalePriceForPriceAdjustment(result.data.salePrice.toString())
+                            setMrpForPriceAdjustment(result.data.mrp.toString())
+                        }catch (e:Exception){
+                            e.printStackTrace()
+                        }
                     }
 
                     is GetDataFromRemote.Failed -> {

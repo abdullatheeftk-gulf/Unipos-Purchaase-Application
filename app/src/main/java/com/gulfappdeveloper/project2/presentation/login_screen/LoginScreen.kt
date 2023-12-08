@@ -4,9 +4,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
@@ -23,6 +36,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     rootViewModel: RootViewModel,
@@ -30,7 +44,9 @@ fun LoginScreen(
     hideKeyboard: () -> Unit,
 ) {
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
 
     var text by remember {
@@ -64,9 +80,7 @@ fun LoginScreen(
                     navHostController.navigate(event.route)
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message
-                    )
+                    snackBarHostState.showSnackbar(message = event.message)
                 }
                 else -> Unit
             }
@@ -74,27 +88,30 @@ fun LoginScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
                     Text(
                         text = "Login",
-                        color = MaterialTheme.colors.OrangeColor,
+                        color = OrangeColor,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface
+                //backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) {
-        it.calculateTopPadding()
+
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = it.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(10.dp))
@@ -110,7 +127,7 @@ fun LoginScreen(
                                 id = if (showPasswordToggle) R.drawable.baseline_visibility_off_24 else R.drawable.baseline_visibility_24
                             ),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor
+                            tint = OrangeColor
                         )
                     }
                 },

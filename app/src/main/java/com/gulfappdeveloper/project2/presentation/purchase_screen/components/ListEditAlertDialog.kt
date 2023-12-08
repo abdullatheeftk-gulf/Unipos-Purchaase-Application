@@ -1,11 +1,21 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,17 +25,24 @@ import androidx.compose.ui.unit.dp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListEditAlertDialog(
     rootViewModel: RootViewModel,
     productSelected: ProductSelected,
-    count:Int,
+    count: Int,
     onDismissRequest: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        shape = RoundedCornerShape(8),
-        buttons = {
+    )
+    {
+        Card(
+            elevation = CardDefaults.cardElevation(6.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            )
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -37,25 +54,47 @@ fun ListEditAlertDialog(
                     textDecoration = TextDecoration.Underline,
                     textAlign = TextAlign.Center
                 )
-                TextButton(onClick = {
-                    rootViewModel.setAProductForEditFromList(count = count,productSelected = productSelected)
-                    onDismissRequest()
-                }) {
-                    Text(
-                        text = "Edit"
-                    )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row {
+
+                    Button(
+                        onClick = {
+                            rootViewModel.deleteAProductFromSelectedProductList(count)
+                            onDismissRequest()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.surface
+                        )
+                    ) {
+                        Text(
+                            text = "Delete",
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Button(
+                        onClick = {
+                            rootViewModel.setAProductForEditFromList(
+                                count = count,
+                                productSelected = productSelected
+                            )
+                            onDismissRequest()
+                        }, colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.surface
+                        )
+                    ) {
+                        Text(
+                            text = "Edit"
+                        )
+                    }
                 }
-                TextButton(onClick = {
-                    rootViewModel.deleteAProductFromSelectedProductList(count)
-                    onDismissRequest()
-                }) {
-                    Text(
-                        text = "Delete",
-                        color = MaterialTheme.colors.error
-                    )
-                }
+
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }
-    )
+
+    }
 }

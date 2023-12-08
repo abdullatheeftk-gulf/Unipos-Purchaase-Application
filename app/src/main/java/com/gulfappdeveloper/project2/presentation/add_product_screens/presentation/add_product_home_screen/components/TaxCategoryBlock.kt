@@ -4,6 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +46,7 @@ fun TaxCategoryBlock(
         Text(
             text = "Select Tax Category :-",
             fontSize = 18.sp,
-            color = MaterialTheme.colors.primary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
 
@@ -55,7 +63,7 @@ fun TaxCategoryBlock(
                             buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = MaterialTheme.colors.error,
+                                        color = MaterialTheme.colorScheme.error,
                                         baselineShift = BaselineShift.Superscript
                                     )
                                 ) {
@@ -91,26 +99,24 @@ fun TaxCategoryBlock(
                                     onClick = {
                                         onSelectedTaxCategory(it)
                                         showDropDownMenuForTaxCategory = false
-                                    })
-                                {
-                                    Text(text = it.tCategoryName)
-                                }
+                                    },
+                                    text = {Text(text = it.tCategoryName)}
+                                )
                             }
                         }
                     }
                 },
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = if (selectedTaxCategory == null) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary,
-                    backgroundColor = MaterialTheme.colors.surface,
-                    disabledTrailingIconColor = MaterialTheme.colors.error,
-                    disabledTextColor = if (selectedTaxCategory == null) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary,
-                    disabledLabelColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+                    disabledTrailingIconColor = MaterialTheme.colorScheme.error,
+                    disabledTextColor = if (selectedTaxCategory == null) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface
                 )
             )
             if (showTaxCategoryError) {
                 Text(
                     text = "    Tax Category is not selected",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Start)
                 )
             }

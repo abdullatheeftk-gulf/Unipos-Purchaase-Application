@@ -1,6 +1,5 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +10,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -60,11 +64,6 @@ fun FirstThreeRows(
         FocusRequester()
     }
 
-    val focusManager = LocalFocusManager.current
-
-
-
-
 
     Spacer(modifier = Modifier.height(5.dp))
     Column(
@@ -103,7 +102,7 @@ fun FirstThreeRows(
                     }
                 ),
                 textStyle = TextStyle(
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 isError = showBillNoError
             )
@@ -126,7 +125,6 @@ fun FirstThreeRows(
 
                         if (it.hasFocus) {
                             onSelectDateClicked()
-                            //focusManager.clearFocus()
                         }
                     }
                     .focusRequester(focusRequester),
@@ -134,7 +132,7 @@ fun FirstThreeRows(
                 shape = MaterialTheme.shapes.medium,
                 maxLines = 1,
                 textStyle = TextStyle(
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
             )
         }
@@ -148,14 +146,14 @@ fun FirstThreeRows(
                 .padding(horizontal = 4.dp)
                 .border(
                     width = 1.dp,
-                    color = if (showClientError) MaterialTheme.colors.error else Color.LightGray,
+                    color = if (showClientError) MaterialTheme.colorScheme.error else Color.LightGray,
                     shape = MaterialTheme.shapes.medium
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Outlined.Person,
-                tint = MaterialTheme.colors.OrangeColor,
+                tint = OrangeColor,
                 contentDescription = null,
                 modifier = Modifier.weight(1f)
             )
@@ -164,7 +162,7 @@ fun FirstThreeRows(
                 modifier = Modifier
                     .weight(7f)
                     .padding(start = 4.dp),
-                color = if (selectedClient == null) Color.DarkGray else MaterialTheme.colors.primary
+                color = if (selectedClient == null) Color.DarkGray else MaterialTheme.colorScheme.primary
             )
             IconButton(
                 onClick = {
@@ -177,7 +175,7 @@ fun FirstThreeRows(
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.OrangeColor,
+                    tint = OrangeColor,
                 )
             }
             IconButton(
@@ -197,96 +195,13 @@ fun FirstThreeRows(
         if (showClientError) {
             Text(
                 text = "    Client is not Selected",
-                color = MaterialTheme.colors.error,
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.align(Alignment.Start)
             )
         }
 
         Spacer(modifier = Modifier.height(2.dp))
 
-        //Third Row
-
-        /* Row(modifier = Modifier.fillMaxWidth()) {
-
-             OutlinedTextField(
-                 value = poNo,
-                 onValueChange = {
-                     rootViewModel.setPoNo(value = it)
-                 },
-                 label = {
-                     Text(text = "Po No.")
-                 },
-                 modifier = Modifier
-                     .weight(1f)
-                     .padding(horizontal = 4.dp),
-                 maxLines = 1,
-                 keyboardOptions = KeyboardOptions(
-                     keyboardType = KeyboardType.Number,
-                     imeAction = ImeAction.Done
-                 ),
-                 keyboardActions = KeyboardActions(
-                     onDone = {
-                         hideKeyboard()
-                     }
-                 )
-             )
-             Surface(
-                 modifier = Modifier
-                     .weight(1f)
-                     .padding(horizontal = 4.dp)
-             ) {
-                 OutlinedTextField(
-                     value = payMode.name,
-                     onValueChange = {
-                         rootViewModel.setPayMode(PayMode.valueOf(it))
-                     },
-                     label = {
-                         Text(text = "Pay Mode")
-                     },
-                     modifier = Modifier
-                         .weight(1f),
-                     trailingIcon = {
-                         IconButton(
-                             onClick = {
-                                 showDropDownMenu = true
-                             }
-                         ) {
-                             Icon(
-                                 imageVector = Icons.Default.KeyboardArrowDown,
-                                 tint = MaterialTheme.colors.error,
-                                 contentDescription = null
-                             )
-                         }
-
-                     },
-                     maxLines = 1,
-                     readOnly = true,
-                 )
-                 DropdownMenu(
-                     expanded = showDropDownMenu,
-                     onDismissRequest = {
-                         showDropDownMenu = false
-                     },
-                     properties = PopupProperties(
-                         focusable = true
-                     ),
-                 ) {
-                     PayMode.values().forEach { value ->
-                         DropdownMenuItem(
-                             onClick = {
-                                 rootViewModel.setPayMode(value)
-                                 showDropDownMenu = false
-                             },
-                             contentPadding = MenuDefaults.DropdownMenuItemContentPadding,
-                         ) {
-                             Text(text = value.name)
-                         }
-                     }
-                 }
-             }
-
-
-         }*/
     }
 
 

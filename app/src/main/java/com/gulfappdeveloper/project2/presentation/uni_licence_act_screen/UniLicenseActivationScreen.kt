@@ -4,10 +4,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
@@ -25,6 +35,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UniLicenseActivationScreen(
     rootViewModel: RootViewModel,
@@ -32,7 +43,9 @@ fun UniLicenseActivationScreen(
     hideKeyboard: () -> Unit,
     deviceId: String,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     var licenseKeyText by remember {
         mutableStateOf("")
@@ -53,9 +66,6 @@ fun UniLicenseActivationScreen(
         mutableStateOf(false)
     }
 
-   /* var showSampleAlertDialog by remember {
-        mutableStateOf(false)
-    }*/
 
     val scope = rememberCoroutineScope()
 
@@ -79,7 +89,7 @@ fun UniLicenseActivationScreen(
                     showProgressBar = false
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(value.uiEvent.message)
+                    snackBarHostState.showSnackbar(value.uiEvent.message)
                 }
                 else -> Unit
             }
@@ -90,11 +100,7 @@ fun UniLicenseActivationScreen(
         LicenseInformationDisplayAlertDialog(
             onDismissRequest = {
 
-                //Trigger base url and welcome message
-
-
                 navHostController.popBackStack()
-               // navHostController.navigate(route = RootNavScreens.LoginScreen.route)
                 navHostController.navigate(route = RootNavScreens.SplashScreen2.route)
                 rootViewModel.readBaseUrl2()
             },
@@ -105,47 +111,42 @@ fun UniLicenseActivationScreen(
         )
     }
 
-    /*if (showSampleAlertDialog){
-        ShowSampleDialog {
-            showSampleAlertDialog = false
-
-        }
-    }*/
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
                     Text(
                         "Activate App",
-                        color = MaterialTheme.colors.OrangeColor,
+                        color = OrangeColor,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface
             )
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = paddingValues.calculateTopPadding())
         ) {
             Spacer(modifier = Modifier.height(15.dp))
 
             Row {
                 Text(
                     text = "Device Id:-   ",
-                    fontStyle = MaterialTheme.typography.h1.fontStyle,
+                    fontStyle = MaterialTheme.typography.headlineLarge.fontStyle,
                     fontSize = 20.sp
                 )
                 SelectionContainer() {
                     Text(
                         text = deviceIdFromDataStore.ifEmpty { deviceId },
-                        fontStyle = MaterialTheme.typography.h1.fontStyle,
+                        fontStyle = MaterialTheme.typography.headlineLarge.fontStyle,
                         fontSize = 20.sp,
                     )
                 }
@@ -154,13 +155,13 @@ fun UniLicenseActivationScreen(
                 Row {
                     Text(
                         text = "App License:-   ",
-                        fontStyle = MaterialTheme.typography.h1.fontStyle,
+                        fontStyle = MaterialTheme.typography.headlineLarge.fontStyle,
                         fontSize = 20.sp
                     )
                     SelectionContainer() {
                         Text(
                             text = uniLicenseDetails.licenseKey,
-                            fontStyle = MaterialTheme.typography.h1.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineLarge.fontStyle,
                             fontSize = 20.sp,
                         )
                     }
@@ -186,7 +187,8 @@ fun UniLicenseActivationScreen(
                     hideKeyboard()
                     if (!licenseKeyValidation(licenseKeyText)) {
                         scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Invalid License")
+                           // scaffoldState.snackbarHostState.showSnackbar("Invalid License")
+                            snackBarHostState.showSnackbar("Invalid License")
                         }
                         return@KeyboardActions
                     }
@@ -213,7 +215,7 @@ fun UniLicenseActivationScreen(
                 if (licenseKeyActivationError.isNotBlank() || licenseKeyActivationError.isNotEmpty()) {
                     Text(
                         text = if (licenseKeyActivationError == "Expired License") "Expired License" else "Bad Request",
-                        color = MaterialTheme.colors.error
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -225,7 +227,7 @@ fun UniLicenseActivationScreen(
                     hideKeyboard()
                     if (!licenseKeyValidation(licenseKeyText)) {
                         scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Invalid License")
+                            snackBarHostState.showSnackbar("Invalid License")
                         }
                         return@Button
                     }
@@ -240,10 +242,6 @@ fun UniLicenseActivationScreen(
             ) {
                 Text(text = "Activate")
             }
-
-            /*Button(onClick = { showSampleAlertDialog     = true }) {
-                Text(text = "Show sample Dialog")
-            }*/
 
         }
 
@@ -267,23 +265,4 @@ private fun licenseKeyValidation(value: String): Boolean {
     return value.startsWith('P', ignoreCase = false)
 }
 
-/*@Composable
-fun ShowSampleDialog(
-    onDismissRequest:()->Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        buttons = {
-            Card(elevation = 10.dp,) {
-                Column {
-                    Text(text = "Sample Text")
-                    Button(onClick = onDismissRequest) {
-                        Text(text = "Dismiss")
-                    }
-                }
-            }
-
-        }
-    )
-}*/
 

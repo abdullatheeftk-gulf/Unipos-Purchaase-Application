@@ -1,10 +1,25 @@
 package com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -15,6 +30,7 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.P
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StockAdjustmentAlertDialog(
     rootViewModel: RootViewModel,
@@ -32,24 +48,25 @@ fun StockAdjustmentAlertDialog(
     }
 
     AlertDialog(
-        onDismissRequest = onDismissRequest,
-        buttons = {
+        onDismissRequest = onDismissRequest,)
+        {
+        Card(elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)) {
             Column(
                 modifier = Modifier.padding(all = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Stock Adjustment",
-                    color = MaterialTheme.colors.OrangeColor,
-                    fontStyle = MaterialTheme.typography.h6.fontStyle,
-                    fontSize = MaterialTheme.typography.h6.fontSize,
+                    color = OrangeColor,
+                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                     textDecoration = TextDecoration.Underline
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Row() {
                     Text(
                         text = "Name",
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(2f)
                     )
                     Text(
@@ -66,17 +83,17 @@ fun StockAdjustmentAlertDialog(
                 Row() {
                     Text(
                         text = "System Stock",
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(2f)
                     )
                     Text(
                         text = ":",
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(0.5f)
                     )
                     Text(
                         text = productForStockAdjustment.currSystemStock.toString(),
-                        color = MaterialTheme.colors.OrangeColor,
+                        color = OrangeColor,
                         modifier = Modifier.weight(2f)
                     )
 
@@ -85,12 +102,12 @@ fun StockAdjustmentAlertDialog(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Actual Stock",
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(2f)
                     )
                     Text(
                         text = ":",
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(0.5f)
                     )
                     OutlinedTextField(
@@ -149,6 +166,7 @@ fun StockAdjustmentAlertDialog(
                 }
             }
         }
-    )
+
+        }
 
 }

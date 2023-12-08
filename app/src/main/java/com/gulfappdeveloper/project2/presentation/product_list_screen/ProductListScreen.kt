@@ -4,10 +4,17 @@ package com.gulfappdeveloper.project2.presentation.product_list_screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -28,7 +35,9 @@ fun ProductListScreen(
     navHostController: NavHostController
 ) {
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     var showEmptyList by remember {
         mutableStateOf(false)
@@ -57,7 +66,7 @@ fun ProductListScreen(
                     navHostController.navigate(route = RootNavScreens.PurchaseScreen.route)
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
                 else -> Unit
             }
@@ -69,10 +78,10 @@ fun ProductListScreen(
     }
 
 
-
-
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             SearchTopBar(
                 rootViewModel = rootViewModel,
@@ -86,13 +95,13 @@ fun ProductListScreen(
                 },
                 onSearchTextIsLessThanThree = {
                     scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar("Search text is less than 3")
+                        snackBarHostState.showSnackbar("Search text is less than 3")
                     }
                 }
             )
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
+
         if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -108,6 +117,7 @@ fun ProductListScreen(
         } else {
             ShowProductList(
                 rootViewModel = rootViewModel,
+                paddingValues = paddingValues
             )
         }
 

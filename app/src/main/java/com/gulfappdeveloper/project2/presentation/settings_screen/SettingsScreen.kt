@@ -6,13 +6,27 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -25,6 +39,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     rootViewModel: RootViewModel,
@@ -33,7 +48,9 @@ fun SettingsScreen(
     settingScreenViewModel: SettingScreenViewModel = hiltViewModel()
 ) {
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     var text by remember {
         mutableStateOf("")
@@ -59,7 +76,7 @@ fun SettingsScreen(
 
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
+                    snackBarHostState.showSnackbar(
                         message = value.message,
                         duration = SnackbarDuration.Long
                     )
@@ -82,13 +99,15 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
-                    Text(text = "Settings", color = MaterialTheme.colors.OrangeColor)
+                    Text(text = "Settings", color = OrangeColor)
                 },
-                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(onClick = {
                         if (!showProgressBar) {
@@ -98,26 +117,25 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor
+                            tint = OrangeColor
                         )
                     }
                 },
                 actions = {
-                    IconButton(
+                    TextButton(
                         onClick = {
                             settingScreenViewModel.setLogout()
                         },
                     ) {
                         Text(
-                            text = "LOGOUT", color = MaterialTheme.colors.error
+                            text = "LOGOUT", color = MaterialTheme.colorScheme.error
                         )
                     }
                 }
             )
         },
 
-        ) {
-        it.calculateTopPadding()
+        ) {paddingValues->
 
 
         Column(
@@ -126,7 +144,9 @@ fun SettingsScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
+
+            Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+
             OutlinedTextField(
                 value = text,
                 onValueChange = { typedText ->
@@ -135,7 +155,7 @@ fun SettingsScreen(
                 placeholder = {
                     Text(
                         text = currentBaseUrl,
-                        modifier = Modifier.alpha(ContentAlpha.medium)
+                        modifier = Modifier.alpha(0.3f)
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -185,7 +205,7 @@ fun SettingsScreen(
                     Text(text = " : ")
                     Text(
                         text = uniLicense.licenseKey,
-                        color = MaterialTheme.colors.OrangeColor
+                        color = OrangeColor
                     )
 
                 }

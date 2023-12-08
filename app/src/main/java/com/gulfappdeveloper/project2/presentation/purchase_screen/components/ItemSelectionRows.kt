@@ -1,17 +1,30 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -31,7 +44,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlin.math.roundToInt
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemSelectionRows(
     rootViewModel: RootViewModel,
@@ -84,10 +97,11 @@ fun ItemSelectionRows(
             Box(
                 modifier = Modifier
                     .weight(2f)
+                    //.border(width = .5.dp, color = Color.LightGray, shape = RoundedCornerShape(25))
                     .padding(end = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = productName,
                     innerTextField = {
                         BasicTextField(
@@ -107,7 +121,7 @@ fun ItemSelectionRows(
                             readOnly = !productSearchMode,
                             //maxLines = 2,
                             textStyle = TextStyle(
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             keyboardActions = KeyboardActions(
                                 onDone = {
@@ -116,20 +130,17 @@ fun ItemSelectionRows(
                             ),
                             keyboardOptions = KeyboardOptions(
                                 imeAction = ImeAction.Done
-                            )
+                            ),
                         )
                     },
                     enabled = true,
                     singleLine = true,
-                    isError = showProductNameError,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
+                    isError = showProductNameError,
                     label = {
-                        Text(text = "Product Name", fontSize = 14.sp)
+                        Text(text = "Product Name", fontSize = 14.sp,)
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
-                        start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
-                    ),
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -145,8 +156,35 @@ fun ItemSelectionRows(
                             }
                         )
 
-                    }
-
+                    },
+                    /*colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.LightGray,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        disabledBorderColor = Color.LightGray,
+                        focusedContainerColor = Color.Blue,
+                        unfocusedContainerColor = Color.Green
+                    ),*/
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
+                        start = 8.dp,
+                        top = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp,
+                    ),
+                    container = {
+                       // OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                                OutlinedTextFieldDefaults.ContainerBox(
+                                    enabled = true,
+                                    isError = false,
+                                    interactionSource = interactionSource,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                        focusedBorderColor = Color.Blue,
+                                        disabledBorderColor = Color.Black,
+                                    ),
+                                    focusedBorderThickness = 0.5.dp,
+                                    shape = RoundedCornerShape(20)
+                                )
+                    },
                 )
             }
 
@@ -156,7 +194,7 @@ fun ItemSelectionRows(
                     .weight(1.2f)
                     .padding(start = 4.dp)
             ) {
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = barcode,
                     innerTextField = {
                         BasicTextField(
@@ -167,7 +205,7 @@ fun ItemSelectionRows(
                             modifier = Modifier.fillMaxWidth(),
                             readOnly = !(productName.isEmpty() || productName.isBlank()),
                             textStyle = TextStyle(
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             keyboardActions = KeyboardActions(
                                 onSearch = {
@@ -188,14 +226,11 @@ fun ItemSelectionRows(
                     label = {
                         Text(text = "Barcode", fontSize = 14.sp)
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
-                        start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
-                    ),
                     trailingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor,
+                            tint = OrangeColor,
                             modifier = Modifier.clickable {
                                 rootViewModel.setProductSearchMode(true)
                                 rootViewModel.resetSelectedProduct()
@@ -203,8 +238,29 @@ fun ItemSelectionRows(
                                 onScanButtonClicked(ScanFrom.PURCHASE_SCREEN)
                             }
                         )
-                    }
-
+                    },
+                   // colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
+                        start = 8.dp,
+                        top = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp,
+                    ),
+                    container = {
+                       // OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
             }
         }
@@ -224,9 +280,8 @@ fun ItemSelectionRows(
                         end = 2.dp
                     )
             ) {
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = qty,
-                    isError = showQuantityError,
                     innerTextField = {
                         BasicTextField(
                             value = qty,
@@ -245,7 +300,7 @@ fun ItemSelectionRows(
                             ),
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             readOnly = !(productName.isNotEmpty() && productName.isNotBlank())
                         )
@@ -254,6 +309,7 @@ fun ItemSelectionRows(
                     singleLine = true,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
+                    isError = showQuantityError,
                     label = {
                         Text(
                             text = "Qty",
@@ -265,12 +321,28 @@ fun ItemSelectionRows(
                     placeholder = {
                         Text(text = "1")
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
                         start = if (qty.isEmpty()) 8.dp else 2.dp,
                         top = 8.dp,
-                        bottom = 8.dp,
                         end = if (qty.isEmpty()) 8.dp else 2.dp,
+                        bottom = 8.dp,
                     ),
+                    container = {
+                      //  OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
             }
 
@@ -282,7 +354,7 @@ fun ItemSelectionRows(
                         start = 2.dp, end = 2.dp
                     )
             ) {
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = unit,
                     innerTextField = {
                         val value = if (unit.length > 3) {
@@ -295,7 +367,7 @@ fun ItemSelectionRows(
                             onValueChange = {},
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             readOnly = true
                         )
@@ -332,9 +404,9 @@ fun ItemSelectionRows(
                     },
                     enabled = true,
                     singleLine = true,
-                    isError = unitsList.isEmpty(),
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
+                    isError = unitsList.isEmpty(),
                     label = {
                         Text(
                             text = "Unit",
@@ -344,9 +416,28 @@ fun ItemSelectionRows(
                     placeholder = {
                         Text("PCs")
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
-                        start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
+                        start = 8.dp,
+                        top = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp,
                     ),
+                    container = {
+                        //OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
                 /*  DropdownMenu(
                       expanded = showDropDownMenu,
@@ -378,7 +469,7 @@ fun ItemSelectionRows(
                     )
             ) {
 
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = rate,
                     innerTextField = {
                         BasicTextField(
@@ -388,7 +479,7 @@ fun ItemSelectionRows(
                             },
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             readOnly = !(productName.isNotEmpty() || productName.isNotBlank()),
                             keyboardOptions = KeyboardOptions(
@@ -415,12 +506,28 @@ fun ItemSelectionRows(
                     placeholder = {
                         Text(text = "0.0")
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
                         start = if (rate.isEmpty()) 8.dp else 2.dp,
                         top = 8.dp,
-                        bottom = 8.dp,
                         end = if (rate.isEmpty()) 8.dp else 2.dp,
+                        bottom = 8.dp,
                     ),
+                    container = {
+                      //  OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
             }
 
@@ -434,7 +541,7 @@ fun ItemSelectionRows(
             ) {
 
 
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = disc,
                     innerTextField = {
                         BasicTextField(
@@ -444,7 +551,7 @@ fun ItemSelectionRows(
                             },
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
@@ -473,12 +580,28 @@ fun ItemSelectionRows(
                             text = "0.0",
                         )
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
                         start = if (disc.isEmpty()) 8.dp else 2.dp,
                         top = 8.dp,
-                        bottom = 8.dp,
                         end = if (disc.isEmpty()) 8.dp else 2.dp,
+                        bottom = 8.dp,
                     ),
+                    container = {
+                       // OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
             }
 
@@ -490,7 +613,7 @@ fun ItemSelectionRows(
                         start = 2.dp, end = 2.dp
                     )
             ) {
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = tax,
                     innerTextField = {
                         BasicTextField(
@@ -500,7 +623,7 @@ fun ItemSelectionRows(
                             },
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
-                                color = if (productSearchMode) MaterialTheme.colors.onBackground else MaterialTheme.colors.primary
+                                color = if (productSearchMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
                             ),
                             readOnly = true
                         )
@@ -520,12 +643,28 @@ fun ItemSelectionRows(
                             text = "NA",
                         )
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
                         start = if (tax.isEmpty()) 8.dp else 2.dp,
                         top = 8.dp,
-                        bottom = 8.dp,
                         end = if (tax.isEmpty()) 8.dp else 2.dp,
+                        bottom = 8.dp,
                     ),
+                    container = {
+                        //OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
             }
 
@@ -539,7 +678,7 @@ fun ItemSelectionRows(
                     )
             ) {
                 roundOff = ((net * 100f).roundToInt()) / 100f
-                TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                OutlinedTextFieldDefaults.DecorationBox(
                     value = roundOff.toString(),
                     innerTextField = {
                         BasicTextField(
@@ -548,7 +687,7 @@ fun ItemSelectionRows(
                             },
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colors.OrangeColor
+                                color = OrangeColor
                             ),
                             readOnly = true
                         )
@@ -561,7 +700,7 @@ fun ItemSelectionRows(
                         Text(
                             text = "Net",
                             fontSize = 10.sp,
-                            color = MaterialTheme.colors.OrangeColor,
+                            color = OrangeColor,
                         )
                     },
                     placeholder = {
@@ -569,12 +708,28 @@ fun ItemSelectionRows(
                             text = "0.0",
                         )
                     },
-                    contentPadding = TextFieldDefaults.outlinedTextFieldPadding(
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    contentPadding = OutlinedTextFieldDefaults.contentPadding(
                         start = 8.dp,
                         top = if (rate.isEmpty()) 9.dp else 8.dp,
-                        bottom = if (rate.isEmpty()) 9.dp else 8.dp,
                         end = 8.dp,
+                        bottom = if (rate.isEmpty()) 9.dp else 8.dp,
                     ),
+                    container = {
+                       // OutlinedTextFieldDefaults.ContainerBox(enabled, isError, interactionSource, colors)
+                        OutlinedTextFieldDefaults.ContainerBox(
+                            enabled = true,
+                            isError = false,
+                            interactionSource = interactionSource,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black.copy(alpha = 0.4f),
+                                focusedBorderColor = Color.Blue,
+                                disabledBorderColor = Color.Black,
+                            ),
+                            focusedBorderThickness = 0.5.dp,
+                            shape = RoundedCornerShape(20)
+                        )
+                    },
                 )
             }
         }

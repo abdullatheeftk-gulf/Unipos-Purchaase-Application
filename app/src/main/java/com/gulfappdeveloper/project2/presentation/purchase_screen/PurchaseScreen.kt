@@ -5,10 +5,23 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +30,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,7 +56,9 @@ fun PurchaseScreen(
     val scope = rememberCoroutineScope()
 
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
     val lazyColumState = rememberLazyListState()
     val scrollState = rememberScrollState()
 
@@ -121,7 +137,7 @@ fun PurchaseScreen(
                     showProgressBar = false
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
                 is UiEvent.Navigate -> {
                     if (event.route == RootNavScreens.ProductListScreen.route) {
@@ -190,7 +206,9 @@ fun PurchaseScreen(
 
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopBar(
                 navHostController = navHostController,
@@ -205,7 +223,7 @@ fun PurchaseScreen(
                 onClick = {
                     if (selectedProductList.isEmpty()) {
                         scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Product List is empty")
+                            snackBarHostState.showSnackbar("Product List is empty")
                         }
                         showProductListIsEmpty = true
                         return@Button
@@ -213,14 +231,14 @@ fun PurchaseScreen(
 
                     if (billNo.isEmpty() || billNo.isBlank()) {
                         scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Bill no is not entered")
+                            snackBarHostState.showSnackbar(message = "Bill no is not entered")
                         }
                         showBillNoError = true
                         return@Button
                     }
                     if (selectedClient == null) {
                         scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Client is not selected")
+                            snackBarHostState.showSnackbar(message = "Client is not selected")
                         }
                         showClientError = true
                         return@Button
@@ -233,12 +251,13 @@ fun PurchaseScreen(
                 Text(text = "Submit")
             }
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
+
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(horizontal = 0.dp, vertical = 0.dp)
                 .fillMaxSize()
                 .verticalScroll(
                     scrollState
@@ -246,7 +265,7 @@ fun PurchaseScreen(
         ) {
 
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
 
 
             FirstThreeRows(
@@ -280,9 +299,12 @@ fun PurchaseScreen(
                     .padding(horizontal = 12.dp)
                     .border(
                         width = Dp.Hairline,
-                        color = if (showProductListIsEmpty) MaterialTheme.colors.error else Color.LightGray
-                    ),
-                elevation = 0.dp
+                        color = if (showProductListIsEmpty) MaterialTheme.colorScheme.error else Color.LightGray,
+                        shape = RoundedCornerShape(5)
+                    )
+                ,
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                shape = RoundedCornerShape(5)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Spacer(modifier = Modifier.height(4.dp))
@@ -303,7 +325,7 @@ fun PurchaseScreen(
             if (showProductListIsEmpty) {
                 Text(
                     text = "  Product List is empty",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(start = 10.dp)
@@ -331,6 +353,7 @@ fun PurchaseScreen(
                 },
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
 
             ProductButtonRow(
                 rootViewModel = rootViewModel,
@@ -346,7 +369,7 @@ fun PurchaseScreen(
                 onProductNameError = {
                     showProductNameError = true
                     coroutineScope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
+                        snackBarHostState.showSnackbar("Product is not selected")
                     }
                 },
                 onQuantityError = {
@@ -354,7 +377,7 @@ fun PurchaseScreen(
                 },
                 onBarcodeError = {
                     coroutineScope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar(message = "Product is not selected")
+                        snackBarHostState.showSnackbar(message = "Product is not selected")
                     }
                 },
                 onAdditionalDiscountAdded = {
@@ -367,6 +390,19 @@ fun PurchaseScreen(
                     fManager.clearFocus()
                 }
             )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .padding(horizontal = 10.dp)
+                    .border(
+                        width = 0.25.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                    )
+            ) {}
 
 
             if (showAdditionalDiscount || additionalDiscount.isNotEmpty()) {
@@ -378,10 +414,11 @@ fun PurchaseScreen(
                 ) {
                     Text(
                         text = "Additional Discount:- ",
-                        color = MaterialTheme.colors.primary,
-                        fontStyle = MaterialTheme.typography.h6.fontStyle,
-                        fontSize = MaterialTheme.typography.h6.fontSize,
-                        modifier = Modifier.weight(3f)
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                        fontSize = 16.sp,
+                        modifier = Modifier.weight(3f),
+                        textAlign = TextAlign.End
                     )
                     OutlinedTextField(
                         value = additionalDiscount,
@@ -413,10 +450,11 @@ fun PurchaseScreen(
                 ) {
                     Text(
                         text = "Freight Charge:- ",
-                        color = MaterialTheme.colors.primary,
-                        fontStyle = MaterialTheme.typography.h6.fontStyle,
-                        fontSize = MaterialTheme.typography.h6.fontSize,
-                        modifier = Modifier.weight(3f)
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                        fontSize = 16.sp,
+                        modifier = Modifier.weight(3f),
+                        textAlign = TextAlign.End
                     )
                     OutlinedTextField(
                         value = freightCharge,
@@ -449,8 +487,8 @@ fun PurchaseScreen(
             ) {
                 Text(
                     text = "Is Cash Purchase",
-                    color = MaterialTheme.colors.primary,
-                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                     fontSize = if (booleanResource(id = R.bool.is_tablet)) 20.sp else 16.sp
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -470,7 +508,7 @@ fun PurchaseScreen(
                     .padding(horizontal = 10.dp)
                     .border(
                         width = 0.25.dp,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
             ) {}
             Spacer(modifier = Modifier.height(10.dp))

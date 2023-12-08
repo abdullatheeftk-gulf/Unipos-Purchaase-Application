@@ -3,10 +3,10 @@ package com.gulfappdeveloper.project2.presentation.add_product_screens.presentat
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun PriceBlock(
@@ -48,9 +49,9 @@ fun PriceBlock(
     Spacer(modifier = Modifier.height(25.dp))
     Text(
         text = "Price Details",
-        color = MaterialTheme.colors.primary,
-        fontSize = MaterialTheme.typography.h6.fontSize,
-        fontStyle = MaterialTheme.typography.h6.fontStyle,
+        color = MaterialTheme.colorScheme.primary,
+        fontSize = 20.sp,
+        fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
         textDecoration = TextDecoration.Underline
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -82,9 +83,8 @@ fun PriceBlock(
                     Text(text = "0.0")
                 },
                 isError = showPurchasePriceError,
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary,
-                    backgroundColor = MaterialTheme.colors.surface
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
                 ),
                 modifier = Modifier
                     .focusRequester(focusRequester)
@@ -108,7 +108,7 @@ fun PriceBlock(
                         buildAnnotatedString {
                             withStyle(
                                 style = SpanStyle(
-                                    color = MaterialTheme.colors.error,
+                                    color = MaterialTheme.colorScheme.error,
                                     baselineShift = BaselineShift.Superscript
                                 )
                             ) {
@@ -127,9 +127,8 @@ fun PriceBlock(
             placeholder = {
                 Text(text = "0.0")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary,
-                backgroundColor = MaterialTheme.colors.surface
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = MaterialTheme.colorScheme.primary,
             ),
             isError = showSellingPriceError,
             keyboardActions = KeyboardActions(
@@ -156,9 +155,8 @@ fun PriceBlock(
             placeholder = {
                 Text(text = "0.0")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary,
-                backgroundColor = MaterialTheme.colors.surface
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = MaterialTheme.colorScheme.primary,
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -187,9 +185,8 @@ fun PriceBlock(
             placeholder = {
                 Text(text = "0.0")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary,
-                backgroundColor = MaterialTheme.colors.surface
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = MaterialTheme.colorScheme.primary,
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -220,10 +217,9 @@ fun PriceBlock(
             placeholder = {
                 Text(text = "0.0")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary,
-                backgroundColor = MaterialTheme.colors.surface
-            )
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = MaterialTheme.colorScheme.primary,
+            ),
         )
     }
 

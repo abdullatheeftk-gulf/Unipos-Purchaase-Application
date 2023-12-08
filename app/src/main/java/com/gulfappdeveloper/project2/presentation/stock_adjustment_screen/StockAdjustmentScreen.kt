@@ -8,13 +8,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.components.EmptyList
@@ -27,7 +40,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StockAdjustmentScreen(
     rootViewModel: RootViewModel,
@@ -35,7 +48,9 @@ fun StockAdjustmentScreen(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: (ScanFrom) -> Unit,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     var showProgressbar by remember {
         mutableStateOf(false)
@@ -77,7 +92,7 @@ fun StockAdjustmentScreen(
                     }
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
                 is UiEvent.Navigate -> {
                     navHostController.popBackStack()
@@ -118,7 +133,9 @@ fun StockAdjustmentScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopBar(
                 rootViewModel = rootViewModel,
@@ -136,13 +153,13 @@ fun StockAdjustmentScreen(
         floatingActionButton = {
             if (stockAdjustedProductList.isNotEmpty()) {
                 ExtendedFloatingActionButton(
-                    text = {
+                    content = {
 
                         BadgedBox(badge = {
                             Row() {
                                 Text(
-                                    text = "  " + stockAdjustedProductList.size.toString(),
-                                    color = MaterialTheme.colors.OrangeColor,
+                                    text = " " + stockAdjustedProductList.size.toString(),
+                                    color = OrangeColor,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
@@ -151,11 +168,11 @@ fun StockAdjustmentScreen(
                         }) {
                             Text(
                                 text = "Submit",
-                                color = if (showProgressbar) Color.White else MaterialTheme.colors.surface,
-                                fontSize = MaterialTheme.typography.h6.fontSize,
-                                fontStyle = MaterialTheme.typography.h6.fontStyle,
+                                color = if (showProgressbar) Color.White else MaterialTheme.colorScheme.surface,
+                                fontSize = 20.sp,
+                                fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                                 modifier = Modifier.alpha(
-                                    if (showProgressbar) ContentAlpha.disabled else ContentAlpha.high
+                                    if (showProgressbar) 0.3f else 1f
                                 )
                             )
                         }
@@ -166,25 +183,25 @@ fun StockAdjustmentScreen(
                             rootViewModel.submitStockAdjustment()
                         }
                     },
-                    backgroundColor = if (showProgressbar) MaterialTheme.colors.onSurface else MaterialTheme.colors.primary,
-                    shape = RoundedCornerShape(25),
+                    containerColor = if (showProgressbar) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(20),
                     modifier = Modifier.alpha(
-                        if (showProgressbar) ContentAlpha.disabled else ContentAlpha.high
+                        if (showProgressbar) 0.3f else 1f
                     )
                 )
 
             }
         },
         floatingActionButtonPosition = FabPosition.Center
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
+
 
         if (productList.isEmpty()) {
             if (!showProgressbar) {
                 EmptyList()
             }
         } else {
-            LazyColumn {
+            LazyColumn(contentPadding = paddingValues) {
                 item { 
                     Spacer(modifier = Modifier.height(4.dp))
                 }
@@ -195,9 +212,9 @@ fun StockAdjustmentScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                         border = BorderStroke(
                             width = 1.dp,
-                            color = if (pair.first) MaterialTheme.colors.OrangeColor else MaterialTheme.colors.primary
+                            color = if (pair.first) OrangeColor else MaterialTheme.colorScheme.primary
                         ),
-                        color = if (pair.first) MaterialTheme.colors.OrangeColor else MaterialTheme.colors.background,
+                        color = if (pair.first) OrangeColor else MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(35),
                         onClick = {
                             rootViewModel.getStockOfAProduct(barcode = pair.second.barcode)
@@ -207,7 +224,7 @@ fun StockAdjustmentScreen(
                         Text(
                             text = pair.second.productName,
                             modifier = Modifier.padding(all = 10.dp),
-                            color = if (pair.first) MaterialTheme.colors.surface else MaterialTheme.colors.onSurface
+                            color = if (pair.first) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

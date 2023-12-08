@@ -6,9 +6,22 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -25,13 +38,16 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdjustPriceScreen(
     rootViewModel: RootViewModel,
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     val selectedProduct by rootViewModel.selectedProductForPriceAdjustment.value
 
@@ -63,7 +79,7 @@ fun AdjustPriceScreen(
                     showSuccessAlertDialog = true
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
 
                 else -> Unit
@@ -89,16 +105,18 @@ fun AdjustPriceScreen(
 
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
                     Text(
                         text = "Price adjustment",
-                        color = MaterialTheme.colors.OrangeColor
+                        color = OrangeColor
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(onClick = {
                         navHostController.popBackStack()
@@ -106,24 +124,24 @@ fun AdjustPriceScreen(
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor
+                            tint = OrangeColor
                         )
                     }
                 },
 
                 )
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
 
         Box {
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 0.dp)
             ) {
+                Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -141,8 +159,8 @@ fun AdjustPriceScreen(
                         text = selectedProduct?.productName ?: "",
                         modifier = Modifier.weight(4f),
                         textAlign = TextAlign.Start,
-                        color = MaterialTheme.colors.primary,
-                        fontStyle = MaterialTheme.typography.h6.fontStyle,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                         fontSize = 18.sp
                     )
                 }
@@ -164,8 +182,8 @@ fun AdjustPriceScreen(
                         text = selectedProduct?.barcode ?: "",
                         modifier = Modifier.weight(4f),
                         textAlign = TextAlign.Start,
-                        color = MaterialTheme.colors.OrangeColor,
-                        fontStyle = MaterialTheme.typography.h6.fontStyle,
+                        color = OrangeColor,
+                        fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                         fontSize = 18.sp
                     )
                 }
@@ -181,14 +199,14 @@ fun AdjustPriceScreen(
                     Text(
                         text = " :  ",
                         modifier = Modifier.weight(.2f),
-                        color = Color.Red
+                        color = MaterialTheme.colorScheme.error
                     )
                     Text(
                         text = selectedProduct?.stock.toString(),
                         modifier = Modifier.weight(4f),
                         textAlign = TextAlign.Start,
-                        color = MaterialTheme.colors.primaryVariant,
-                        fontStyle = MaterialTheme.typography.h6.fontStyle,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                         fontSize = 18.sp
                     )
                 }
@@ -214,7 +232,7 @@ fun AdjustPriceScreen(
                         keyboardType = KeyboardType.Decimal
                     ),
                     textStyle = TextStyle(
-                        color = MaterialTheme.colors.primary
+                        color = MaterialTheme.colorScheme.primary
                     ),
                     label = {
                         Text(text = "Purchase price")
@@ -242,7 +260,7 @@ fun AdjustPriceScreen(
                         keyboardType = KeyboardType.Decimal
                     ),
                     textStyle = TextStyle(
-                        color = MaterialTheme.colors.primary
+                        color = MaterialTheme.colorScheme.primary
                     ),
                     placeholder = {
                         Text(text = "0.0")
@@ -258,7 +276,7 @@ fun AdjustPriceScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Data is not entered",
-                        color = MaterialTheme.colors.error
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -293,9 +311,5 @@ fun AdjustPriceScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
-
-
     }
-
-
 }

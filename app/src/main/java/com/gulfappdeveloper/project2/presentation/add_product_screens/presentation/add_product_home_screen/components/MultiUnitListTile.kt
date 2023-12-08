@@ -2,11 +2,11 @@ package com.gulfappdeveloper.project2.presentation.add_product_screens.presentat
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +36,7 @@ fun MultiUnitListTile(
             textAlign = TextAlign.Start,
             fontSize = 12.sp,
             modifier = Modifier.weight(5f),
-            color = MaterialTheme.colors.primary,
+            color = MaterialTheme.colorScheme.primary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -45,14 +45,14 @@ fun MultiUnitListTile(
             textAlign = TextAlign.Center,
             fontSize = 12.sp,
             modifier = Modifier.weight(2.5f),
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = item.unitQty.toString(),
             textAlign = TextAlign.Center,
             fontSize = 12.sp,
             modifier = Modifier.weight(1.5f),
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = item.salesPrice.toString(),
@@ -60,12 +60,12 @@ fun MultiUnitListTile(
             fontSize = 12.sp,
             modifier = Modifier.weight(2f),
             maxLines = 1,
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colorScheme.primary
         )
         Icon(
             imageVector = Icons.Default.Delete,
             contentDescription = null,
-            tint = MaterialTheme.colors.OrangeColor,
+            tint = OrangeColor,
             modifier = Modifier
                 .size(24.dp)
                 .align(Alignment.Top)

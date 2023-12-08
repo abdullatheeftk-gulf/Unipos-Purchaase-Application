@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,12 +40,18 @@ fun MainScreen(
     rootViewModel: RootViewModel,
     navHostController: NavHostController
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     val uniLicenseDetails by rootViewModel.uniLicenseDetails
 
 
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
+    ) {
         it.calculateTopPadding()
 
         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
@@ -55,7 +64,9 @@ fun MainScreen(
                         .clickable {
                             navHostController.navigate(route = RootNavScreens.PurchaseScreen.route)
                         },
-                    backgroundColor = Color(0xFF6FACC7),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF6FACC7)
+                    )
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -65,7 +76,7 @@ fun MainScreen(
                             text = "PURCHASE",
                             color = Color.Black,
                             fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -81,7 +92,9 @@ fun MainScreen(
                         .clickable {
                             navHostController.navigate(route = RootNavScreens.StockAdjustmentScreen.route)
                         },
-                    backgroundColor = Color(0xFFEDCBC0),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFEDCBC0)
+                    ),
                     shape = RoundedCornerShape(25)
                 ) {
                     Box(
@@ -92,7 +105,7 @@ fun MainScreen(
                             text = "STOCK ADJUSTMENT",
                             color = Color.Black,
                             fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -109,7 +122,9 @@ fun MainScreen(
                             rootViewModel.setNavFrom(true)
                             navHostController.navigate(route = RootNavScreens.AddProductMainScreen.route)
                         },
-                    backgroundColor = Color(0xFFBFA9CD),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFBFA9CD)
+                    ),
                     shape = RoundedCornerShape(25)
                 ) {
                     Box(
@@ -120,7 +135,7 @@ fun MainScreen(
                             text = "ADD\nPRODUCT",
                             color = Color.Black,
                             fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -136,7 +151,9 @@ fun MainScreen(
                         .clickable {
                             navHostController.navigate(route = RootNavScreens.ShowProductForPriceAdjustmentScreen.route)
                         },
-                    backgroundColor = Color(0xFFE4C08C),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFE4C08C)
+                    ),
                     shape = RoundedCornerShape(25)
                 ) {
                     Box(
@@ -147,7 +164,7 @@ fun MainScreen(
                             text = "PRICE ADJUSTMENT",
                             color = Color.Black,
                             fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -166,7 +183,9 @@ fun MainScreen(
                             rootViewModel.setAddClientScreenNavPopUpFlag(false)
                             navHostController.navigate(RootNavScreens.AddClientScreen.route)
                         },
-                    backgroundColor = Color(0xFFA0CAA1),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFA0CAA1)
+                    ),
                     shape = RoundedCornerShape(25)
                 ) {
                     Box(
@@ -177,7 +196,7 @@ fun MainScreen(
                             text = "ADD\nCLIENT",
                             color = Color.Black,
                             fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -192,7 +211,10 @@ fun MainScreen(
                         .clip(shape = RoundedCornerShape(25))
                         .clickable {
                             navHostController.navigate(route = RootNavScreens.SettingsScreen.route)
-                        }, backgroundColor = Color(0xFFCDA9B5),
+                        },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFCDA9B5)
+                    ),
                     shape = RoundedCornerShape(25)
                 ) {
                     Box(
@@ -203,40 +225,14 @@ fun MainScreen(
                             text = "SETTINGS",
                             color = Color.Black,
                             fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
             }
 
-            /*item {
-                Card(
-                    modifier = Modifier
-                        .size(width = 150.dp, height = 150.dp)
-                        .padding(24.dp)
-                        .clip(shape = RoundedCornerShape(25))
-                        .clickable {
-                            navHostController.popBackStack()
-                            navHostController.navigate(route = RootNavScreens.LoginScreen.route)
-                        },
-                    backgroundColor = Color(0xFFDE8989),
-                    shape = RoundedCornerShape(25)
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "LOGOUT",
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                            fontStyle = MaterialTheme.typography.h6.fontStyle,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }*/
+
         }
         if (uniLicenseDetails?.licenseType != "permanent") {
             Column(
@@ -247,9 +243,9 @@ fun MainScreen(
 
                 Text(
                     text = if (BuildConfig.DEBUG) "Debug Version" else "Demo version",
-                    color = MaterialTheme.colors.error,
-                    fontStyle = MaterialTheme.typography.h6.fontStyle,
-                    fontSize = MaterialTheme.typography.h6.fontSize,
+                    color = MaterialTheme.colorScheme.error,
+                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                    fontSize = 20.sp,
                     textDecoration = TextDecoration.Underline
                 )
                 Spacer(modifier = Modifier.height(10.dp))

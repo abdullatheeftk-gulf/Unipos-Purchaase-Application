@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +30,7 @@ fun ListArea(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp),
-        border = BorderStroke(width = Dp.Hairline, color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)),
+        border = BorderStroke(width = Dp.Hairline, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)),
     ) {
         Column(
             modifier = Modifier

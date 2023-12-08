@@ -2,11 +2,13 @@ package com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.compon
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicenseInformationDisplayAlertDialog(
     onDismissRequest: () -> Unit,
@@ -34,8 +37,9 @@ fun LicenseInformationDisplayAlertDialog(
             if (isUniposLicenseExpired(it)) {
                 AlertDialog(
                     onDismissRequest = onLicenseExpired,
-                    shape = RoundedCornerShape(8),
-                    buttons = {
+                )
+                {
+                    Card(elevation = CardDefaults.cardElevation(6.dp)) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(16.dp)
@@ -44,9 +48,9 @@ fun LicenseInformationDisplayAlertDialog(
 
                             Text(
                                 text = "Expired License",
-                                color = MaterialTheme.colors.error,
-                                fontSize = MaterialTheme.typography.h6.fontSize,
-                                fontStyle = MaterialTheme.typography.h6.fontStyle
+                                color = MaterialTheme.colorScheme.error,
+                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.headlineMedium.fontStyle
                             )
 
                             Button(
@@ -57,7 +61,8 @@ fun LicenseInformationDisplayAlertDialog(
                             }
                         }
                     }
-                )
+
+                }
 
                 return
             }
@@ -66,8 +71,9 @@ fun LicenseInformationDisplayAlertDialog(
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        shape = RoundedCornerShape(4),
-        buttons = {
+    )
+    {
+        Card (elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(10.dp)
@@ -75,10 +81,10 @@ fun LicenseInformationDisplayAlertDialog(
             {
                 Text(
                     text = "Unipos License Information",
-                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                     fontSize = 22.sp,
                     textDecoration = TextDecoration.Underline,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 Row(
@@ -99,7 +105,7 @@ fun LicenseInformationDisplayAlertDialog(
                         text = if (uniLicense?.licenseType == "demo") "Demo" else "Permanent",
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
-                        color = if (uniLicense?.licenseType == "demo") MaterialTheme.colors.OrangeColor else MaterialTheme.colors.primary,
+                        color = if (uniLicense?.licenseType == "demo") OrangeColor else MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -123,7 +129,7 @@ fun LicenseInformationDisplayAlertDialog(
                         text = uniLicense?.expiryDate ?: "Nil",
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
-                        color = if (uniLicense?.licenseType == "demo") MaterialTheme.colors.error else MaterialTheme.colors.primary
+                        color = if (uniLicense?.licenseType == "demo") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                     )
                 }
                 Spacer(modifier = Modifier.height(15.dp))
@@ -133,7 +139,9 @@ fun LicenseInformationDisplayAlertDialog(
 
             }
         }
-    )
+
+    }
+
 }
 
 private fun isUniposLicenseExpired(eDate: String): Boolean {

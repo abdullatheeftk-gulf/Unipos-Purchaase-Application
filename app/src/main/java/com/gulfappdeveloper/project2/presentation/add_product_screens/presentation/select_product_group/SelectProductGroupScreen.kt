@@ -8,6 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +33,9 @@ fun SelectProductGroupScreen(
     addProductMainViewModel: AddProductMainViewModel,
     addProductNavHostController: NavHostController,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     var normalAndSearchTobBarToggle by remember {
         mutableStateOf(true)
@@ -59,7 +68,7 @@ fun SelectProductGroupScreen(
                     addProductNavHostController.popBackStack()
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
                 else -> Unit
             }
@@ -78,7 +87,9 @@ fun SelectProductGroupScreen(
 
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             if (normalAndSearchTobBarToggle) {
                 NormalTopBar(
@@ -101,8 +112,7 @@ fun SelectProductGroupScreen(
                 )
             }
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
         if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -117,7 +127,7 @@ fun SelectProductGroupScreen(
             return@Scaffold
         }
 
-        LazyColumn {
+        LazyColumn(contentPadding = paddingValues) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -136,7 +146,7 @@ fun SelectProductGroupScreen(
                             addProductNavHostController.popBackStack()
                         },
                     shape = RoundedCornerShape(35),
-                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary)
+                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
                         text = productGroup.pGroupName,

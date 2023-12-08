@@ -2,9 +2,7 @@ package com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.compo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +20,7 @@ fun EmptyList() {
             text = "Empty List",
             fontWeight = FontWeight.W600,
             fontSize = 24.sp,
-            modifier = Modifier.alpha(ContentAlpha.medium)
+            modifier = Modifier.alpha(0.3f)
         )
     }
 }

@@ -2,20 +2,47 @@ package com.gulfappdeveloper.project2.presentation.add_product_screens.presentat
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -33,7 +60,13 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Pr
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
 import com.gulfappdeveloper.project2.presentation.add_product_screens.navigation.AddProductScreens
-import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.*
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.CheckBoxBlock
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.OpeningStockBlock
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.PriceBlock
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.ShowMultiUnits
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.SuccessAlertDialog
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.TaxCategoryBlock
+import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.UnitBlock
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
@@ -41,6 +74,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductHomeScreen(
     rootViewModel: RootViewModel,
@@ -53,7 +87,9 @@ fun AddProductHomeScreen(
 
     val focusManager = LocalFocusManager.current
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     val scope = rememberCoroutineScope()
 
@@ -153,7 +189,7 @@ fun AddProductHomeScreen(
                     navHostController.popBackStack()
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
                 else -> Unit
             }
@@ -178,13 +214,15 @@ fun AddProductHomeScreen(
 
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
-                    Text(text = "Add Product", color = MaterialTheme.colors.OrangeColor)
+                    Text(text = "Add Product", color = OrangeColor)
                 },
-                backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -196,12 +234,12 @@ fun AddProductHomeScreen(
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor
+                            tint = OrangeColor
                         )
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
+                    TextButton(onClick = {
                         var errors = false
                         if (productName.isEmpty()) {
                             showProductNameError = true
@@ -222,29 +260,38 @@ fun AddProductHomeScreen(
                         }
                         if (errors) {
                             scope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar("Add required columns to continue")
+                                snackBarHostState.showSnackbar("Add required columns to continue")
                             }
-                            return@IconButton
+                            return@TextButton
                         }
                         addProductNavHostController.navigate(AddProductScreens.MultiUnitScreen.route)
                     }) {
-                        Icon(
+                        /*Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = null
+                        )*/
+                        Text("Multi Unit")
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
+
+
                     }
                 }
             )
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
 
         Column(
             modifier = Modifier
-                .padding(all = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 0.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
             // Product name
 
             OutlinedTextField(
@@ -262,7 +309,7 @@ fun AddProductHomeScreen(
                             buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = MaterialTheme.colors.error,
+                                        color = MaterialTheme.colorScheme.error,
                                         baselineShift = BaselineShift.Superscript
                                     )
                                 ) {
@@ -275,23 +322,23 @@ fun AddProductHomeScreen(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary,
-                    backgroundColor = MaterialTheme.colors.surface
-                ),
+
                 isError = showProductNameError,
                 keyboardActions = KeyboardActions(
                     onDone = {
                         hideKeyboard()
                     }
-                )
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                ),
 
             )
 
             if (showProductNameError) {
                 Text(
                     text = "   Product name is required",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Start)
                 )
             }
@@ -311,15 +358,15 @@ fun AddProductHomeScreen(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary,
-                    backgroundColor = MaterialTheme.colors.surface
-                ),
+
                 keyboardActions = KeyboardActions(
                     onDone = {
                         hideKeyboard()
                     }
-                )
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                ),
             )
 
             // Product group
@@ -342,7 +389,7 @@ fun AddProductHomeScreen(
                             buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = MaterialTheme.colors.error,
+                                        color = MaterialTheme.colorScheme.error,
                                         baselineShift = BaselineShift.Superscript
                                     )
                                 ) {
@@ -353,13 +400,7 @@ fun AddProductHomeScreen(
                     }
                 },
                 enabled = false,
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary,
-                    backgroundColor = MaterialTheme.colors.surface,
-                    disabledTextColor = MaterialTheme.colors.primary,
-                    disabledTrailingIconColor = MaterialTheme.colors.error,
-                    disabledLabelColor = Color.Black.copy(alpha = ContentAlpha.medium)
-                ),
+
                 singleLine = true,
                 trailingIcon = {
                     IconButton(
@@ -372,17 +413,22 @@ fun AddProductHomeScreen(
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowRight,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.error
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 },
-                isError = showProductGroupError
+                isError = showProductGroupError,
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+                    disabledTextColor = MaterialTheme.colorScheme.primary,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface
+                )
             )
 
             if (showProductGroupError) {
                 Text(
                     text = "    Product group is not selected",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Start)
                 )
             }
@@ -403,15 +449,15 @@ fun AddProductHomeScreen(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary,
-                    backgroundColor = MaterialTheme.colors.surface
-                ),
+
                 keyboardActions = KeyboardActions(
                     onDone = {
                         hideKeyboard()
                     }
-                )
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                ),
             )
 
             // Barcode
@@ -423,7 +469,7 @@ fun AddProductHomeScreen(
                 Text(
                     text = "Enter Barcode :- ",
                     fontSize = 18.sp,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -441,7 +487,7 @@ fun AddProductHomeScreen(
                                     buildAnnotatedString {
                                         withStyle(
                                             style = SpanStyle(
-                                                color = MaterialTheme.colors.error,
+                                                color = MaterialTheme.colorScheme.error,
                                                 baselineShift = BaselineShift.Superscript
                                             )
                                         ) {
@@ -452,10 +498,7 @@ fun AddProductHomeScreen(
                             }
                         },
                         isError = showBarcodeError,
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = MaterialTheme.colors.primary,
-                            backgroundColor = MaterialTheme.colors.surface
-                        ),
+
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done,
                             capitalization = KeyboardCapitalization.Characters
@@ -469,7 +512,7 @@ fun AddProductHomeScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colors.OrangeColor
+                                    tint = OrangeColor
                                 )
                             }
                         },
@@ -477,12 +520,15 @@ fun AddProductHomeScreen(
                             onDone = {
                                 hideKeyboard()
                             }
-                        )
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                     if (showBarcodeError) {
                         Text(
                             text = "    Barcode is required",
-                            color = MaterialTheme.colors.error,
+                            color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.align(Alignment.Start)
                         )
                     }
@@ -565,9 +611,9 @@ fun AddProductHomeScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Multi Units",
-                    color = MaterialTheme.colors.primary,
-                    fontSize = MaterialTheme.typography.h6.fontSize,
-                    fontStyle = MaterialTheme.typography.h6.fontStyle,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 20.sp,
+                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                     textDecoration = TextDecoration.Underline
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -608,7 +654,7 @@ fun AddProductHomeScreen(
                     }
                     if (errors) {
                         scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Add required columns to continue")
+                            snackBarHostState.showSnackbar("Add required columns to continue")
                         }
                         return@Button
                     }

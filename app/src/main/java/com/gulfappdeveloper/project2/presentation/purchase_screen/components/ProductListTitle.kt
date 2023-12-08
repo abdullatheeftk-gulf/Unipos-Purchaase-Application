@@ -2,9 +2,8 @@ package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,7 +103,7 @@ fun ProductListTitle() {
                 .fillMaxWidth()
                 .height(0.5.dp)
                 .padding(horizontal = 4.dp)
-                .border(width = 0.25.dp, color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium))
+                .border(width = 0.25.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
         ) {}
 
     }

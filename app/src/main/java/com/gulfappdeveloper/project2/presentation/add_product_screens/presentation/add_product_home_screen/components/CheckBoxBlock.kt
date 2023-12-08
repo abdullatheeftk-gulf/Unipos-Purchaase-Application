@@ -3,9 +3,9 @@ package com.gulfappdeveloper.project2.presentation.add_product_screens.presentat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Checkbox
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +29,7 @@ fun CheckBoxBlock(
         ) {
             Text(
                 text = "Is Inclusive Tax",
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
             Checkbox(
                 checked = isInclusive,
@@ -43,7 +43,7 @@ fun CheckBoxBlock(
         ) {
             Text(
                 text = "Is Scale",
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
             Checkbox(
                 checked = isScale,

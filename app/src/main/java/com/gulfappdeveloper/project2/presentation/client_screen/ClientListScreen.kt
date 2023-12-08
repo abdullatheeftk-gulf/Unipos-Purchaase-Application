@@ -3,9 +3,10 @@ package com.gulfappdeveloper.project2.presentation.client_screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +27,9 @@ fun ClientListScreen(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
 
     var normalAndSearchTobBarToggle by remember {
@@ -54,7 +57,7 @@ fun ClientListScreen(
                     showEmptyScreen = event.value
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                    snackBarHostState.showSnackbar(message = event.message)
                 }
                 else -> Unit
             }
@@ -73,7 +76,9 @@ fun ClientListScreen(
 
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             if (normalAndSearchTobBarToggle) {
                 NormalTopBar(
@@ -94,8 +99,7 @@ fun ClientListScreen(
                 )
             }
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
         if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -109,6 +113,7 @@ fun ClientListScreen(
             EmptyScreen()
         } else {
             ShowList(
+                paddingValues = paddingValues,
                 rootViewModel = rootViewModel,
                 navHostController = navHostController
             )

@@ -12,12 +12,19 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -27,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(
     rootViewModel: RootViewModel,
@@ -35,83 +43,87 @@ fun SearchTopBar(
 ) {
     val searchText by rootViewModel.clientSearchText
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.surface) {
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BasicTextField(
-                value = searchText,
-                onValueChange = {
-                    rootViewModel.setClientSearchText(it)
-                },
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        rootViewModel.clientSearch()
-                        hideKeyboard()
-                    }
-                ),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search,
-                    keyboardType = KeyboardType.Text
-                ),
-                decorationBox = {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-
-                        if (searchText.isEmpty()) {
-                            Text(
-                                text = "Search",
-                                color = Color.DarkGray,
-                                modifier = Modifier
-                                    .alpha(ContentAlpha.disabled)
-                            )
+    TopAppBar(
+        modifier = Modifier.shadow(elevation = 6.dp),
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BasicTextField(
+                    value = searchText,
+                    onValueChange = {
+                        rootViewModel.setClientSearchText(it)
+                    },
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            rootViewModel.clientSearch()
+                            hideKeyboard()
                         }
-                        it()
-                    }
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Search,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    decorationBox = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
 
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .weight(1f)
-                    .padding(all = 4.dp)
-                    .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
-                    .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(16.dp))
-                    .background(color = Color.White),
-                textStyle = TextStyle(
-                    fontSize = 20.sp,
-                ),
-                singleLine = true
+                            if (searchText.isEmpty()) {
+                                Text(
+                                    text = "Search",
+                                    color = Color.DarkGray,
+                                    modifier = Modifier
+                                        .alpha(0.3f)
+                                )
+                            }
+                            it()
+                        }
 
-            )
-            IconButton(onClick = {
-                rootViewModel.clientSearch()
-                hideKeyboard()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.OrangeColor
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .weight(1f)
+                        .padding(all = 4.dp)
+                        .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .background(color = Color.White),
+                    textStyle = TextStyle(
+                        fontSize = 20.sp,
+                    ),
+                    singleLine = true
+
                 )
+                IconButton(onClick = {
+                    rootViewModel.clientSearch()
+                    hideKeyboard()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = OrangeColor
+                    )
+                }
+                IconButton(onClick = {
+                    onClearButtonClicked()
+                    hideKeyboard()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
-            IconButton(onClick = {
-                onClearButtonClicked()
-                hideKeyboard()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.error
-                )
-            }
-        }
-
-
-    }
+        },
+    )
 }

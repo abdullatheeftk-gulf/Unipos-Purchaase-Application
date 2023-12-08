@@ -6,9 +6,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
@@ -22,6 +34,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetBaseUrlScreen(
     rootViewModel: RootViewModel,
@@ -29,7 +42,9 @@ fun SetBaseUrlScreen(
     hideKeyboard: () -> Unit,
     setBaseUrlScreenViewModel: SetBaseUrlScreenViewModel = hiltViewModel()
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
     val currentBaseUrl by rootViewModel.baseUrl
 
     var text by remember {
@@ -52,10 +67,7 @@ fun SetBaseUrlScreen(
                     navHostController.navigate(value.route)
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = value.message,
-                        duration = SnackbarDuration.Long
-                    )
+                    snackBarHostState.showSnackbar(value.message, duration = SnackbarDuration.Long)
                 }
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
@@ -69,27 +81,28 @@ fun SetBaseUrlScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
                     Text(
                         text = "Set Base Url",
-                        color = MaterialTheme.colors.OrangeColor,
+                        color = OrangeColor,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface
             )
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = paddingValues.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(10.dp))

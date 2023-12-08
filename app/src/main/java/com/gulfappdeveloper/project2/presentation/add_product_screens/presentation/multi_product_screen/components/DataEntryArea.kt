@@ -1,12 +1,31 @@
 package com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.multi_product_screen.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -105,7 +124,7 @@ fun DataEntryArea(
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
                                 contentDescription = null,
-                                tint = MaterialTheme.colors.OrangeColor
+                                tint = OrangeColor
                             )
                         }
                     },
@@ -113,11 +132,11 @@ fun DataEntryArea(
                         Text(text = "Unit")
                     },
                     textStyle = TextStyle(
-                        color = MaterialTheme.colors.primary
+                        color = MaterialTheme.colorScheme.primary
                     ),
                     isError = showUnitError,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        disabledLabelColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                     ),
                 )
                 DropdownMenu(
@@ -126,7 +145,7 @@ fun DataEntryArea(
                         showDropDownMenu = false
                     }
                 ) {
-                    unitList.forEach {  unit ->
+                    unitList.forEach { unit ->
                         DropdownMenuItem(
                             onClick = {
                                 showUnitError = false
@@ -137,9 +156,9 @@ fun DataEntryArea(
 
                                 addProductMainViewModel.setSelectedMultiUnit(unit)
                                 showDropDownMenu = false
-                            }) {
-                            Text(text = unit.unitName)
-                        }
+                            },
+                            text = { Text(text = unit.unitName) }
+                        )
                     }
                 }
             }
@@ -170,7 +189,7 @@ fun DataEntryArea(
                     .padding(start = 4.dp),
                 textStyle = TextStyle(
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 20.sp
                 ),
                 keyboardActions = KeyboardActions(
@@ -202,7 +221,7 @@ fun DataEntryArea(
                 Text(text = "Product Name")
             },
             textStyle = TextStyle(
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
@@ -244,7 +263,7 @@ fun DataEntryArea(
                         hideKeyboard()
                     }),
                 textStyle = TextStyle(
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 isError = showBarcodeError,
                 trailingIcon = {
@@ -256,7 +275,7 @@ fun DataEntryArea(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor
+                            tint = OrangeColor
                         )
                     }
                 }
@@ -287,7 +306,7 @@ fun DataEntryArea(
                         hideKeyboard()
                     }),
                 textStyle = TextStyle(
-                    color = MaterialTheme.colors.primary, fontSize = 20.sp
+                    color = MaterialTheme.colorScheme.primary, fontSize = 20.sp
                 ),
                 modifier = Modifier
                     .weight(2f)
@@ -307,13 +326,13 @@ fun DataEntryArea(
             Text(
                 text = "Opening Stock",
                 fontSize = 20.sp,
-                fontStyle = MaterialTheme.typography.h6.fontStyle,
-                color = MaterialTheme.colors.primary
+                fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = " : ",
-                fontSize = MaterialTheme.typography.h6.fontSize,
-                fontStyle = MaterialTheme.typography.h6.fontStyle,
+                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
             )
             OutlinedTextField(
                 value = openingStock,
@@ -333,7 +352,7 @@ fun DataEntryArea(
                     .padding(start = 4.dp),
                 textStyle = TextStyle(
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 placeholder = {
                     Text(
@@ -351,9 +370,9 @@ fun DataEntryArea(
         ) {
             Text(
                 text = "Is Inclusive",
-                color = MaterialTheme.colors.primary,
-                fontStyle = MaterialTheme.typography.h6.fontStyle,
-                fontSize = MaterialTheme.typography.h6.fontSize
+                color = MaterialTheme.colorScheme.primary,
+                fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                fontSize = MaterialTheme.typography.headlineMedium.fontSize
             )
             Checkbox(
                 checked = isInclusive,
@@ -417,12 +436,12 @@ fun DataEntryArea(
                     .weight(1f)
                     .padding(horizontal = 4.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.OrangeColor
+                    containerColor = OrangeColor
                 )
             ) {
                 Text(
                     text = "Clear",
-                    color = MaterialTheme.colors.surface
+                    color = MaterialTheme.colorScheme.surface
                 )
             }
             Button(

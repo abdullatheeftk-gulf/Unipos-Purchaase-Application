@@ -12,6 +12,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,9 +51,10 @@ fun PriceAdjustmentTopBar(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = MaterialTheme.colors.surface,
+        //backgroundColor = MaterialTheme.colors.surface,
         shape = RectangleShape,
-        elevation = 6.dp
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
     ) {
         Column(
             modifier = Modifier
@@ -53,14 +62,16 @@ fun PriceAdjustmentTopBar(
                 .padding(top = 8.dp),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackButtonClicked) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.OrangeColor
+                        tint = OrangeColor
                     )
                 }
                 BasicTextField(
@@ -91,7 +102,7 @@ fun PriceAdjustmentTopBar(
                                     text = "Search",
                                     color = Color.DarkGray,
                                     modifier = Modifier
-                                        .alpha(ContentAlpha.disabled)
+                                        .alpha(0.3f)
                                 )
                             }
                             it()
@@ -106,7 +117,7 @@ fun PriceAdjustmentTopBar(
                         .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
                         .border(
                             width = 1.dp,
-                            color = MaterialTheme.colors.primary,
+                            color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
                         .background(color = Color.White),
@@ -124,7 +135,7 @@ fun PriceAdjustmentTopBar(
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.error
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
 
@@ -136,7 +147,7 @@ fun PriceAdjustmentTopBar(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.OrangeColor,
+                        tint = OrangeColor,
                     )
                 }
             }
@@ -152,7 +163,7 @@ fun PriceAdjustmentTopBar(
                             rootViewModel.searchProductListByNameForPriceAdjustment()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.OrangeColor
+                            containerColor = OrangeColor
                         )
                     ) {
                         Text(text = "Search by name", color = Color.Black)
@@ -164,7 +175,7 @@ fun PriceAdjustmentTopBar(
                             rootViewModel.searchProductByQrCodeForPriceAdjustment(productSearchText)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.OrangeColor
+                            containerColor = OrangeColor
                         )
                     ) {
                         Text(text = "Search by barcode", color = Color.Black)

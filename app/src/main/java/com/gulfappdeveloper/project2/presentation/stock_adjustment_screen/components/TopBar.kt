@@ -8,10 +8,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,7 +33,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
@@ -46,9 +52,9 @@ fun TopBar(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = MaterialTheme.colors.surface,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
         shape = RectangleShape,
-        elevation = 6.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
             modifier = Modifier
@@ -56,14 +62,16 @@ fun TopBar(
                 .padding(top = 8.dp),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackButtonClicked) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.OrangeColor
+                        tint = OrangeColor
                     )
                 }
                 BasicTextField(
@@ -94,7 +102,7 @@ fun TopBar(
                                     text = "Search",
                                     color = Color.DarkGray,
                                     modifier = Modifier
-                                        .alpha(ContentAlpha.disabled)
+                                        .alpha(0.3f)
                                 )
                             }
                             it()
@@ -109,7 +117,7 @@ fun TopBar(
                         .clip(MaterialTheme.shapes.medium.copy(all = CornerSize(16.dp)))
                         .border(
                             width = 1.dp,
-                            color = MaterialTheme.colors.primary,
+                            color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
                         .background(color = Color.White),
@@ -127,7 +135,7 @@ fun TopBar(
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.error
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
 
@@ -139,7 +147,7 @@ fun TopBar(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_barcode_scanner_24),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.OrangeColor,
+                        tint = OrangeColor,
                     )
                 }
             }
@@ -155,7 +163,7 @@ fun TopBar(
                             rootViewModel.searchProductListByNameForStockAdjustment()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.OrangeColor
+                            containerColor = OrangeColor
                         )
                     ) {
                         Text(text = "Search by name", color = Color.Black)
@@ -167,7 +175,7 @@ fun TopBar(
                             rootViewModel.searchProductByQrCodeForStockAdjustment(productSearchText)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.OrangeColor
+                            containerColor = OrangeColor
                         )
                     ) {
                         Text(text = "Search by barcode", color = Color.Black)

@@ -5,6 +5,13 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +34,9 @@ fun SplashScreen2(
     rootViewModel: RootViewModel,
    // deviceId: String
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     val welcomeMessage by rootViewModel.message
 
@@ -70,9 +79,7 @@ fun SplashScreen2(
                     showUrlSetButton = true
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.uiEvent.message
-                    )
+                    snackBarHostState.showSnackbar(event.uiEvent.message)
                 }
                 else -> Unit
             }
@@ -80,7 +87,9 @@ fun SplashScreen2(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
     ) {
         it.calculateTopPadding()
 
@@ -95,7 +104,7 @@ fun SplashScreen2(
                 contentDescription = null,
                 modifier = Modifier.size(250.dp),
                 colorFilter = ColorFilter.tint(
-                    color = MaterialTheme.colors.OrangeColor
+                    color = OrangeColor
                 )
             )
             Spacer(modifier = Modifier.height(50.dp))

@@ -7,6 +7,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +27,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 fun ShowProductsForPriceAdjustmentScreen(
     rootViewModel: RootViewModel,
@@ -29,7 +36,9 @@ fun ShowProductsForPriceAdjustmentScreen(
     hideKeyboard: () -> Unit
 ) {
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     var showProgressbar by remember {
         mutableStateOf(false)
@@ -52,7 +61,7 @@ fun ShowProductsForPriceAdjustmentScreen(
                 }
 
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
                 else -> Unit
             }
@@ -67,7 +76,9 @@ fun ShowProductsForPriceAdjustmentScreen(
 
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             PriceAdjustmentTopBar(
                 rootViewModel = rootViewModel,
@@ -101,9 +112,9 @@ fun ShowProductsForPriceAdjustmentScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                         border = BorderStroke(
                             width = 1.dp,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colorScheme.primary
                         ),
-                        color = MaterialTheme.colors.background,
+                        color = MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(35),
                         onClick = {
                             rootViewModel.getProductForPriceAdjustment(product.barcode)

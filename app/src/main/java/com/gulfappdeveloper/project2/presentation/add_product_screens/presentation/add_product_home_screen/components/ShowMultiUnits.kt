@@ -2,10 +2,9 @@ package com.gulfappdeveloper.project2.presentation.add_product_screens.presentat
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -29,7 +28,7 @@ fun ShowMultiUnits(
         modifier = Modifier
             .fillMaxWidth()
         ,
-        border = BorderStroke(width = Dp.Hairline, color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)),
+        border = BorderStroke(width = Dp.Hairline, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)),
     ) {
         Column(
             modifier = Modifier

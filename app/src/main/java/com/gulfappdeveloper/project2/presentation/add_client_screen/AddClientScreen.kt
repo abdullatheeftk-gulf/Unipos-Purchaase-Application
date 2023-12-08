@@ -5,12 +5,25 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -20,6 +33,7 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
@@ -28,6 +42,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddClientScreen(
     rootViewModel: RootViewModel,
@@ -78,7 +93,9 @@ fun AddClientScreen(
     val taxId by addClientViewModel.taxId
 
 
-    val scaffoldState = rememberScaffoldState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     LaunchedEffect(key1 = true) {
         addClientViewModel.addClientEvent.collectLatest { result ->
@@ -90,7 +107,7 @@ fun AddClientScreen(
                     showProgressBar = false
                 }
                 is UiEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(value.message)
+                    snackBarHostState.showSnackbar(message = value.message)
                 }
                 is UiEvent.Navigate -> {
                     try {
@@ -105,8 +122,7 @@ fun AddClientScreen(
                         }
                         navHostController.popBackStack()
                     } catch (e: Exception) {
-                        e.printStackTrace()
-                        scaffoldState.snackbarHostState.showSnackbar("There have some error when receiving account id")
+                        snackBarHostState.showSnackbar(e.message?:"There have some error when receiving account id")
                     }
                 }
                 else -> Unit
@@ -115,22 +131,25 @@ fun AddClientScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             TopAppBar(
+                modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
                     Text(
                         text = "Add Client",
-                        color = MaterialTheme.colors.OrangeColor
+                        color = OrangeColor
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface,
+               // backgroundColor = MaterialTheme.colorScheme.surface,
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.OrangeColor
+                            tint = OrangeColor
                         )
                     }
                 })
@@ -154,7 +173,7 @@ fun AddClientScreen(
                 Text(text = "Add Client")
             }
         }
-    ) {
+    ) {paddingValues->
         if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -164,13 +183,14 @@ fun AddClientScreen(
             }
         }
 
-        it.calculateTopPadding()
         Column(
             modifier = Modifier
-                .padding(all = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 0.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            
+            Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
 
             OutlinedTextField(
                 value = accountName,
@@ -187,7 +207,7 @@ fun AddClientScreen(
                             buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = MaterialTheme.colors.error,
+                                        color = MaterialTheme.colorScheme.error,
                                         baselineShift = BaselineShift.Superscript
                                     )
                                 ) {
@@ -212,7 +232,7 @@ fun AddClientScreen(
             if (showClientNameError) {
                 Text(
                     text = "    Client name is required",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Start)
                 )
             }
@@ -232,7 +252,7 @@ fun AddClientScreen(
                             buildAnnotatedString {
                                 withStyle(
                                     style = SpanStyle(
-                                        color = MaterialTheme.colors.error,
+                                        color = MaterialTheme.colorScheme.error,
                                         baselineShift = BaselineShift.Superscript
                                     )
                                 ) {
@@ -257,7 +277,7 @@ fun AddClientScreen(
             if (showClientIdError) {
                 Text(
                     text = "    Client Id is required",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Start)
                 )
             }
@@ -284,11 +304,11 @@ fun AddClientScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
             Text(
-                text = " Address Details",
+                text = "Address Details",
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                color = MaterialTheme.colors.primary,
-                fontStyle = MaterialTheme.typography.h6.fontStyle,
-                fontSize = MaterialTheme.typography.h6.fontSize,
+                color = MaterialTheme.colorScheme.primary,
+                fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                fontSize = 20.sp,
                 textDecoration = TextDecoration.Underline
             )
 
