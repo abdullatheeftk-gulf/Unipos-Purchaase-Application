@@ -9,9 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun EmptyList() {
+    val screenWidth = screenSize().value
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -19,7 +21,7 @@ fun EmptyList() {
         Text(
             text = "Empty List",
             fontWeight = FontWeight.W600,
-            fontSize = 24.sp,
+            fontSize = if(screenWidth<600f) 24.sp else if(screenWidth>=600 && screenWidth<800) 30.sp else 32.sp,
             modifier = Modifier.alpha(0.3f)
         )
     }

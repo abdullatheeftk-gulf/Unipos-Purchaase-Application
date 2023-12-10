@@ -26,8 +26,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +41,8 @@ fun StockAdjustmentAlertDialog(
     productForStockAdjustment: ProductStock,
     index: Int,
 ) {
+    val screenWidth = screenSize().value
+
     var stockAdjustedProduct by remember {
         mutableStateOf(productForStockAdjustment)
     }
@@ -48,8 +52,9 @@ fun StockAdjustmentAlertDialog(
     }
 
     AlertDialog(
-        onDismissRequest = onDismissRequest,)
-        {
+        onDismissRequest = onDismissRequest,
+    )
+    {
         Card(elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)) {
             Column(
                 modifier = Modifier.padding(all = 12.dp),
@@ -67,15 +72,18 @@ fun StockAdjustmentAlertDialog(
                     Text(
                         text = "Name",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(2f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = ":",
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(0.5f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = productForStockAdjustment.productName,
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(2f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
 
                 }
@@ -84,17 +92,20 @@ fun StockAdjustmentAlertDialog(
                     Text(
                         text = "System Stock",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(2f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = ":",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(0.5f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = productForStockAdjustment.currSystemStock.toString(),
                         color = OrangeColor,
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(2f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
 
                 }
@@ -103,12 +114,14 @@ fun StockAdjustmentAlertDialog(
                     Text(
                         text = "Actual Stock",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(2f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = ":",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(0.5f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     OutlinedTextField(
                         value = actualStock,
@@ -140,7 +153,10 @@ fun StockAdjustmentAlertDialog(
                         ),
                         singleLine = true,
                         placeholder = {
-                            Text(text = "0.0")
+                            Text(
+                                text = "0.0",
+                                fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                            )
                         }
                     )
 
@@ -167,6 +183,6 @@ fun StockAdjustmentAlertDialog(
             }
         }
 
-        }
+    }
 
 }

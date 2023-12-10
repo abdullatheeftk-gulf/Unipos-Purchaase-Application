@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.ProductUnit
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
@@ -24,17 +25,18 @@ fun MultiUnitListTile(
     index:Int,
     addProductMainViewModel: AddProductMainViewModel
 ) {
+    val screenWidth = screenSize().value
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (item.productUnitName.length>20) 45.dp else 30.dp),
+            .height(if (item.productUnitName.length > 20) 45.dp else 30.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         Text(
             text = item.productUnitName,
             textAlign = TextAlign.Start,
-            fontSize = 12.sp,
+            fontSize = if (screenWidth < 600) 12.sp else if (screenWidth >= 600 && screenWidth < 800) 14.sp else 16.sp,
             modifier = Modifier.weight(5f),
             color = MaterialTheme.colorScheme.primary,
             maxLines = 2,
@@ -43,21 +45,21 @@ fun MultiUnitListTile(
         Text(
             text = item.barcode,
             textAlign = TextAlign.Center,
-            fontSize = 12.sp,
+            fontSize = if (screenWidth < 600) 12.sp else if (screenWidth >= 600 && screenWidth < 800) 14.sp else 16.sp,
             modifier = Modifier.weight(2.5f),
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = item.unitQty.toString(),
             textAlign = TextAlign.Center,
-            fontSize = 12.sp,
+            fontSize = if (screenWidth < 600) 12.sp else if (screenWidth >= 600 && screenWidth < 800) 14.sp else 16.sp,
             modifier = Modifier.weight(1.5f),
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = item.salesPrice.toString(),
             textAlign = TextAlign.Center,
-            fontSize = 12.sp,
+            fontSize = if (screenWidth < 600) 12.sp else if (screenWidth >= 600 && screenWidth < 800) 14.sp else 16.sp,
             modifier = Modifier.weight(2f),
             maxLines = 1,
             color = MaterialTheme.colorScheme.primary
@@ -70,7 +72,7 @@ fun MultiUnitListTile(
                 .size(24.dp)
                 .align(Alignment.Top)
                 .clickable {
-                   addProductMainViewModel.deleteOneItemFromMultiUnitList(index)
+                    addProductMainViewModel.deleteOneItemFromMultiUnitList(index)
                 }
         )
 

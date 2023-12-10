@@ -27,14 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
@@ -47,6 +50,8 @@ fun SettingsScreen(
     navHostController: NavHostController,
     settingScreenViewModel: SettingScreenViewModel = hiltViewModel()
 ) {
+
+    val screenWidth = screenSize().value
 
     val snackBarHostState = remember {
         SnackbarHostState()
@@ -106,7 +111,11 @@ fun SettingsScreen(
             TopAppBar(
                 modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
-                    Text(text = "Settings", color = OrangeColor)
+                    Text(
+                        text = "Settings",
+                        color = OrangeColor,
+                        fontSize = if (screenWidth < 600f) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 28.sp,
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -128,7 +137,9 @@ fun SettingsScreen(
                         },
                     ) {
                         Text(
-                            text = "LOGOUT", color = MaterialTheme.colorScheme.error
+                            text = "LOGOUT",
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                         )
                     }
                 }
@@ -155,7 +166,8 @@ fun SettingsScreen(
                 placeholder = {
                     Text(
                         text = currentBaseUrl,
-                        modifier = Modifier.alpha(0.3f)
+                        modifier = Modifier.alpha(0.3f),
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -175,8 +187,10 @@ fun SettingsScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth(),
-                //.focusRequester(focusRequester = focusRequester),
-                enabled = !showProgressBar
+                enabled = !showProgressBar,
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                )
             )
             Spacer(modifier = Modifier.height(10.dp))
             Button(
@@ -193,7 +207,10 @@ fun SettingsScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Set Base Url")
+                Text(
+                    text = "Set Base Url",
+                    fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                )
             }
             Spacer(modifier = Modifier.height(30.dp))
             uniLicenseDetails?.let {uniLicense->
@@ -201,11 +218,18 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "App License")
-                    Text(text = " : ")
+                    Text(
+                        text = "App License",
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                    )
+                    Text(
+                        text = " : ",
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                    )
                     Text(
                         text = uniLicense.licenseKey,
-                        color = OrangeColor
+                        color = OrangeColor,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
 
                 }

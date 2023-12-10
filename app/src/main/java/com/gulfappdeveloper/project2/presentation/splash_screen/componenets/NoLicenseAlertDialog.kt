@@ -18,12 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoLicenseAlertDialog(
     onDismissRequest: () -> Unit,
 ) {
+    val screenWidth = screenSize().value
     AlertDialog(
         onDismissRequest = onDismissRequest,)
         {
@@ -35,7 +38,8 @@ fun NoLicenseAlertDialog(
                 Text(
                     text = "No License information on your mobile, Please Activate the App",
                     fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600f && screenWidth<900f) 18.sp else 22.sp
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
@@ -43,7 +47,10 @@ fun NoLicenseAlertDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismissRequest) {
-                        Text(text = "Ok")
+                        Text(
+                            text = "Ok",
+                            fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                        )
                     }
                 }
 

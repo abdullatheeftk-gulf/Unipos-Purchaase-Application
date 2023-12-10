@@ -25,12 +25,9 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import dagger.hilt.android.AndroidEntryPoint
 
-//import dagger.hilt.android.AndroidEntryPoint
-
-
 private const val TAG = "MainActivity"
 
-//@AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -46,8 +43,8 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             Project2Theme {
-                val isTablet = booleanResource(id = R.bool.is_tablet)
-                //Log.e("Test", "onCreate: $isTablet", )
+                /*val isTablet = booleanResource(id = R.bool.is_tablet)
+                //Log.e("Test", "onCreate: $isTablet", )*/
 
                 val launcher =
                     rememberLauncherForActivityResult(contract = ScanContract(), onResult = {
@@ -88,7 +85,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navHostController = rememberNavController()
-                    Log.e(TAG, "screenSize: ${com.gulfappdeveloper.project2.presentation.ui_util.screenSize()}")
 
                     RootNavGraph(
                         navHostController = navHostController,
@@ -125,10 +121,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /*override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.e(TAG, "onKeyDown: ", )
-        return super.onKeyDown(keyCode, event)
-    }*/
+
 }
 
 class CaptureAct : CaptureActivity() {

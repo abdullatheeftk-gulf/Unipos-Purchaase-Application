@@ -17,12 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.remote.post.add_product.ProductUnit
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun ShowMultiUnits(
     multiUnitList:SnapshotStateList<ProductUnit>,
     addProductMainViewModel: AddProductMainViewModel
 ) {
+
+    val screenWidth = screenSize().value
 
     Card(
         modifier = Modifier
@@ -47,7 +50,7 @@ fun ShowMultiUnits(
                     text = "Product Name",
                     textAlign = TextAlign.Start,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     modifier = Modifier.weight(5f),
                     textDecoration = TextDecoration.Underline
                 )
@@ -55,7 +58,7 @@ fun ShowMultiUnits(
                     text = "Barcode",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     modifier = Modifier.weight(2.5f),
                     textDecoration = TextDecoration.Underline
                 )
@@ -63,7 +66,7 @@ fun ShowMultiUnits(
                     text = "Qty",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     modifier = Modifier.weight(1.5f),
                     textDecoration = TextDecoration.Underline
                 )
@@ -71,7 +74,7 @@ fun ShowMultiUnits(
                     text = "Price",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     modifier = Modifier.weight(2f),
                     textDecoration = TextDecoration.Underline,
                     maxLines = 1,

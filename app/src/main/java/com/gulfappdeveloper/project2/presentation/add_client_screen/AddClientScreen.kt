@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -39,6 +40,7 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
@@ -50,6 +52,8 @@ fun AddClientScreen(
     navHostController: NavHostController,
     addClientViewModel: AddClientViewModel = hiltViewModel()
 ) {
+
+    val screenWidth = screenSize().value
 
     // Add client screen navigation popUp flag, false is for navigation from the main screen
     val addClientScreenNavPopUpFlag by rootViewModel.addClientScreenNavPopUpFlag
@@ -103,12 +107,15 @@ fun AddClientScreen(
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
                 }
+
                 is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
                 }
+
                 is UiEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(message = value.message)
                 }
+
                 is UiEvent.Navigate -> {
                     try {
                         if (addClientScreenNavPopUpFlag) {
@@ -122,9 +129,12 @@ fun AddClientScreen(
                         }
                         navHostController.popBackStack()
                     } catch (e: Exception) {
-                        snackBarHostState.showSnackbar(e.message?:"There have some error when receiving account id")
+                        snackBarHostState.showSnackbar(
+                            e.message ?: "There have some error when receiving account id"
+                        )
                     }
                 }
+
                 else -> Unit
             }
         }
@@ -140,10 +150,10 @@ fun AddClientScreen(
                 title = {
                     Text(
                         text = "Add Client",
-                        color = OrangeColor
+                        color = OrangeColor,
+                        fontSize = if (screenWidth < 600) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 26.sp
                     )
                 },
-               // backgroundColor = MaterialTheme.colorScheme.surface,
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
@@ -170,10 +180,13 @@ fun AddClientScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Add Client")
+                Text(
+                    text = "Add Client",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             }
         }
-    ) {paddingValues->
+    ) { paddingValues ->
         if (showProgressBar) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -189,9 +202,11 @@ fun AddClientScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            
-            Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
 
+            Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 8.dp else 12.dp
+            ))
             OutlinedTextField(
                 value = accountName,
                 onValueChange = { value ->
@@ -202,7 +217,10 @@ fun AddClientScreen(
                     .fillMaxWidth(),
                 label = {
                     Row() {
-                        Text(text = "Client Name ")
+                        Text(
+                            text = "Client Name ",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                         Text(
                             buildAnnotatedString {
                                 withStyle(
@@ -211,9 +229,12 @@ fun AddClientScreen(
                                         baselineShift = BaselineShift.Superscript
                                     )
                                 ) {
-                                    append("*")
+                                    append(
+                                        "*"
+                                    )
                                 }
                             },
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                         )
                     }
 
@@ -227,13 +248,17 @@ fun AddClientScreen(
                     onDone = {
                         hideKeyboard()
                     }
+                ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             )
             if (showClientNameError) {
                 Text(
                     text = "    Client name is required",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             }
 
@@ -247,7 +272,10 @@ fun AddClientScreen(
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Row() {
-                        Text(text = "Tax Id ")
+                        Text(
+                            text = "Tax Id ",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                         Text(
                             buildAnnotatedString {
                                 withStyle(
@@ -259,6 +287,7 @@ fun AddClientScreen(
                                     append("*")
                                 }
                             },
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                         )
                     }
                 },
@@ -272,13 +301,17 @@ fun AddClientScreen(
                     onDone = {
                         hideKeyboard()
                     }
+                ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             )
             if (showClientIdError) {
                 Text(
                     text = "    Client Id is required",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             }
             OutlinedTextField(
@@ -288,7 +321,10 @@ fun AddClientScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
-                    Text(text = "Nat")
+                    Text(
+                        text = "Nat",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                    )
                 },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
@@ -298,6 +334,9 @@ fun AddClientScreen(
                     onDone = {
                         hideKeyboard()
                     }
+                ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             )
 
@@ -308,8 +347,8 @@ fun AddClientScreen(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 color = MaterialTheme.colorScheme.primary,
                 fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                fontSize = 20.sp,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
+                fontSize = if (screenWidth < 600) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 24.sp else 28.sp
             )
 
 
@@ -324,12 +363,18 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(end = 4.dp),
                     label = {
-                        Text(text = "Building Number")
+                        Text(
+                            text = "Building Number",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 )
                 OutlinedTextField(
@@ -342,11 +387,17 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(start = 4.dp),
                     label = {
-                        Text(text = "Plot Identification")
+                        Text(
+                            text = "Plot Identification",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 )
             }
@@ -362,12 +413,18 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(end = 4.dp),
                     label = {
-                        Text(text = "Street Name")
+                        Text(
+                            text = "Street Name",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
                     ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                    )
                 )
                 OutlinedTextField(
                     value = postalZone,
@@ -379,12 +436,18 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(start = 4.dp),
                     label = {
-                        Text(text = "Postal Zone")
+                        Text(
+                            text = "Postal Zone",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
                     ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                    )
                 )
             }
 
@@ -399,11 +462,17 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(end = 4.dp),
                     label = {
-                        Text(text = "City")
+                        Text(
+                            text = "City",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 )
                 OutlinedTextField(
@@ -416,11 +485,17 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(start = 4.dp),
                     label = {
-                        Text(text = "Local Area")
+                        Text(
+                            text = "Local Area",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 )
             }
@@ -436,11 +511,17 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(end = 4.dp),
                     label = {
-                        Text(text = "Country")
+                        Text(
+                            text = "Country",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 )
                 OutlinedTextField(
@@ -453,7 +534,10 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(start = 4.dp),
                     label = {
-                        Text(text = "Province/State")
+                        Text(
+                            text = "Province/State",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
@@ -463,6 +547,9 @@ fun AddClientScreen(
                         onDone = {
                             hideKeyboard()
                         }
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 )
             }
@@ -478,12 +565,18 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(end = 4.dp),
                     label = {
-                        Text(text = "Phone No 1")
+                        Text(
+                            text = "Phone No 1",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Number
+                    ),
+                    textStyle = TextStyle(
+                        fontSize =if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                     )
                 )
                 OutlinedTextField(
@@ -496,7 +589,10 @@ fun AddClientScreen(
                         .weight(1f)
                         .padding(start = 4.dp),
                     label = {
-                        Text(text = "Phone No 2")
+                        Text(
+                            text = "Phone No 2",
+                            fontSize =if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                        )
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
@@ -507,6 +603,9 @@ fun AddClientScreen(
                         onDone = {
                             hideKeyboard()
                         }
+                    ),
+                    textStyle = TextStyle(
+                        fontSize =if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                     )
                 )
             }

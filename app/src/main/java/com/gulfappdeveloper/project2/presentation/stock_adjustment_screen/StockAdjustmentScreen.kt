@@ -36,6 +36,7 @@ import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.compon
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.components.TopBar
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
@@ -48,6 +49,8 @@ fun StockAdjustmentScreen(
     hideKeyboard: () -> Unit,
     onScanButtonClicked: (ScanFrom) -> Unit,
 ) {
+    val screenWidth = screenSize().value
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -169,7 +172,7 @@ fun StockAdjustmentScreen(
                             Text(
                                 text = "Submit",
                                 color = if (showProgressbar) Color.White else MaterialTheme.colorScheme.surface,
-                                fontSize = 20.sp,
+                                fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 22.sp else 26.sp,
                                 fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                                 modifier = Modifier.alpha(
                                     if (showProgressbar) 0.3f else 1f
@@ -224,7 +227,8 @@ fun StockAdjustmentScreen(
                         Text(
                             text = pair.second.productName,
                             modifier = Modifier.padding(all = 10.dp),
-                            color = if (pair.first) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
+                            color = if (pair.first) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
+                            fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                         )
                     }
                 }

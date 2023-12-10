@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
 import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.multi_product_screen.components.DataEntryArea
 import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.multi_product_screen.components.ListArea
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.launch
 
@@ -44,6 +46,8 @@ fun MultiUnitScreen(
     hideKeyboard:()->Unit,
     onScanButtonClicked:(ScanFrom)->Unit
 ) {
+    val screenWidth = screenSize().value
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -69,7 +73,11 @@ fun MultiUnitScreen(
             TopAppBar(
                 modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
-                    Text(text = "Add Multi Unit", color = OrangeColor)
+                    Text(
+                        text = "Add Multi Unit",
+                        color = OrangeColor,
+                        fontSize = if(screenWidth<600) 20.sp else if(screenWidth>=600 && screenWidth<800) 24.sp else 30.sp
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -109,6 +117,7 @@ fun MultiUnitScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+            Spacer(modifier = Modifier.height(10.dp))
             ListArea(addProductMainViewModel = addProductMainViewModel)
             Spacer(modifier = Modifier.height(12.dp))
             DataEntryArea(
@@ -121,14 +130,19 @@ fun MultiUnitScreen(
                 },
                 onScanButtonClicked = onScanButtonClicked
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 16.dp else if(screenWidth>=600 && screenWidth<800) 24.dp else 32.dp
+            ))
             Button(
                 onClick = {
                     addProductMainViewModel.clearMultiUnitDataEntryArea()
                     addProductNavHostController.popBackStack()
                 }
             ) {
-                Text(text = "OK")
+                Text(
+                    text = "Submit",
+                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                )
             }
             Spacer(modifier = Modifier.height(300.dp))
         }

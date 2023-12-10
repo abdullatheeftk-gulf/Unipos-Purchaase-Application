@@ -35,6 +35,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjust_price_screen.componenets.ShowSuccessAlertDialog
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
@@ -45,6 +46,9 @@ fun AdjustPriceScreen(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
 ) {
+
+    val screenWidth = screenSize().value
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -91,7 +95,6 @@ fun AdjustPriceScreen(
     if (showSuccessAlertDialog) {
         ShowSuccessAlertDialog {
             rootViewModel.resetAllPriceAdjustmentData()
-           // navHostController.backQueue.clear()
             navHostController.navigate(
                 route = RootNavScreens.MainScreen.route
             ){
@@ -114,7 +117,8 @@ fun AdjustPriceScreen(
                 title = {
                     Text(
                         text = "Price adjustment",
-                        color = OrangeColor
+                        color = OrangeColor,
+                        fontSize = if (screenWidth < 600f) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 24.sp else 24.sp,
                     )
                 },
                 navigationIcon = {
@@ -148,12 +152,14 @@ fun AdjustPriceScreen(
                     Text(
                         text = "Product Name",
                         modifier = Modifier.weight(2.3f),
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = " :  ",
                         modifier = Modifier.weight(.2f),
-                        color = Color.Red
+                        color = Color.Red,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = selectedProduct?.productName ?: "",
@@ -161,8 +167,8 @@ fun AdjustPriceScreen(
                         textAlign = TextAlign.Start,
                         color = MaterialTheme.colorScheme.primary,
                         fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                        fontSize = 18.sp
-                    )
+                        fontSize = if (screenWidth < 600f) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 24.sp,
+                        )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -171,12 +177,14 @@ fun AdjustPriceScreen(
                     Text(
                         text = "Barcode",
                         modifier = Modifier.weight(2.3f),
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = " :  ",
                         modifier = Modifier.weight(0.2f),
-                        color = Color.Red
+                        color = Color.Red,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = selectedProduct?.barcode ?: "",
@@ -184,8 +192,8 @@ fun AdjustPriceScreen(
                         textAlign = TextAlign.Start,
                         color = OrangeColor,
                         fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                        fontSize = 18.sp
-                    )
+                        fontSize = if (screenWidth < 600f) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 26.sp,
+                        )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -194,12 +202,14 @@ fun AdjustPriceScreen(
                     Text(
                         text = "Stock",
                         modifier = Modifier.weight(2.3f),
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = " :  ",
                         modifier = Modifier.weight(.2f),
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     )
                     Text(
                         text = selectedProduct?.stock.toString(),
@@ -207,8 +217,8 @@ fun AdjustPriceScreen(
                         textAlign = TextAlign.Start,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                        fontSize = 18.sp
-                    )
+                        fontSize = if (screenWidth < 600f) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 26.sp,
+                        )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -232,10 +242,14 @@ fun AdjustPriceScreen(
                         keyboardType = KeyboardType.Decimal
                     ),
                     textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 20.sp,
                     ),
                     label = {
-                        Text(text = "Purchase price")
+                        Text(
+                            text = "Purchase price",
+                            fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 20.sp,
+                        )
                     }
                 )
 
@@ -260,13 +274,20 @@ fun AdjustPriceScreen(
                         keyboardType = KeyboardType.Decimal
                     ),
                     textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                     ),
                     placeholder = {
-                        Text(text = "0.0")
+                        Text(
+                            text = "0.0",
+                            fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 20.sp,
+                        )
                     },
                     label = {
-                        Text(text = "Sale price")
+                        Text(
+                            text = "Sale price",
+                            fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 20.sp,
+                        )
                     }
                 )
 
@@ -303,7 +324,10 @@ fun AdjustPriceScreen(
                     },
                     enabled = !showProgressBar
                 ) {
-                    Text(text = "Submit")
+                    Text(
+                        text = "Submit",
+                        fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                    )
                 }
 
             }

@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
@@ -47,11 +48,11 @@ fun PriceAdjustmentTopBar(
     hideKeyboard: () -> Unit,
     onClearButtonClicked: () -> Unit
 ) {
+    val screenWidth = screenSize().value
     val productSearchText by rootViewModel.productNameForPriceAdjustment.value
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        //backgroundColor = MaterialTheme.colors.surface,
         shape = RectangleShape,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
@@ -166,7 +167,11 @@ fun PriceAdjustmentTopBar(
                             containerColor = OrangeColor
                         )
                     ) {
-                        Text(text = "Search by name", color = Color.Black)
+                        Text(
+                            text = "Search by name",
+                            color = Color.Black,
+                            fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                            )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Button(
@@ -178,7 +183,11 @@ fun PriceAdjustmentTopBar(
                             containerColor = OrangeColor
                         )
                     ) {
-                        Text(text = "Search by barcode", color = Color.Black)
+                        Text(
+                            text = "Search by barcode",
+                            color = Color.Black,
+                            fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))

@@ -17,12 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicenseExpiryAlertDialog(
     onDismissRequest: () -> Unit,
 ) {
+    val screenWidth = screenSize().value
     AlertDialog(
         onDismissRequest = onDismissRequest,
     )
@@ -36,7 +39,8 @@ fun LicenseExpiryAlertDialog(
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Your App license is expired",
-                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle
+                    fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
@@ -44,7 +48,10 @@ fun LicenseExpiryAlertDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismissRequest) {
-                        Text(text = "Ok")
+                        Text(
+                            text = "Ok",
+                            fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                        )
                     }
                 }
 

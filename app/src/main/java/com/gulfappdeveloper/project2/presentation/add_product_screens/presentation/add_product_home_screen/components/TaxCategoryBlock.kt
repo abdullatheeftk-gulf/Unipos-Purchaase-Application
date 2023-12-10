@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.TaxCategory
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun TaxCategoryBlock(
@@ -31,6 +33,9 @@ fun TaxCategoryBlock(
     onSelectedTaxCategory: (TaxCategory) -> Unit,
     addProductMainViewModel: AddProductMainViewModel
 ) {
+
+    val screenWidth = screenSize().value
+
     var showDropDownMenuForTaxCategory by remember {
         mutableStateOf(false)
     }
@@ -45,7 +50,7 @@ fun TaxCategoryBlock(
     ) {
         Text(
             text = "Select Tax Category :-",
-            fontSize = 18.sp,
+            fontSize = if (screenWidth < 600) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 24.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
@@ -58,7 +63,10 @@ fun TaxCategoryBlock(
                 enabled = false,
                 label = {
                     Row() {
-                        Text(text = "Tax Category")
+                        Text(
+                            text = "Tax Category",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                        )
                         Text(
                             buildAnnotatedString {
                                 withStyle(
@@ -70,11 +78,15 @@ fun TaxCategoryBlock(
                                     append("*")
                                 }
                             },
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                         )
                     }
                 },
                 placeholder = {
-                    Text(text = "GST5")
+                    Text(
+                        text = "GST5",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                    )
                 },
                 trailingIcon = {
                     IconButton(
@@ -100,7 +112,10 @@ fun TaxCategoryBlock(
                                         onSelectedTaxCategory(it)
                                         showDropDownMenuForTaxCategory = false
                                     },
-                                    text = {Text(text = it.tCategoryName)}
+                                    text = {Text(
+                                        text = it.tCategoryName,
+                                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                                    )}
                                 )
                             }
                         }
@@ -111,13 +126,17 @@ fun TaxCategoryBlock(
                     disabledTrailingIconColor = MaterialTheme.colorScheme.error,
                     disabledTextColor = if (selectedTaxCategory == null) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary,
                     disabledLabelColor = MaterialTheme.colorScheme.onSurface
+                ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                 )
             )
             if (showTaxCategoryError) {
                 Text(
                     text = "    Tax Category is not selected",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                 )
             }
         }

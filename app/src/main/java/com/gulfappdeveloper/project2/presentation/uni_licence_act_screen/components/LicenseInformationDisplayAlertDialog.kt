@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,6 +31,7 @@ fun LicenseInformationDisplayAlertDialog(
     uniLicense:UniLicenseDetails?
 ) {
 
+    val screenWidth = screenSize().value
 
     val expDateString = uniLicense?.expiryDate
     expDateString?.let {
@@ -82,7 +84,7 @@ fun LicenseInformationDisplayAlertDialog(
                 Text(
                     text = "Unipos License Information",
                     fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                    fontSize = 22.sp,
+                    fontSize = if(screenWidth<600f) 22.sp else if(screenWidth>=600 && screenWidth<900) 26.sp else 30.sp,
                     textDecoration = TextDecoration.Underline,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -94,12 +96,14 @@ fun LicenseInformationDisplayAlertDialog(
                     Text(
                         text = "License Type",
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                     )
                     Text(
                         text = ":-",
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                     )
                     Text(
                         text = if (uniLicense?.licenseType == "demo") "Demo" else "Permanent",
@@ -107,7 +111,7 @@ fun LicenseInformationDisplayAlertDialog(
                         textAlign = TextAlign.Center,
                         color = if (uniLicense?.licenseType == "demo") OrangeColor else MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<900) 22.sp else 26.sp
                     )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
@@ -118,23 +122,29 @@ fun LicenseInformationDisplayAlertDialog(
                     Text(
                         text = "Expiry Date",
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                     )
                     Text(
                         text = ":-",
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                     )
                     Text(
                         text = uniLicense?.expiryDate ?: "Nil",
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
-                        color = if (uniLicense?.licenseType == "demo") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                        color = if (uniLicense?.licenseType == "demo") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                     )
                 }
                 Spacer(modifier = Modifier.height(15.dp))
                 Button(onClick = onDismissRequest) {
-                    Text(text = "OK")
+                    Text(
+                        text = "OK",
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                    )
                 }
 
             }

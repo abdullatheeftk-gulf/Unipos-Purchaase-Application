@@ -19,11 +19,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -32,8 +34,9 @@ import kotlinx.coroutines.flow.collectLatest
 fun SplashScreen2(
     navHostController: NavHostController,
     rootViewModel: RootViewModel,
-   // deviceId: String
 ) {
+    val screenWidth = screenSize().value
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -127,8 +130,8 @@ fun SplashScreen2(
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
                     modifier = Modifier
-                        .width(200.dp)
-                        .height(150.dp),
+                        .width(if(screenWidth<600f) 200.dp else if(screenWidth>=600 && screenWidth<900) 300.dp else 350.dp )
+                        .height(if(screenWidth<600f) 150.dp else if(screenWidth>=600 && screenWidth<900) 200.dp else 250.dp),
                     alignment = Alignment.Center
                 )
             }
@@ -148,7 +151,10 @@ fun SplashScreen2(
                         navHostController.navigate(route = RootNavScreens.UrlSetScreen.route)
                     }
                 ) {
-                    Text(text = "Set Base Url")
+                    Text(
+                        text = "Set Base Url",
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                    )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }

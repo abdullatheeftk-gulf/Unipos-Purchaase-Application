@@ -9,6 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun CheckBoxBlock(
@@ -17,6 +19,7 @@ fun CheckBoxBlock(
     onSelectedInclusive: (Boolean) -> Unit,
     onSelectedScale: (Boolean) -> Unit
 ) {
+    val screenWidth = screenSize().value
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -29,7 +32,8 @@ fun CheckBoxBlock(
         ) {
             Text(
                 text = "Is Inclusive Tax",
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
             )
             Checkbox(
                 checked = isInclusive,
@@ -43,12 +47,13 @@ fun CheckBoxBlock(
         ) {
             Text(
                 text = "Is Scale",
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
             )
             Checkbox(
                 checked = isScale,
                 onCheckedChange = onSelectedScale,
-                )
+            )
         }
 
 

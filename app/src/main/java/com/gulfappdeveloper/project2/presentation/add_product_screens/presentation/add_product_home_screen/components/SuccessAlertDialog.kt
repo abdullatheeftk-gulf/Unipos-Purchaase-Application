@@ -16,12 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuccessAlertDialog(
-    onDismissRequest:()->Unit
+    onDismissRequest: () -> Unit
 ) {
+    val screenWidth = screenSize().value
 
 
     AlertDialog(onDismissRequest = onDismissRequest) {
@@ -41,7 +44,10 @@ fun SuccessAlertDialog(
                     onClick = onDismissRequest,
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text(text = "OK")
+                    Text(
+                        text = "OK",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                    )
                 }
             }
         }

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +31,7 @@ import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.components.LicenseInformationDisplayAlertDialog
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
@@ -43,6 +45,10 @@ fun UniLicenseActivationScreen(
     hideKeyboard: () -> Unit,
     deviceId: String,
 ) {
+
+   val screenWidth = screenSize().value
+
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -124,7 +130,8 @@ fun UniLicenseActivationScreen(
                         "Activate App",
                         color = OrangeColor,
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontSize = if(screenWidth<600f) 20.sp else if(screenWidth>=600 && screenWidth<900) 24.sp else 28.sp
                     )
                 },
             )
@@ -133,7 +140,9 @@ fun UniLicenseActivationScreen(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = paddingValues.calculateTopPadding())
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = paddingValues.calculateTopPadding())
         ) {
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -176,7 +185,10 @@ fun UniLicenseActivationScreen(
                     rootViewModel.setUnitActivationErrorValue("")
                 },
                 label = {
-                    Text(text = "Enter License Key")
+                    Text(
+                        text = "Enter License Key",
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -204,6 +216,9 @@ fun UniLicenseActivationScreen(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
                     capitalization = KeyboardCapitalization.Characters
+                ),
+                textStyle = TextStyle(
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                 )
             )
 
@@ -215,7 +230,8 @@ fun UniLicenseActivationScreen(
                 if (licenseKeyActivationError.isNotBlank() || licenseKeyActivationError.isNotEmpty()) {
                     Text(
                         text = if (licenseKeyActivationError == "Expired License") "Expired License" else "Bad Request",
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
                     )
                 }
             }
@@ -240,8 +256,13 @@ fun UniLicenseActivationScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Activate")
+                Text(
+                    text = "Activate",
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                )
             }
+
+
 
         }
 

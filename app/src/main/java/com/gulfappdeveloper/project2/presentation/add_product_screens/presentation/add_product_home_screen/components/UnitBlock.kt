@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.remote.get.for_add_product.Units
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun UnitBlock(
@@ -32,10 +33,12 @@ fun UnitBlock(
     addProductMainViewModel: AddProductMainViewModel,
     showUnitError: Boolean
 ) {
+
+    val screenWidth = screenSize().value
+
     var showDropDownMenuForUnits by remember {
         mutableStateOf(false)
     }
-
 
 
     val unitsList = addProductMainViewModel.unitsList
@@ -48,7 +51,7 @@ fun UnitBlock(
     ) {
         Text(
             text = "Select Unit :-",
-            fontSize = 18.sp,
+            fontSize = if (screenWidth < 600) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 26.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
@@ -57,16 +60,23 @@ fun UnitBlock(
             OutlinedTextField(
                 value = selectedUnits?.unitName ?: "",
                 textStyle = TextStyle(
-                    color = if (selectedUnits != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                    color = if (selectedUnits != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                 ),
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
-                    Text(text = "Pcs")
+                    Text(
+                        text = "Pcs",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                    )
                 },
                 label = {
                     Row() {
-                        Text(text = "Unit")
+                        Text(
+                            text = "Unit",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                        )
                         Text(
                             buildAnnotatedString {
                                 withStyle(
@@ -78,6 +88,7 @@ fun UnitBlock(
                                     append("*")
                                 }
                             },
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                         )
                     }
                 },
@@ -103,9 +114,12 @@ fun UnitBlock(
                                         showDropDownMenuForUnits = false
                                     },
                                     text = {
-                                        Text(text = it.unitName)
+                                        Text(
+                                            text = it.unitName,
+                                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                                        )
                                     }
-                                    )
+                                )
                             }
                         }
                     }
@@ -116,14 +130,16 @@ fun UnitBlock(
                     disabledTrailingIconColor = MaterialTheme.colorScheme.error,
                     disabledTextColor = if (selectedUnits == null) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary,
                     disabledLabelColor = MaterialTheme.colorScheme.onSurface
+                ),
+
                 )
-            )
 
             if (showUnitError) {
                 Text(
                     text = "    Unit is not selected",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                 )
             }
 

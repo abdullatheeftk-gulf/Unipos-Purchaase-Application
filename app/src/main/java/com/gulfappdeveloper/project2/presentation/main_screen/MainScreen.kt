@@ -34,12 +34,15 @@ import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun MainScreen(
     rootViewModel: RootViewModel,
     navHostController: NavHostController
 ) {
+    val screenWidth = screenSize().value
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -75,7 +78,7 @@ fun MainScreen(
                         Text(
                             text = "PURCHASE",
                             color = Color.Black,
-                            fontSize = 18.sp,
+                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -104,7 +107,7 @@ fun MainScreen(
                         Text(
                             text = "STOCK ADJUSTMENT",
                             color = Color.Black,
-                            fontSize = 18.sp,
+                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -132,9 +135,9 @@ fun MainScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "ADD\nPRODUCT",
+                            text = if(screenWidth<600f) "ADD\nPRODUCT" else "ADD PRODUCT",
                             color = Color.Black,
-                            fontSize = 18.sp,
+                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -163,7 +166,7 @@ fun MainScreen(
                         Text(
                             text = "PRICE ADJUSTMENT",
                             color = Color.Black,
-                            fontSize = 18.sp,
+                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -193,9 +196,9 @@ fun MainScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "ADD\nCLIENT",
+                            text = if(screenWidth<600f) "ADD\nCLIENT" else "ADD CLIENT",
                             color = Color.Black,
-                            fontSize = 18.sp,
+                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -224,7 +227,7 @@ fun MainScreen(
                         Text(
                             text = "SETTINGS",
                             color = Color.Black,
-                            fontSize = 18.sp,
+                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )

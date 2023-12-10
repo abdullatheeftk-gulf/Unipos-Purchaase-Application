@@ -1,13 +1,19 @@
 package com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.multi_product_screen.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
@@ -37,9 +43,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
@@ -49,6 +57,7 @@ fun DataEntryArea(
     onDataValidationError: () -> Unit,
     onScanButtonClicked: (ScanFrom) -> Unit
 ) {
+    val screenWidth = screenSize().value
 
     val selectedUnit by addProductMainViewModel.selectedMultiUnit
 
@@ -98,7 +107,8 @@ fun DataEntryArea(
 
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // First row
@@ -106,12 +116,16 @@ fun DataEntryArea(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .weight(2f)
-                    .padding(end = 4.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(end = 4.dp),
+                contentAlignment = Alignment.Center
             ) {
+
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = selectedUnit?.unitName ?: "",
                     onValueChange = {},
                     enabled = false,
@@ -129,21 +143,30 @@ fun DataEntryArea(
                         }
                     },
                     label = {
-                        Text(text = "Unit")
+                        Text(
+                            text = "Unit",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     },
                     textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     ),
                     isError = showUnitError,
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary
                     ),
                 )
+
                 DropdownMenu(
+                    modifier = Modifier.fillMaxWidth(),
                     expanded = showDropDownMenu,
                     onDismissRequest = {
                         showDropDownMenu = false
-                    }
+                    },
                 ) {
                     unitList.forEach { unit ->
                         DropdownMenuItem(
@@ -157,13 +180,22 @@ fun DataEntryArea(
                                 addProductMainViewModel.setSelectedMultiUnit(unit)
                                 showDropDownMenu = false
                             },
-                            text = { Text(text = unit.unitName) }
+                            text = {
+                                Text(
+                                    text = unit.unitName,
+                                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                                )
+                            }
                         )
                     }
                 }
             }
 
             OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(start = 4.dp),
                 value = qty,
                 onValueChange = { value ->
 
@@ -178,15 +210,14 @@ fun DataEntryArea(
                 label = {
                     Text(
                         text = "Qty",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                     )
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Decimal
                 ),
-                modifier = Modifier
-                    .weight(2f)
-                    .padding(start = 4.dp),
+
                 textStyle = TextStyle(
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.primary,
@@ -203,6 +234,9 @@ fun DataEntryArea(
         }
 
         // Second row
+        Spacer(modifier = Modifier.height(
+            if(screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth<800) 6.dp else 10.dp
+        ))
         OutlinedTextField(
             value = productName,
             onValueChange = { value ->
@@ -218,10 +252,14 @@ fun DataEntryArea(
             modifier = Modifier
                 .fillMaxWidth(),
             label = {
-                Text(text = "Product Name")
+                Text(
+                    text = "Product Name",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             },
             textStyle = TextStyle(
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
             ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
@@ -234,7 +272,13 @@ fun DataEntryArea(
         )
 
         // Third row
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(
+            if(screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth<800) 6.dp else 10.dp
+        ))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
             OutlinedTextField(
                 value = barcode,
@@ -246,12 +290,16 @@ fun DataEntryArea(
                     showQtyError = false
 
                     addProductMainViewModel.setMultiUnitBarcode(value)
-                }, enabled = true,
+                },
+                enabled = true,
                 modifier = Modifier
                     .weight(2f)
                     .padding(end = 4.dp),
                 label = {
-                    Text(text = "Barcode")
+                    Text(
+                        text = "Barcode",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                    )
                 },
                 singleLine = true,
                 maxLines = 1,
@@ -263,7 +311,8 @@ fun DataEntryArea(
                         hideKeyboard()
                     }),
                 textStyle = TextStyle(
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 ),
                 isError = showBarcodeError,
                 trailingIcon = {
@@ -295,7 +344,10 @@ fun DataEntryArea(
                     addProductMainViewModel.setMultiUnitPrice(value)
                 },
                 label = {
-                    Text(text = "Sales Price")
+                    Text(
+                        text = "Sales Price",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -306,7 +358,8 @@ fun DataEntryArea(
                         hideKeyboard()
                     }),
                 textStyle = TextStyle(
-                    color = MaterialTheme.colorScheme.primary, fontSize = 20.sp
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 ),
                 modifier = Modifier
                     .weight(2f)
@@ -315,6 +368,10 @@ fun DataEntryArea(
             )
 
         }
+
+        Spacer(modifier = Modifier.height(
+            if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 8.dp else 16.dp
+        ))
         // 4 th row
         Row(
             modifier = Modifier
@@ -325,7 +382,7 @@ fun DataEntryArea(
         ) {
             Text(
                 text = "Opening Stock",
-                fontSize = 20.sp,
+                fontSize = if (screenWidth < 600) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 24.sp else 28.sp,
                 fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -348,19 +405,28 @@ fun DataEntryArea(
                     }
                 ),
                 modifier = Modifier
-                    .width(100.dp)
+                    .width(
+                        if (screenWidth < 600) 100.dp else if (screenWidth >= 600 && screenWidth < 800) 120.dp else 140.dp
+                    )
                     .padding(start = 4.dp),
                 textStyle = TextStyle(
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                 ),
                 placeholder = {
                     Text(
-                        text = "0", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center
+                        text = "0",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                     )
                 })
         }
         // Check box row
+        Spacer(modifier = Modifier.height(
+            if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 8.dp else 16.dp
+        ))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -372,15 +438,22 @@ fun DataEntryArea(
                 text = "Is Inclusive",
                 color = MaterialTheme.colorScheme.primary,
                 fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize
+                fontSize = if(screenWidth<600) 20.sp else if(screenWidth>=600 && screenWidth<800) 24.sp else 28.sp
             )
             Checkbox(
+                modifier = Modifier.size(
+                    if(screenWidth<600) 30.dp else if(screenWidth>=600 && screenWidth<800) 40.dp else 60.dp
+                ),
                 checked = isInclusive,
                 onCheckedChange = { value ->
                     addProductMainViewModel.setMultiUnitIsInclusive(value)
                 }
             )
         }
+
+        Spacer(modifier = Modifier.height(
+            if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 8.dp else 16.dp
+        ))
 
         Row(modifier = Modifier.fillMaxWidth()) {
             Button(
@@ -419,7 +492,10 @@ fun DataEntryArea(
                     .weight(1f)
                     .padding(end = 4.dp)
             ) {
-                Text(text = "Add To List")
+                Text(
+                    text = "Add To List",
+                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                )
             }
             Button(
                 onClick = {
@@ -441,7 +517,8 @@ fun DataEntryArea(
             ) {
                 Text(
                     text = "Clear",
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.surface,
+                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                 )
             }
             Button(
@@ -458,9 +535,13 @@ fun DataEntryArea(
                     .weight(1f)
                     .padding(start = 4.dp)
             ) {
-                Text(text = "Clear List")
+                Text(
+                    text = "Clear List",
+                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                )
             }
         }
+
 
 
     }

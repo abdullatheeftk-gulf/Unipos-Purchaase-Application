@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -69,6 +70,7 @@ import com.gulfappdeveloper.project2.presentation.add_product_screens.presentati
 import com.gulfappdeveloper.project2.presentation.add_product_screens.presentation.add_product_home_screen.components.UnitBlock
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -84,6 +86,8 @@ fun AddProductHomeScreen(
     addProductMainViewModel: AddProductMainViewModel,
     onScanButtonClicked: (ScanFrom) -> Unit
 ) {
+
+    val screenWidth = screenSize().value
 
     val focusManager = LocalFocusManager.current
 
@@ -174,23 +178,29 @@ fun AddProductHomeScreen(
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
                 }
+
                 is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
                 }
+
                 is UiEvent.ShowAlertDialog -> {
                     showSuccessAlertDialog = true
                 }
+
                 is UiEvent.AddedProduct -> {
                     rootViewModel.setProductSearchMode(false)
                     rootViewModel.setSelectedProduct(event.product)
                     rootViewModel.setQty("1")
                 }
+
                 is UiEvent.Navigate -> {
                     navHostController.popBackStack()
                 }
+
                 is UiEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
+
                 else -> Unit
             }
         }
@@ -221,7 +231,11 @@ fun AddProductHomeScreen(
             TopAppBar(
                 modifier = Modifier.shadow(elevation = 6.dp),
                 title = {
-                    Text(text = "Add Product", color = OrangeColor)
+                    Text(
+                        text = "Add Product",
+                        color = OrangeColor,
+                        fontSize = if (screenWidth < 600) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 24.sp else 28.sp
+                    )
                 },
                 navigationIcon = {
                     IconButton(
@@ -270,7 +284,10 @@ fun AddProductHomeScreen(
                             imageVector = Icons.Filled.Add,
                             contentDescription = null
                         )*/
-                        Text("Multi Unit")
+                        Text(
+                            "Multi Unit",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                         Spacer(modifier = Modifier.width(2.dp))
                         Icon(
                             imageVector = Icons.Filled.Add,
@@ -283,7 +300,7 @@ fun AddProductHomeScreen(
                 }
             )
         }
-    ) {paddingValues->
+    ) { paddingValues ->
 
         Column(
             modifier = Modifier
@@ -294,6 +311,9 @@ fun AddProductHomeScreen(
             Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
             // Product name
 
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 2.dp else if(screenWidth>=600 && screenWidth<800) 4.dp else 8.dp
+            ))
             OutlinedTextField(
                 value = productName,
                 onValueChange = { value ->
@@ -304,7 +324,10 @@ fun AddProductHomeScreen(
                 maxLines = 2,
                 label = {
                     Row {
-                        Text(text = "Product Name")
+                        Text(
+                            text = "Product Name",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp
+                        )
                         Text(
                             buildAnnotatedString {
                                 withStyle(
@@ -316,6 +339,7 @@ fun AddProductHomeScreen(
                                     append("*")
                                 }
                             },
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp
                         )
                     }
                 },
@@ -332,19 +356,25 @@ fun AddProductHomeScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = MaterialTheme.colorScheme.primary,
                 ),
-
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             )
 
             if (showProductNameError) {
                 Text(
                     text = "   Product name is required",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             }
 
             // Local name
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 6.dp else 8.dp
+            ))
+
             OutlinedTextField(
                 value = localName,
                 onValueChange = { value ->
@@ -353,7 +383,10 @@ fun AddProductHomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 2,
                 label = {
-                    Text(text = "Local Name")
+                    Text(
+                        text = "Local Name",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
@@ -367,10 +400,15 @@ fun AddProductHomeScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = MaterialTheme.colorScheme.primary,
                 ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             )
 
             // Product group
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 6.dp else 8.dp
+            ))
             OutlinedTextField(
                 value = productGroup?.pGroupName ?: "",
                 onValueChange = {},
@@ -384,7 +422,10 @@ fun AddProductHomeScreen(
                 maxLines = 1,
                 label = {
                     Row {
-                        Text(text = "Product Group")
+                        Text(
+                            text = "Product Group",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp
+                        )
                         Text(
                             buildAnnotatedString {
                                 withStyle(
@@ -396,6 +437,7 @@ fun AddProductHomeScreen(
                                     append("*")
                                 }
                             },
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp
                         )
                     }
                 },
@@ -422,6 +464,9 @@ fun AddProductHomeScreen(
                     disabledBorderColor = MaterialTheme.colorScheme.onSurface,
                     disabledTextColor = MaterialTheme.colorScheme.primary,
                     disabledLabelColor = MaterialTheme.colorScheme.onSurface
+                ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             )
 
@@ -429,12 +474,15 @@ fun AddProductHomeScreen(
                 Text(
                     text = "    Product group is not selected",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             }
 
             //Product Specification
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth<800) 6.dp else 8.dp
+            ))
             OutlinedTextField(
                 value = specification,
                 onValueChange = { value ->
@@ -444,7 +492,10 @@ fun AddProductHomeScreen(
                     .fillMaxWidth()
                     .height(100.dp),
                 label = {
-                    Text(text = "Product Specification")
+                    Text(
+                        text = "Product Specification",
+                        fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
@@ -458,23 +509,27 @@ fun AddProductHomeScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = MaterialTheme.colorScheme.primary,
                 ),
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             )
 
             // Barcode
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(if(screenWidth<600) 20.dp else if(screenWidth>=600 && screenWidth>800) 26.dp else 32.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Enter Barcode :- ",
-                    fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    fontSize = if (screenWidth < 600) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 26.sp
                 )
 
                 Column(modifier = Modifier.weight(1.5f)) {
                     OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
                         value = barcode,
                         onValueChange = { value ->
                             showBarcodeError = false
@@ -482,7 +537,10 @@ fun AddProductHomeScreen(
                         },
                         label = {
                             Row {
-                                Text(text = "Barcode")
+                                Text(
+                                    text = "Barcode",
+                                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                                )
                                 Text(
                                     buildAnnotatedString {
                                         withStyle(
@@ -494,6 +552,7 @@ fun AddProductHomeScreen(
                                             append("*")
                                         }
                                     },
+                                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                                 )
                             }
                         },
@@ -524,17 +583,23 @@ fun AddProductHomeScreen(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedTextColor = MaterialTheme.colorScheme.primary,
                         ),
+                        textStyle = TextStyle(
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     )
+
                     if (showBarcodeError) {
                         Text(
                             text = "    Barcode is required",
                             color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.align(Alignment.Start)
+                            modifier = Modifier.align(Alignment.Start),
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                         )
                     }
                 }
 
             }
+            Spacer(modifier = Modifier.height(if(screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth>800) 8.dp else 16.dp))
 
             OpeningStockBlock(
                 openingStock = openingStock,
@@ -543,6 +608,8 @@ fun AddProductHomeScreen(
                 },
                 hideKeyboard = hideKeyboard,
             )
+
+            Spacer(modifier = Modifier.height(if(screenWidth<600) 4.dp else if(screenWidth>=600 && screenWidth>800) 8.dp else 16.dp))
 
             // Price Details
             PriceBlock(
@@ -572,6 +639,7 @@ fun AddProductHomeScreen(
                 hideKeyboard = hideKeyboard
             )
 
+            Spacer(modifier = Modifier.height(if(screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth>800) 8.dp else 16.dp))
 
             // Tax Category
             TaxCategoryBlock(
@@ -584,6 +652,9 @@ fun AddProductHomeScreen(
                 showTaxCategoryError = showTaxCategoryError
             )
 
+            Spacer(modifier = Modifier.height(if(screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth>800) 8.dp else 16.dp))
+
+
             UnitBlock(
                 selectedUnits = productUnit,
                 onUnitsSelected = { unit ->
@@ -593,6 +664,8 @@ fun AddProductHomeScreen(
                 addProductMainViewModel = addProductMainViewModel,
                 showUnitError = showUnitError
             )
+
+            Spacer(modifier = Modifier.height(if(screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth>800) 8.dp else 16.dp))
 
             CheckBoxBlock(
                 isInclusive = isInclusive,
@@ -612,7 +685,7 @@ fun AddProductHomeScreen(
                 Text(
                     text = "Multi Units",
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 20.sp,
+                    fontSize = if (screenWidth < 600) 20.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 24.sp,
                     fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                     textDecoration = TextDecoration.Underline
                 )
@@ -624,7 +697,9 @@ fun AddProductHomeScreen(
             }
 
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(
+                if(screenWidth<600) 20.dp else if(screenWidth>=600 && screenWidth>800) 25.dp else 30.dp
+            ))
             Button(
                 onClick = {
                     var errors = false
@@ -663,7 +738,10 @@ fun AddProductHomeScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Add Product")
+                Text(
+                    text = "Add Product",
+                    fontSize =if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                )
             }
             Spacer(modifier = Modifier.height(200.dp))
 

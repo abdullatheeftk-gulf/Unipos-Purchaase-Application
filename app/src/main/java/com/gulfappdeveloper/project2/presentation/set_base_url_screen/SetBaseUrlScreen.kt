@@ -23,14 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
@@ -42,6 +45,8 @@ fun SetBaseUrlScreen(
     hideKeyboard: () -> Unit,
     setBaseUrlScreenViewModel: SetBaseUrlScreenViewModel = hiltViewModel()
 ) {
+    val screenWidth = screenSize().value
+
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -92,7 +97,8 @@ fun SetBaseUrlScreen(
                         text = "Set Base Url",
                         color = OrangeColor,
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontSize = if(screenWidth<600f) 20.sp else if(screenWidth>=600 && screenWidth<900) 24.sp else 30.sp
                     )
                 },
             )
@@ -112,7 +118,10 @@ fun SetBaseUrlScreen(
                     text = typedText
                 },
                 placeholder = {
-                    Text(text = currentBaseUrl)
+                    Text(
+                        text = currentBaseUrl,
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Uri,
@@ -131,7 +140,10 @@ fun SetBaseUrlScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester = focusRequester),
-                enabled = !showProgressBar
+                enabled = !showProgressBar,
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                )
             )
             Spacer(modifier = Modifier.height(10.dp))
             Button(
@@ -145,7 +157,10 @@ fun SetBaseUrlScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Set Base Url")
+                Text(
+                    text = "Set Base Url",
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                )
             }
         }
         if (showProgressBar) {

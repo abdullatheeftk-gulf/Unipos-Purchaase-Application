@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
@@ -44,6 +45,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.splash_screen.componenets.LicenseExpiryAlertDialog
 import com.gulfappdeveloper.project2.presentation.splash_screen.componenets.NoLicenseAlertDialog
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -55,6 +57,7 @@ fun SplashScreen(
     rootViewModel: RootViewModel,
     deviceId: String
 ) {
+    val screenWidth = screenSize().value
 
     val snackBarHostState = remember {
         SnackbarHostState()
@@ -163,7 +166,9 @@ fun SplashScreen(
             Image(
                 painter = painterResource(id = R.drawable.outline_shopping_cart_24),
                 contentDescription = null,
-                modifier = Modifier.size(250.dp),
+                modifier = Modifier.size(
+                    if(screenWidth<600f) 250.dp else if(screenWidth>=600 && screenWidth<800) 300.dp else 400.dp
+                ),
                 colorFilter = ColorFilter.tint(
                     color = OrangeColor
                 )
@@ -189,8 +194,8 @@ fun SplashScreen(
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
                     modifier = Modifier
-                        .width(200.dp)
-                        .height(150.dp),
+                        .width(if(screenWidth<600f) 200.dp else if(screenWidth>=600 && screenWidth<900) 300.dp else 350.dp )
+                        .height(if(screenWidth<600f) 150.dp else if(screenWidth>=600 && screenWidth<900) 200.dp else 250.dp),
                     alignment = Alignment.Center
                 )
             }
@@ -199,7 +204,8 @@ fun SplashScreen(
                     text = "Please wait while we retrieve your public IP address.",
                     color = Color.Red,
                     modifier = Modifier.padding(16.dp),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 20.sp else 24.sp
                 )
             }
 
@@ -218,7 +224,10 @@ fun SplashScreen(
                         navHostController.navigate(route = RootNavScreens.UrlSetScreen.route)
                     }
                 ) {
-                    Text(text = "Set Base Url")
+                    Text(
+                        text = "Set Base Url",
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                    )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }

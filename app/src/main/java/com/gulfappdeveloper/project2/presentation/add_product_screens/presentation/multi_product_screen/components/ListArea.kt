@@ -18,19 +18,25 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.presentation.add_product_screens.AddProductMainViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun ListArea(
     addProductMainViewModel: AddProductMainViewModel,
 ) {
 
-    val multiUnitList =  addProductMainViewModel.multiUnitProductList
+    val screenWidth = screenSize().value
+
+    val multiUnitList = addProductMainViewModel.multiUnitProductList
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp),
-        border = BorderStroke(width = Dp.Hairline, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)),
+        border = BorderStroke(
+            width = Dp.Hairline,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+        ),
     ) {
         Column(
             modifier = Modifier
@@ -49,7 +55,7 @@ fun ListArea(
                     text = "Product Name",
                     textAlign = TextAlign.Start,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp,
                     modifier = Modifier.weight(5f),
                     textDecoration = TextDecoration.Underline
                 )
@@ -57,7 +63,7 @@ fun ListArea(
                     text = "Barcode",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp,
                     modifier = Modifier.weight(2.5f),
                     textDecoration = TextDecoration.Underline
                 )
@@ -65,7 +71,7 @@ fun ListArea(
                     text = "Qty",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp,
                     modifier = Modifier.weight(1.5f),
                     textDecoration = TextDecoration.Underline
                 )
@@ -73,7 +79,7 @@ fun ListArea(
                     text = "Price",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 16.sp else 18.sp,
                     modifier = Modifier.weight(2f),
                     textDecoration = TextDecoration.Underline,
                     maxLines = 1,
@@ -81,15 +87,17 @@ fun ListArea(
                 Spacer(modifier = Modifier.width(24.dp))
             }
             Spacer(modifier = Modifier.height(8.dp))
-            LazyColumn(contentPadding = PaddingValues(
-                vertical = 0.dp
-            )) {
-                itemsIndexed(multiUnitList) {index, item ->
-                  ListTile(
-                      item = item,
-                      index = index,
-                      addProductMainViewModel = addProductMainViewModel
-                  )
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    vertical = 0.dp
+                )
+            ) {
+                itemsIndexed(multiUnitList) { index, item ->
+                    ListTile(
+                        item = item,
+                        index = index,
+                        addProductMainViewModel = addProductMainViewModel
+                    )
                 }
             }
         }

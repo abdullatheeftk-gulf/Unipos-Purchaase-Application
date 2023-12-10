@@ -13,10 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @Composable
 fun OpeningStockBlock(
@@ -25,6 +27,7 @@ fun OpeningStockBlock(
     hideKeyboard:()->Unit,
 
 ) {
+    val screenWidth = screenSize().value
     Spacer(modifier = Modifier.height(20.dp))
 
     Row(
@@ -33,7 +36,7 @@ fun OpeningStockBlock(
     ) {
         Text(
             text = "Opening Stock :- ",
-            fontSize = 18.sp,
+            fontSize = if (screenWidth < 600) 18.sp else if (screenWidth >= 600 && screenWidth < 800) 22.sp else 26.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
@@ -44,10 +47,16 @@ fun OpeningStockBlock(
             onValueChange = setOpeningStock,
             modifier = Modifier.weight(1.5f),
             label = {
-                Text(text = "Opening Stock")
+                Text(
+                    text = "Opening Stock",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             },
             placeholder = {
-                Text(text = "0.0")
+                Text(
+                    text = "0.0",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
@@ -60,6 +69,9 @@ fun OpeningStockBlock(
                 onDone = {
                     hideKeyboard()
                 }
+            ),
+            textStyle = TextStyle(
+                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
             )
         )
     }

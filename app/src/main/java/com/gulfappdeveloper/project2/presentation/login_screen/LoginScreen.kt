@@ -23,16 +23,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlinx.coroutines.flow.collectLatest
 
@@ -43,6 +46,8 @@ fun LoginScreen(
     navHostController: NavHostController,
     hideKeyboard: () -> Unit,
 ) {
+    
+    val screenWidth = screenSize().value
 
     val snackBarHostState = remember {
         SnackbarHostState()
@@ -99,7 +104,8 @@ fun LoginScreen(
                         text = "Login",
                         color = OrangeColor,
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontSize = if(screenWidth<600f) 20.sp else if(screenWidth>=600 && screenWidth<900) 24.sp else 30.sp
                     )
                 },
                 //backgroundColor = MaterialTheme.colors.surface
@@ -136,7 +142,10 @@ fun LoginScreen(
                     text = typedText
                 },
                 label = {
-                    Text(text = "User Password")
+                    Text(
+                        text = "User Password",
+                        fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -151,7 +160,10 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester = focusRequester),
-                enabled = !showProgressBar
+                enabled = !showProgressBar,
+                textStyle = TextStyle(
+                    fontSize = if (screenWidth < 600f) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                )
             )
             Spacer(modifier = Modifier.height(10.dp))
             Button(
@@ -162,8 +174,13 @@ fun LoginScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Login")
+                Text(
+                    text = "Login",
+                    fontSize = if(screenWidth<600f) 14.sp else if(screenWidth>=600 && screenWidth<900) 18.sp else 22.sp
+                )
             }
+
+
         }
         if (showProgressBar) {
             Column(
