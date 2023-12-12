@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.booleanResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +43,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.purchase_screen.components.*
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -54,6 +56,8 @@ fun PurchaseScreen(
     rootViewModel: RootViewModel,
 ) {
     val scope = rememberCoroutineScope()
+
+    val screenWidth = screenSize().value
 
 
     val snackBarHostState = remember {
@@ -133,12 +137,15 @@ fun PurchaseScreen(
                 is UiEvent.ShowProgressBar -> {
                     showProgressBar = true
                 }
+
                 is UiEvent.CloseProgressBar -> {
                     showProgressBar = false
                 }
+
                 is UiEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
+
                 is UiEvent.Navigate -> {
                     if (event.route == RootNavScreens.ProductListScreen.route) {
                         navHostController.popBackStack()
@@ -146,9 +153,11 @@ fun PurchaseScreen(
                     navHostController.navigate(route = event.route) {
                     }
                 }
+
                 is UiEvent.ShowAlertDialog -> {
                     showSubmitAlertDialog = true
                 }
+
                 else -> Unit
             }
 
@@ -248,10 +257,13 @@ fun PurchaseScreen(
                 },
                 enabled = !showProgressBar
             ) {
-                Text(text = "Submit")
+                Text(
+                    text = "Submit",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
             }
         }
-    ) {paddingValues->
+    ) { paddingValues ->
 
 
         Column(
@@ -268,7 +280,7 @@ fun PurchaseScreen(
             Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
 
 
-            FirstThreeRows(
+            FirstTwoRows(
                 rootViewModel = rootViewModel,
                 hideKeyboard = hideKeyboard,
                 onSelectDateClicked = {
@@ -295,14 +307,15 @@ fun PurchaseScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
+                    .height(
+                        if (screenWidth < 600) 250.dp else if (screenWidth >= 600 && screenWidth < 800) 300.dp else 400.dp
+                    )
                     .padding(horizontal = 12.dp)
                     .border(
                         width = Dp.Hairline,
-                        color = if (showProductListIsEmpty) MaterialTheme.colorScheme.error else Color.LightGray,
+                        color = if (showProductListIsEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         shape = RoundedCornerShape(5)
-                    )
-                ,
+                    ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                 shape = RoundedCornerShape(5)
             ) {
@@ -328,7 +341,8 @@ fun PurchaseScreen(
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .align(Alignment.Start)
-                        .padding(start = 10.dp)
+                        .padding(start = 10.dp),
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
             }
 
@@ -337,7 +351,22 @@ fun PurchaseScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            ItemSelectionRows(
+            /*ItemSelectionRows(
+                rootViewModel = rootViewModel,
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard,
+                onScanButtonClicked = onScanButtonClicked,
+                showProductNameError = showProductNameError,
+                showQuantityError = showQuantityError,
+                onProductNameError = {
+                    showProductNameError = false
+                },
+                onQuantityError = {
+                    showQuantityError = false
+                    showProductNameError = false
+                },
+            )*/
+            ItemSelectionRows2(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
                 hideKeyboard = hideKeyboard,
@@ -390,7 +419,7 @@ fun PurchaseScreen(
                     fManager.clearFocus()
                 }
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(
@@ -416,7 +445,7 @@ fun PurchaseScreen(
                         text = "Additional Discount:- ",
                         color = MaterialTheme.colorScheme.primary,
                         fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                        fontSize = 16.sp,
+                        fontSize = if (screenWidth < 600) 16.sp else if (screenWidth >= 600 && screenWidth < 800) 20.sp else 24.sp,
                         modifier = Modifier.weight(3f),
                         textAlign = TextAlign.End
                     )
@@ -427,7 +456,10 @@ fun PurchaseScreen(
                             rootViewModel.setAdditionalDiscount(value)
                         },
                         placeholder = {
-                            Text(text = "0.0")
+                            Text(
+                                text = "0.0",
+                                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done,
@@ -441,7 +473,7 @@ fun PurchaseScreen(
                     )
                 }
             }
-            if (showFreightCharge || freightCharge.isNotEmpty() ) {
+            if (showFreightCharge || freightCharge.isNotEmpty()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -452,7 +484,7 @@ fun PurchaseScreen(
                         text = "Freight Charge:- ",
                         color = MaterialTheme.colorScheme.primary,
                         fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                        fontSize = 16.sp,
+                        fontSize = if (screenWidth < 600) 16.sp else if (screenWidth >= 600 && screenWidth < 800) 20.sp else 22.sp,
                         modifier = Modifier.weight(3f),
                         textAlign = TextAlign.End
                     )
@@ -463,7 +495,10 @@ fun PurchaseScreen(
                             rootViewModel.setFreightCharge(value)
                         },
                         placeholder = {
-                            Text(text = "0.0")
+                            Text(
+                                text = "0.0",
+                                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done,
@@ -473,6 +508,9 @@ fun PurchaseScreen(
                             onDone = {
                                 hideKeyboard()
                             }
+                        ),
+                        textStyle = TextStyle(
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp,
                         )
                     )
                 }
@@ -489,8 +527,8 @@ fun PurchaseScreen(
                     text = "Is Cash Purchase",
                     color = MaterialTheme.colorScheme.primary,
                     fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
-                    fontSize = if (booleanResource(id = R.bool.is_tablet)) 20.sp else 16.sp
-                )
+                    fontSize = if (screenWidth < 600) 16.sp else if (screenWidth >= 600 && screenWidth < 800) 20.sp else 24.sp,
+                    )
                 Spacer(modifier = Modifier.width(12.dp))
                 Checkbox(
                     checked = isCashPurchase,

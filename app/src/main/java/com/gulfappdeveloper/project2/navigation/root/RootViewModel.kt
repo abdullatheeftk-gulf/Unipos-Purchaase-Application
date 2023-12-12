@@ -400,15 +400,27 @@ open class RootViewModel @Inject constructor(
 
 
     fun setDate(date: Date) {
-        _selectedDate.value = date
+        try {
+            _selectedDate.value = date
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
     fun setBillNo(value: String) {
-        _billNo.value = value
+        try {
+            _billNo.value = value
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
     fun setClientDetails(value: ClientDetails) {
-        _selectedClient.value = value
+        try {
+            _selectedClient.value = value
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
 
@@ -1838,41 +1850,49 @@ open class RootViewModel @Inject constructor(
                 launch(Dispatchers.IO) {
                     useCase.getLocalPurchaseMasterUseCase(userId = _userId)
                         .collectLatest { localPurchaseMaster ->
-                            setDate(localPurchaseMaster.purDate)
-                            setBillNo(localPurchaseMaster.refInvNo)
+                            try {
+                                setDate(localPurchaseMaster.purDate)
+                                setBillNo(localPurchaseMaster.refInvNo)
 
 
-                            val localClientName = localPurchaseMaster.clientName
-                            val localClientId = localPurchaseMaster.clientId
-                            if(localClientId!=0 && localClientName.isNotEmpty()) {
-                                setClientDetails(
-                                    value = ClientDetails(
-                                        clientId = localPurchaseMaster.clientId,
-                                        clientName = localPurchaseMaster.clientName
+                                val localClientName = localPurchaseMaster.clientName
+                                val localClientId = localPurchaseMaster.clientId
+                                if (localClientId != 0 && localClientName.isNotEmpty()) {
+                                    setClientDetails(
+                                        value = ClientDetails(
+                                            clientId = localPurchaseMaster.clientId,
+                                            clientName = localPurchaseMaster.clientName
+                                        )
+                                    )
+                                }
+
+                                setIsCashPurchase(localPurchaseMaster.isCashPurchase)
+
+                                val localAdditionalDiscount = localPurchaseMaster.additionalDiscount
+                                if (localAdditionalDiscount != 0f) {
+                                    setAdditionalDiscount(localAdditionalDiscount.toString())
+                                } else {
+                                    setAdditionalDiscount("")
+                                }
+
+                                val localFreightCharge = localPurchaseMaster.freight
+                                if (localFreightCharge != 0f) {
+                                    setFreightCharge(localPurchaseMaster.freight.toString())
+                                } else {
+                                    setFreightCharge("")
+                                }
+
+                                _totalDiscount.value = localPurchaseMaster.discountAmount
+                                _subTotal.value = localPurchaseMaster.taxable
+                                _totalVat.value = localPurchaseMaster.totalTax
+                                _grandTotal.value = localPurchaseMaster.totalAmount
+                            }catch (e:Exception){
+                                sendHomeScreenEvent(
+                                    UiEvent.ShowSnackBar(
+                                        message = "No saved data"
                                     )
                                 )
                             }
-
-                            setIsCashPurchase(localPurchaseMaster.isCashPurchase)
-
-                            val localAdditionalDiscount = localPurchaseMaster.additionalDiscount
-                            if(localAdditionalDiscount!=0f) {
-                                setAdditionalDiscount(localAdditionalDiscount.toString())
-                            }else{
-                                setAdditionalDiscount("")
-                            }
-
-                            val localFreightCharge = localPurchaseMaster.freight
-                            if(localFreightCharge!=0f) {
-                                setFreightCharge(localPurchaseMaster.freight.toString())
-                            }else{
-                                setFreightCharge("")
-                            }
-
-                            _totalDiscount.value = localPurchaseMaster.discountAmount
-                            _subTotal.value = localPurchaseMaster.taxable
-                            _totalVat.value = localPurchaseMaster.totalTax
-                            _grandTotal.value = localPurchaseMaster.totalAmount
 
 
                         }

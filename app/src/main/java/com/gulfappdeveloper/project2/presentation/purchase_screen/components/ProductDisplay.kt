@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 import kotlin.math.roundToInt
 
@@ -31,6 +32,8 @@ fun ProductDisplay(
     count: Int,
     onItemClicked: (Int, ProductSelected) -> Unit
 ) {
+    val screenWidth = screenSize().value
+
     var roundOff:Float
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -44,14 +47,14 @@ fun ProductDisplay(
             Text(
                 text = (count + 1).toString() + ",",
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(1f),
                 color = OrangeColor
             )
             Text(
                 text = productSelected.productName,
                 textAlign = TextAlign.Start,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 maxLines = 2,
                 modifier = Modifier.weight(5.3f),
                 overflow = TextOverflow.Ellipsis,
@@ -60,14 +63,14 @@ fun ProductDisplay(
             Text(
                 text = productSelected.qty.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = productSelected.unit,
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(1.4f),
                 color = MaterialTheme.colorScheme.primary
             )
@@ -75,21 +78,21 @@ fun ProductDisplay(
             Text(
                 text = roundOff.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(2f),
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = productSelected.disc.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(1.5f),
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = productSelected.vat.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(1.3f),
                 color = MaterialTheme.colorScheme.primary
             )
@@ -97,7 +100,7 @@ fun ProductDisplay(
             Text(
                 text = roundOff.toString(),
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = if (screenWidth < 600) 11.sp else if (screenWidth >= 600 && screenWidth < 800) 13.sp else 16.sp,
                 modifier = Modifier.weight(2.5f),
                 color = MaterialTheme.colorScheme.primary
             )
@@ -106,7 +109,9 @@ fun ProductDisplay(
                 contentDescription = null,
                 tint = OrangeColor,
                 modifier = Modifier
-                    .height(18.dp)
+                    .height(
+                        if (screenWidth < 600) 18.dp else if (screenWidth >= 600 && screenWidth < 800) 24.dp else 30.dp
+                    )
                     .weight(0.75f)
                     .clickable {
                         onItemClicked(count, productSelected)

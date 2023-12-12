@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -20,8 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +34,7 @@ fun TopBar(
     navHostController: NavHostController,
     rootViewModel: RootViewModel
 ) {
+    val screenWidth = screenSize().value
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -37,7 +42,11 @@ fun TopBar(
     TopAppBar(
         modifier = Modifier.shadow(elevation = 6.dp),
         title = {
-            Text(text = "Purchase Entry", color = OrangeColor)
+            Text(
+                text = "Purchase Entry",
+                color = OrangeColor,
+                fontSize = if(screenWidth<600) 20.sp else if(screenWidth>=600 && screenWidth<800) 24.sp else 28.sp
+            )
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -68,18 +77,27 @@ fun TopBar(
                 offset = DpOffset(
                     0.dp,
                     (-5).dp,
-                )
+                ),
+                modifier = Modifier.width(intrinsicSize = IntrinsicSize.Max)
             ) {
                 DropdownMenuItem(onClick = {
                     expanded = false
                     rootViewModel.saveProductPurchaseSessionToRoom()
                 },
-                    text = { Text(text = "Save this Session") })
+                    text = { Text(
+                        text = "Save this Session",
+                        fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    ) })
                 DropdownMenuItem(onClick = {
                     expanded = false
                     rootViewModel.loadProductPurchaseSessionFromRoom()
                 },
-                    text = { Text(text = "Load Data from the saved session") }
+                    text = { Text(
+                        text = "Load Data from the saved session",
+                        fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                        color = MaterialTheme.colorScheme.error
+                    ) }
                 )
 
             }

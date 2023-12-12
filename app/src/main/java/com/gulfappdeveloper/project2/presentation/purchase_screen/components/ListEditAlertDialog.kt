@@ -22,8 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +35,7 @@ fun ListEditAlertDialog(
     count: Int,
     onDismissRequest: () -> Unit,
 ) {
+    val screenWidth = screenSize().value
     AlertDialog(
         onDismissRequest = onDismissRequest,
     )
@@ -52,7 +55,8 @@ fun ListEditAlertDialog(
                 Text(
                     text = productSelected.productName,
                     textDecoration = TextDecoration.Underline,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row {
@@ -69,6 +73,7 @@ fun ListEditAlertDialog(
                     ) {
                         Text(
                             text = "Delete",
+                            fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                         )
                     }
 
@@ -87,7 +92,8 @@ fun ListEditAlertDialog(
                         )
                     ) {
                         Text(
-                            text = "Edit"
+                            text = "Edit",
+                            fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
                         )
                     }
                 }

@@ -155,7 +155,6 @@ fun ItemSelectionRows(
                                 navHostController.navigate(RootNavScreens.AddProductMainScreen.route)
                             }
                         )
-
                     },
                     /*colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color.LightGray,

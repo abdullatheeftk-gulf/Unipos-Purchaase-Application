@@ -24,6 +24,7 @@ import com.gulfappdeveloper.project2.domain.services.ApiService
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

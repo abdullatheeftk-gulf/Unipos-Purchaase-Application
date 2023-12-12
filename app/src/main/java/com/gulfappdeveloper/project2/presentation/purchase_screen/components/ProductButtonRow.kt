@@ -27,7 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
+import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
@@ -35,12 +37,14 @@ fun ProductButtonRow(
     rootViewModel: RootViewModel,
     onProductAdded: () -> Unit,
     onProductNameError: (Boolean) -> Unit,
-    onAdditionalDiscountAdded:()->Unit,
-    onFreightChargeAdded:()->Unit,
+    onAdditionalDiscountAdded: () -> Unit,
+    onFreightChargeAdded: () -> Unit,
     onQuantityError: (Boolean) -> Unit,
-    onClearButtonClicked:()->Unit,
+    onClearButtonClicked: () -> Unit,
     onBarcodeError: (Boolean) -> Unit,
 ) {
+    val screenWidth = screenSize().value
+
     val productName by rootViewModel.productName
     val qty by rootViewModel.qty
     val barcode by rootViewModel.barCode
@@ -69,7 +73,8 @@ fun ProductButtonRow(
 
             },
             contentPadding = PaddingValues(
-                horizontal = 2.dp
+                horizontal = if (screenWidth < 600) 2.dp else if (screenWidth >= 600 && screenWidth < 800) 4.dp else 8.dp,
+                vertical = if (screenWidth < 600) 8.dp else if (screenWidth >= 600 && screenWidth < 800) 12.dp else 16.dp
             ),
             modifier = Modifier
                 .weight(1f)
@@ -79,7 +84,10 @@ fun ProductButtonRow(
                 imageVector = Icons.Default.Add,
                 contentDescription = null
             )
-            Text(text = "Add")
+            Text(
+                text = "Add",
+                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+            )
         }
         Button(
             onClick = {
@@ -90,7 +98,8 @@ fun ProductButtonRow(
                 .weight(1f)
                 .padding(horizontal = 4.dp),
             contentPadding = PaddingValues(
-                horizontal = 2.dp
+                horizontal = if (screenWidth < 600) 2.dp else if (screenWidth >= 600 && screenWidth < 800) 4.dp else 8.dp,
+                vertical = if (screenWidth < 600) 8.dp else if (screenWidth >= 600 && screenWidth < 800) 12.dp else 16.dp
             ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = OrangeColor
@@ -102,7 +111,11 @@ fun ProductButtonRow(
                 modifier = Modifier.scale(0.8f),
                 tint = MaterialTheme.colorScheme.surface
             )
-            Text(text = "Clear", color = MaterialTheme.colorScheme.surface)
+            Text(
+                text = "Clear",
+                color = MaterialTheme.colorScheme.surface,
+                fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+            )
 
         }
         Column(
@@ -113,10 +126,16 @@ fun ProductButtonRow(
         ) {
             Button(
                 onClick = { showDropDownMenu = true },
-                contentPadding = PaddingValues(horizontal = 2.dp),
+                contentPadding = PaddingValues(
+                    horizontal = if (screenWidth < 600) 2.dp else if (screenWidth >= 600 && screenWidth < 800) 4.dp else 8.dp,
+                    vertical = if (screenWidth < 600) 8.dp else if (screenWidth >= 600 && screenWidth < 800) 12.dp else 16.dp
+                ),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "More")
+                Text(
+                    text = "More",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
                 Spacer(modifier = Modifier.width(2.dp))
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
@@ -135,7 +154,10 @@ fun ProductButtonRow(
                         showDropDownMenu = false
                     },
                     text = {
-                        Text(text = "Clear Product List")
+                        Text(
+                            text = "Clear Product List",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
                     }
                 )
                 DropdownMenuItem(
@@ -143,14 +165,24 @@ fun ProductButtonRow(
                         onAdditionalDiscountAdded()
                         showDropDownMenu = false
                     },
-                    text = {Text(text = "Add Additional Discount")}
+                    text = {
+                        Text(
+                            text = "Add Additional Discount",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
+                    }
                 )
                 DropdownMenuItem(
                     onClick = {
                         onFreightChargeAdded()
                         showDropDownMenu = false
                     },
-                    text = {Text(text = "Add Freight Charge")}
+                    text = {
+                        Text(
+                            text = "Add Freight Charge",
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                        )
+                    }
                 )
             }
 
