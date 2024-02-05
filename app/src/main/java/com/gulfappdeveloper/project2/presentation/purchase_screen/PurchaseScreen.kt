@@ -351,21 +351,7 @@ fun PurchaseScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            /*ItemSelectionRows(
-                rootViewModel = rootViewModel,
-                navHostController = navHostController,
-                hideKeyboard = hideKeyboard,
-                onScanButtonClicked = onScanButtonClicked,
-                showProductNameError = showProductNameError,
-                showQuantityError = showQuantityError,
-                onProductNameError = {
-                    showProductNameError = false
-                },
-                onQuantityError = {
-                    showQuantityError = false
-                    showProductNameError = false
-                },
-            )*/
+
             ItemSelectionRows2(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
