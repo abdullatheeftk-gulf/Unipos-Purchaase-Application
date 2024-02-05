@@ -13,7 +13,6 @@ import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseReq
 import com.gulfappdeveloper.project2.domain.models.remote.get.license.LicenseResponse
 import com.gulfappdeveloper.project2.domain.models.remote.get.login.User
 import com.gulfappdeveloper.project2.domain.models.remote.get.price_adjustment.ProductForPriceAdjustment
-import com.gulfappdeveloper.project2.domain.models.remote.get.see_ip.SeeIp
 import com.gulfappdeveloper.project2.domain.models.remote.get.stock_adjustment.ProductStock
 import com.gulfappdeveloper.project2.domain.models.remote.post.AddClient
 import com.gulfappdeveloper.project2.domain.models.remote.post.PurchaseClass
@@ -24,7 +23,6 @@ import com.gulfappdeveloper.project2.domain.services.ApiService
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.network.sockets.*
-import io.ktor.client.plugins.timeout
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

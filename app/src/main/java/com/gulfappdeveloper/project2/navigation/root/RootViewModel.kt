@@ -4,6 +4,8 @@ package com.gulfappdeveloper.project2.navigation.root
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -48,7 +50,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
@@ -169,7 +170,7 @@ open class RootViewModel @Inject constructor(
     private val _unit = mutableStateOf("")
     val unit: State<String> = _unit
 
-    private val _unitId = mutableStateOf(0)
+    private val _unitId = mutableIntStateOf(0)
 
     private val _rate = mutableStateOf("")
     val rate: State<String> = _rate
@@ -192,7 +193,7 @@ open class RootViewModel @Inject constructor(
     private val _tax = mutableStateOf("")
     val tax: State<String> = _tax
 
-    private val _net = mutableStateOf(0f)
+    private val _net = mutableFloatStateOf(0f)
     val net: State<Float> = _net
 
     private val _clientSearchText = mutableStateOf("")
