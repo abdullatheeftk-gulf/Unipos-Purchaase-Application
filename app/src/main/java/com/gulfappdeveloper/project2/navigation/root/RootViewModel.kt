@@ -148,7 +148,7 @@ open class RootViewModel @Inject constructor(
     val productList = mutableStateListOf<Product>()
 
 
-    private val _productId = mutableStateOf(0)
+    private val _productId = mutableIntStateOf(0)
 
     private val _barCode = mutableStateOf("")
     val barCode: State<String> = _barCode
@@ -176,8 +176,15 @@ open class RootViewModel @Inject constructor(
     val rate: State<String> = _rate
 
     fun setProductRate(value: String) {
-        _rate.value = value
-        calculateNet()
+        try {
+
+
+            _rate.value = value
+            calculateNet()
+        }catch (e:Exception){
+            _rate.value = value
+            calculateNet()
+        }
     }
 
     private val _disc = mutableStateOf("")
@@ -432,7 +439,7 @@ open class RootViewModel @Inject constructor(
 
                 when (result) {
                     is GetDataFromRemote.Success -> {
-                        _publicIpAddress = result.data.toString() ?: "nil"
+                        _publicIpAddress = result.data
                         Log.i(TAG, "getIp4Address: $_publicIpAddress")
                     }
 
@@ -713,7 +720,7 @@ open class RootViewModel @Inject constructor(
             }
             total -= discount
             total = (total * 100) / 100f
-            _net.value = total
+            _net.floatValue = total
         } catch (e: Exception) {
             e.message
         }
@@ -725,16 +732,16 @@ open class RootViewModel @Inject constructor(
         try {
             if (qty.value.isNotEmpty()) {
                 val productSelected = ProductSelected(
-                    productId = _productId.value,
+                    productId = _productId.intValue,
                     productName = _productName.value,
                     qty = if (_qty.value.isNotEmpty() || _qty.value.isNotEmpty()) _qty.value.toFloat() else 0f,
                     productRate = if (_rate.value.isNotBlank() || _rate.value.isNotEmpty()) _rate.value.toFloat() else 0f,
                     vat = if (_tax.value.isNotBlank() || _tax.value.isNotEmpty()) _tax.value.toFloat() else 0f,
                     barcode = _barCode.value,
                     unit = _unit.value,
-                    unitId = _unitId.value,
+                    unitId = _unitId.intValue,
                     disc = if (_disc.value.isNotBlank() || _disc.value.isNotEmpty()) _disc.value.toFloat() else 0f,
-                    net = _net.value,
+                    net = _net.floatValue,
                 )
                 if (_selectedProductListIndex.value < 0) {
                     try {
@@ -862,16 +869,16 @@ open class RootViewModel @Inject constructor(
         _selectedProductListIndex.value = count
 
         _barCode.value = productSelected.barcode
-        _productId.value = productSelected.productId
+        _productId.intValue = productSelected.productId
         _productName.value = productSelected.productName
         _disc.value = productSelected.disc.toString()
         _rate.value = productSelected.productRate.toString()
-        _unitId.value = productSelected.unitId
+        _unitId.intValue = productSelected.unitId
         _unit.value = productSelected.unit
         _tax.value = productSelected.vat.toString()
 
         _qty.value = productSelected.qty.toString()
-        _net.value = productSelected.net
+        _net.floatValue = productSelected.net
 
         setProductSearchMode(false)
 
@@ -885,11 +892,11 @@ open class RootViewModel @Inject constructor(
     fun setSelectedProduct(product: Product) {
         _productName.value = product.productName
         _unit.value = product.unitName
-        _unitId.value = product.unitId
+        _unitId.intValue = product.unitId
         _barCode.value = product.barcode
         _rate.value = product.rate.toString()
         _tax.value = product.vatPercentage.toString()
-        _productId.value = product.productId
+        _productId.intValue = product.productId
         _disc.value = product.purchaseDiscount.toString()
         calculateNet()
     }
@@ -898,14 +905,14 @@ open class RootViewModel @Inject constructor(
         setProductSearchMode(true)
         _productName.value = ""
         _unit.value = ""
-        _unitId.value = 0
+        _unitId.intValue = 0
         _barCode.value = ""
         _rate.value = ""
         _tax.value = ""
-        _productId.value = 0
+        _productId.intValue = 0
         _disc.value = ""
         _qty.value = ""
-        _net.value = 0f
+        _net.floatValue = 0f
     }
 
     fun clearProductList() {

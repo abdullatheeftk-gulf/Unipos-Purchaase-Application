@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.price_adjustment_screens.showProductsForPriceAdjustmentScreens.components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -21,13 +22,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -50,6 +56,12 @@ fun PriceAdjustmentTopBar(
 ) {
     val screenWidth = screenSize().value
     val productSearchText by rootViewModel.productNameForPriceAdjustment.value
+
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -76,9 +88,14 @@ fun PriceAdjustmentTopBar(
                     )
                 }
                 BasicTextField(
+
                     value = productSearchText,
                     onValueChange = { value ->
                         rootViewModel.setProductNameSearchForPriceAdjustment(value)
+                        if(value.endsWith("\n")){
+                            rootViewModel.searchProductByQrCodeForPriceAdjustment(productSearchText.dropLast(1))
+                            hideKeyboard()
+                        }
                     },
                     keyboardActions = KeyboardActions(
                         onSearch = {
@@ -121,11 +138,13 @@ fun PriceAdjustmentTopBar(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
-                        .background(color = Color.White),
+                        .background(color = Color.White)
+                        .focusRequester(focusRequester),
                     textStyle = TextStyle(
                         fontSize = 20.sp,
                     ),
-                    singleLine = true
+                   // singleLine = true
+                    maxLines = 2
 
                 )
 

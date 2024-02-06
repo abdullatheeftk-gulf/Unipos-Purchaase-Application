@@ -93,15 +93,15 @@ fun ShowProductsForPriceAdjustmentScreen(
                 }
             )
         }
-    ) {
-        it.calculateTopPadding()
+    ) {paddingValues->
+
 
         if (productList.isEmpty()) {
             if (!showProgressbar) {
                 EmptyList()
             }
         } else {
-            LazyColumn {
+            LazyColumn(contentPadding = paddingValues) {
                 item {
                     Spacer(modifier = Modifier.height(4.dp))
                 }

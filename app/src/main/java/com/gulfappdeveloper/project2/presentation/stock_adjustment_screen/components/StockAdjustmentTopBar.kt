@@ -20,11 +20,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -40,7 +44,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
 
 @Composable
-fun TopBar(
+fun StockAdjustmentTopBar(
     rootViewModel: RootViewModel,
     onScanButtonClicked: (ScanFrom) -> Unit,
     onBackButtonClicked: () -> Unit,
@@ -50,6 +54,12 @@ fun TopBar(
 
     val screenWidth = screenSize().value
     val productSearchText by rootViewModel.productNameForStockAdjustment.value
+
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -79,6 +89,10 @@ fun TopBar(
                     value = productSearchText,
                     onValueChange = { value ->
                         rootViewModel.setProductNameForStockAdjustment(value)
+                        if(value.endsWith("\n")){
+                            rootViewModel.searchProductByQrCodeForStockAdjustment(productSearchText.dropLast(1))
+                            hideKeyboard()
+                        }
                     },
                     keyboardActions = KeyboardActions(
                         onSearch = {
@@ -121,11 +135,13 @@ fun TopBar(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
-                        .background(color = Color.White),
+                        .background(color = Color.White)
+                        .focusRequester(focusRequester = focusRequester),
                     textStyle = TextStyle(
                         fontSize = 20.sp,
                     ),
-                    singleLine = true
+                    //singleLine = true
+                    maxLines = 2
 
                 )
 

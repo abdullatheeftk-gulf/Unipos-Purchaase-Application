@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.purchase_screen.components
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import com.gulfappdeveloper.project2.navigation.root.RootViewModel
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
 import com.gulfappdeveloper.project2.ui.theme.OrangeColor
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 @Composable
@@ -74,9 +76,6 @@ fun ItemSelectionRows2(
 
     val net by rootViewModel.net
 
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
 
 
     var roundOff: Float
@@ -147,6 +146,8 @@ fun ItemSelectionRows2(
         Spacer(modifier = Modifier.height(
             if (screenWidth<600) 0.dp else if(screenWidth>=600 && screenWidth<800) 4.dp else 8.dp
         ))
+
+
         //Barcode row
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -227,6 +228,8 @@ fun ItemSelectionRows2(
                 shape = MaterialTheme.shapes.medium
             )
 
+
+
             // rate
             OutlinedTextField(
                 modifier = Modifier
@@ -267,6 +270,8 @@ fun ItemSelectionRows2(
                 },
                 shape = MaterialTheme.shapes.medium
             )
+
+
             // Barcode
             OutlinedTextField(
                 modifier = Modifier
@@ -276,6 +281,10 @@ fun ItemSelectionRows2(
                 value = barcode,
                 onValueChange = { value ->
                     rootViewModel.setBarcode(value)
+                    if (value.endsWith("\n")) {
+                        rootViewModel.searchProductByQrCode(value = barcode)
+                        hideKeyboard()
+                    }
                 },
                 readOnly = !(productName.isEmpty() || productName.isBlank()),
                 textStyle = TextStyle(
