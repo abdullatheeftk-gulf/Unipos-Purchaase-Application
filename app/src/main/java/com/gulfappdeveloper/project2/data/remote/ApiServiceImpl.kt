@@ -252,9 +252,7 @@ class ApiServiceImpl(
         url: String,
         licenseRequestBody: LicenseRequestBody
     ): Flow<GetDataFromRemote<LicenseResponse>> {
-        Log.w(TAG, "uniLicenseActivation: $rioLabKey", )
-        Log.w(TAG, "uniLicenseActivation: $url", )
-        Log.i(TAG, "uniLicenseActivation: $licenseRequestBody")
+
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
@@ -265,7 +263,7 @@ class ApiServiceImpl(
 
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
-                        Log.d(TAG, "uniLicenseActivation: ${httpResponse.body<LicenseResponse>()}")
+                       // Log.d(TAG, "uniLicenseActivation: ${httpResponse.body<LicenseResponse>()}")
                         emit(
                             GetDataFromRemote.Success(httpResponse.body())
                         )
@@ -281,9 +279,9 @@ class ApiServiceImpl(
                         )
                     }
                     in 400..499 -> {
-                        Log.e(TAG, "uniLicenseActivation: ${httpResponse.bodyAsText()}", )
-                        Log.d(TAG, "uniLicenseActivation: ${httpResponse.status.description}")
-                        Log.e(TAG, "uniLicenseActivation: $statusCode", )
+                        //Log.e(TAG, "uniLicenseActivation: ${httpResponse.bodyAsText()}", )
+                       // Log.d(TAG, "uniLicenseActivation: ${httpResponse.status.description}")
+                        //Log.e(TAG, "uniLicenseActivation: $statusCode", )
                         var str = ""
                         try {
                             str = httpResponse.bodyAsText()
@@ -323,7 +321,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
-                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
+               // Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -334,7 +332,7 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
-                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
+               // Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -344,7 +342,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
-                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
+                //Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -354,7 +352,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
-                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
+               // Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -364,7 +362,7 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "uniLicenseActivation: ${e.message}", )
+               // Log.e(TAG, "uniLicenseActivation: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -928,6 +926,7 @@ class ApiServiceImpl(
         url: String,
         addProduct: AddProduct
     ): Flow<GetDataFromRemote<Product>> {
+        Log.w(TAG, "addProduct: $url", )
         Log.d(TAG, "addProduct: $addProduct", )
         return flow {
             try {
@@ -953,13 +952,7 @@ class ApiServiceImpl(
                     }
                     in 400..499 -> {
                         if (statusCode == 400) {
-                            Log.e(TAG, "url: $url", )
-                            Log.d(TAG, "addProduct: $addProduct", )
-                            try {
-                                Log.e(TAG, "addProduct: ${httpResponse.bodyAsText()}", )
-                            }catch (e:Exception){
-                                e.printStackTrace()
-                            }
+
 
                             emit(
                                 GetDataFromRemote.Failed(
@@ -1612,9 +1605,14 @@ class ApiServiceImpl(
 
     override suspend fun getStockOfAProduct(url: String): Flow<GetDataFromRemote<ProductStock?>> {
         return flow {
-
+            Log.w(TAG, "getStockOfAProduct: $url", )
             try {
                 val httpResponse = client.get(urlString = url)
+
+                val productStock = httpResponse.body<ProductStock>()
+
+                Log.e(TAG, "getStockOfAProduct: $productStock", )
+
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
                         if (statusCode == 204) {
@@ -1724,7 +1722,7 @@ class ApiServiceImpl(
         stockAdjustment: StockAdjustment
     ): Flow<GetDataFromRemote<StockAdjustment>> {
         Log.d(TAG, "adjustStocksOfProductList: $url", )
-        Log.d(TAG, "adjustStocksOfProductList: $stockAdjustment")
+        Log.e(TAG, "adjustStocksOfProductList: $stockAdjustment")
         return flow {
             try {
                 val httpResponse = client.post(urlString = url) {
@@ -1844,7 +1842,7 @@ class ApiServiceImpl(
     override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return flow {
             try {
-                Log.d(TAG, "getIp4Address: $url")
+                //Log.d(TAG, "getIp4Address: $url")
                 val httpResponse = client.get(urlString = url)
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {

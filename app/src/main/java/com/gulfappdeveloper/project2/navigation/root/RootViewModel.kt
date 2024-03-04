@@ -1,7 +1,6 @@
 package com.gulfappdeveloper.project2.navigation.root
 
 //import android.util.Log
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
@@ -53,10 +52,11 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
-private const val TAG = "RootViewModel"
+//private const val TAG = "RootViewModel"
 
 @HiltViewModel
 open class RootViewModel @Inject constructor(
@@ -440,14 +440,14 @@ open class RootViewModel @Inject constructor(
                 when (result) {
                     is GetDataFromRemote.Success -> {
                         _publicIpAddress = result.data
-                        Log.i(TAG, "getIp4Address: $_publicIpAddress")
+                      //  Log.i(TAG, "getIp4Address: $_publicIpAddress")
                     }
 
                     is GetDataFromRemote.Failed -> {
                         val error = result.error
                         val errorMessage =
                             "code:- ${error.code}, message:- ${error.message}, url:- $url"
-                        Log.e(TAG, "getIp4Address: $errorMessage")
+                       // Log.e(TAG, "getIp4Address: $errorMessage")
                         useCase.insertErrorDataToFireStoreUseCase(
                             collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
                             documentName = "getIp4Address,${Date()}",
@@ -1185,6 +1185,7 @@ open class RootViewModel @Inject constructor(
     fun getStockOfAProduct(barcode: String) {
         sendStockAdjustmentScreenEvent(UiEvent.ShowProgressBar)
         val url = _baseUrl.value + HttpRoutes.STOCK_ADJUSTMENT + barcode
+
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getStockOfAProductUseCase(url = url).collectLatest { result ->
                 sendStockAdjustmentScreenEvent(UiEvent.CloseProgressBar)
@@ -1840,7 +1841,7 @@ open class RootViewModel @Inject constructor(
                 useCase.insertLocalPurchaseMasterUseCase(localPurchaseMaster)
 
             } catch (e: Exception) {
-                Log.e(TAG, "saveProductPurchaseSessionToRoom: ${e.message}")
+                //Log.e(TAG, "saveProductPurchaseSessionToRoom: ${e.message}")
                 sendHomeScreenEvent(
                     UiEvent.ShowSnackBar(
                         message = e.message ?: "There have problem on saving session data"
@@ -1929,7 +1930,7 @@ open class RootViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                Log.e(TAG, "saveProductPurchaseSessionToRoom: ${e.message}")
+               // Log.e(TAG, "saveProductPurchaseSessionToRoom: ${e.message}")
                 sendHomeScreenEvent(
                     UiEvent.ShowSnackBar(
                         message = e.message ?: "There have problem on saving session data"
