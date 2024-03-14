@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,10 +37,7 @@ fun ListEditAlertDialog(
     onDismissRequest: () -> Unit,
 ) {
     val screenWidth = screenSize().value
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-    )
-    {
+    BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Card(
             elevation = CardDefaults.cardElevation(6.dp),
             colors = CardDefaults.cardColors(
@@ -56,7 +54,7 @@ fun ListEditAlertDialog(
                     text = productSelected.productName,
                     textDecoration = TextDecoration.Underline,
                     textAlign = TextAlign.Center,
-                    fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row {
@@ -73,7 +71,7 @@ fun ListEditAlertDialog(
                     ) {
                         Text(
                             text = "Delete",
-                            fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                         )
                     }
 
@@ -93,7 +91,7 @@ fun ListEditAlertDialog(
                     ) {
                         Text(
                             text = "Edit",
-                            fontSize = if(screenWidth<600) 14.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp
+                            fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
                         )
                     }
                 }

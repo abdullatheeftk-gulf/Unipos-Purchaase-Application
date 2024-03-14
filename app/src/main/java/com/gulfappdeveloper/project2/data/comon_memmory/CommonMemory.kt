@@ -9,5 +9,4 @@ object CommonMemory {
 
     var firebaseLicense = true
 
-
 }

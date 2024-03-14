@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project2.navigation.root
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,6 +14,7 @@ import com.gulfappdeveloper.project2.presentation.login_screen.LoginScreen
 import com.gulfappdeveloper.project2.presentation.main_screen.MainScreen
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjust_price_screen.AdjustPriceScreen
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.showProductsForPriceAdjustmentScreens.ShowProductsForPriceAdjustmentScreen
+import com.gulfappdeveloper.project2.presentation.print_barcode.PrintBarcodeScreen
 import com.gulfappdeveloper.project2.presentation.product_list_screen.ProductListScreen
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.settings_screen.SettingsScreen
@@ -22,6 +25,7 @@ import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.UniLicenseActivationScreen
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RootNavGraph(
     navHostController: NavHostController,
@@ -49,7 +53,7 @@ fun RootNavGraph(
             SplashScreen2(
                 navHostController = navHostController,
                 rootViewModel = rootViewModel,
-              //  deviceId = deviceId
+                //  deviceId = deviceId
             )
         }
 
@@ -113,7 +117,7 @@ fun RootNavGraph(
             )
         }
 
-        composable(route = RootNavScreens.AdjustPriceScreen.route){
+        composable(route = RootNavScreens.AdjustPriceScreen.route) {
             AdjustPriceScreen(
                 rootViewModel = rootViewModel,
                 navHostController = navHostController,
@@ -159,6 +163,15 @@ fun RootNavGraph(
                 hideKeyboard = hideKeyboard,
                 navHostController = navHostController,
                 onScanButtonClicked = onScanButtonClicked
+            )
+        }
+
+        composable(route = RootNavScreens.PrintBarcodeScreen.route) {
+            PrintBarcodeScreen(
+                navHostController = navHostController,
+                hideKeyboard = hideKeyboard,
+                onScanButtonClicked = onScanButtonClicked,
+                rootViewModel = rootViewModel
             )
         }
 

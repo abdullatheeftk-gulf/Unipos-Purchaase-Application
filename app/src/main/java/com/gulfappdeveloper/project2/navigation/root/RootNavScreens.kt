@@ -16,4 +16,5 @@ sealed class RootNavScreens(val route: String) {
     object ProductListScreen : RootNavScreens("product_list")
     object ClientListScreen : RootNavScreens("client_list")
     object AddProductMainScreen : RootNavScreens("add_product_screens")
+    object  PrintBarcodeScreen : RootNavScreens("print_barcode_screen")
 }

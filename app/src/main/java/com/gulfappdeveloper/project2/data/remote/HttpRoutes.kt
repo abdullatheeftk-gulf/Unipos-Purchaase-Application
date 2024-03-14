@@ -32,4 +32,6 @@ object HttpRoutes {
 
     const val SEE_IP4 = "https://ipinfo.io/ip"
 
+    const val GET_BARCODE_DESIGNS = "/api/BarcodePrint"
+
 }

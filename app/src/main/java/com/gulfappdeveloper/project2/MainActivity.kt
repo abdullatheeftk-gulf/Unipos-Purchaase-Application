@@ -1,6 +1,7 @@
 package com.gulfappdeveloper.project2
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,6 +34,7 @@ private const val TAG = "MainActivity"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,6 +71,9 @@ class MainActivity : ComponentActivity() {
                                         }
                                         ScanFrom.PRICE_ADJUSTMENT_SCREEN->{
                                             rootViewModel.searchProductByQrCodeForPriceAdjustment(value = value)
+                                        }
+                                        ScanFrom.PRINT_BARCODE->{
+                                            rootViewModel.searchProductByQrCode(value)
                                         }
                                     }
 

@@ -1,6 +1,8 @@
 package com.gulfappdeveloper.project2.repositories
 
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodeDesign
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodePrintSubmit
 import com.gulfappdeveloper.project2.domain.models.remote.Error
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -29,7 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class RemoteRepository @Inject constructor(
     private val apiService: ApiService,
-    private val commonMemory:CommonMemory
+    private val commonMemory: CommonMemory
 ) {
 
     suspend fun getWelcomeMessage(url: String): Flow<GetDataFromRemote<WelcomeMessage>> {
@@ -102,7 +104,7 @@ class RemoteRepository @Inject constructor(
                 url = url,
                 purchaseClass = purchaseClass
             )
-        }else{
+        } else {
             flow {
                 GetDataFromRemote.Failed(
                     error = Error(
@@ -148,6 +150,19 @@ class RemoteRepository @Inject constructor(
         priceAdjustment: PriceAdjustment
     ): Flow<GetDataFromRemote<PriceAdjustment>> {
         return apiService.adjustProductPrice(url = url, priceAdjustment = priceAdjustment)
+    }
+
+    suspend fun getBarcodeDesigns(url: String): Flow<GetDataFromRemote<List<BarcodeDesign>>> {
+        return apiService.getBarcodeDesigns(url = url)
+    }
+
+    suspend fun submitBarcodesToPrint(
+        url: String,
+        barcodePrintSubmit: BarcodePrintSubmit
+    ): Flow<GetDataFromRemote<String>> {
+        return apiService.submitBarcodesToPrint(
+            url = url, barcodePrintSubmit = barcodePrintSubmit,
+        )
     }
 
 

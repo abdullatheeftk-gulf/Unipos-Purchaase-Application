@@ -1,12 +1,15 @@
 package com.gulfappdeveloper.project2.navigation.root
 
 //import android.util.Log
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
@@ -39,6 +42,7 @@ import com.gulfappdeveloper.project2.presentation.purchase_screen.util.HomeScree
 import com.gulfappdeveloper.project2.presentation.splash_screen.util.SplashScreenEvent
 import com.gulfappdeveloper.project2.presentation.splash_screen2.util.SplashScreenEvent2
 import com.gulfappdeveloper.project2.presentation.stock_adjustment_screen.util.StockAdjustmentScreenEvent
+import com.gulfappdeveloper.project2.presentation.ui_util.ProductBarcodeSearchTransfer
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.uni_licence_act_screen.util.UniLicenseActivationUiEvent
 import com.gulfappdeveloper.project2.usecases.UseCase
@@ -46,6 +50,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -56,13 +62,18 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-//private const val TAG = "RootViewModel"
+private const val TAG = "RootViewModel"
 
 @HiltViewModel
 open class RootViewModel @Inject constructor(
     private val useCase: UseCase,
-    private val commonMemory: CommonMemory
+    private val commonMemory: CommonMemory,
 ) : ViewModel() {
+
+   /* private val _testFlow:MutableStateFlow<Int> = MutableStateFlow(0)
+    val testFlow:StateFlow<Int> = _testFlow*/
+
+
 
     private var _isInitialLoadingFinished = false
 
@@ -241,8 +252,20 @@ open class RootViewModel @Inject constructor(
         // readBaseUrl()
         readUniLicenseKeyDetails()
 
+        //setTestFlow()
+
 
     }
+
+
+    /*private fun setTestFlow(){
+        viewModelScope.launch {
+            (1..1000).forEach {
+                delay(1000L)
+                _testFlow.value = it
+            }
+        }
+    }*/
 
     private fun getFirebaseLicense() {
         viewModelScope.launch {
@@ -656,14 +679,34 @@ open class RootViewModel @Inject constructor(
         }
     }
 
+    private val _productSearchByBarcodeTransferData:MutableStateFlow<ProductBarcodeSearchTransfer> = MutableStateFlow<ProductBarcodeSearchTransfer>(ProductBarcodeSearchTransfer())
+    val productSearchByBarcodeTransferData:StateFlow<ProductBarcodeSearchTransfer?> = _productSearchByBarcodeTransferData
+
+    private fun setProductSearchByBarcodeTransferData(value:ProductBarcodeSearchTransfer){
+        _productSearchByBarcodeTransferData.value = value
+    }
+
     fun searchProductByQrCode(value: String) {
+
         sendHomeScreenEvent(UiEvent.ShowProgressBar)
+
         val url = _baseUrl.value + HttpRoutes.PRODUCT_SEARCH_BY_BARCODE + value
+
         viewModelScope.launch(Dispatchers.IO) {
             useCase.getProductDetailByBarcodeUseCase(url = url).collectLatest { result ->
+
                 sendHomeScreenEvent(UiEvent.CloseProgressBar)
+
                 if (result is GetDataFromRemote.Success) {
                     result.data?.let { product ->
+
+                        // Transferring data to other viewmodel
+                        setProductSearchByBarcodeTransferData(
+                            ProductBarcodeSearchTransfer(
+                                product = product
+                            )
+                        )
+
                         _productName.value = product.productName
                         _qty.value = "1"
                         setSelectedProduct(product)
@@ -672,9 +715,18 @@ open class RootViewModel @Inject constructor(
                     }
                     sendHomeScreenEvent(UiEvent.ShowSnackBar("No productItem with barcode $value"))
                 }
+
                 if (result is GetDataFromRemote.Failed) {
                     sendHomeScreenEvent(UiEvent.ShowToastMessage("There have error when scanning ${result.error.message}"))
                     val error = result.error
+
+                    // Transferring data to other viewmodel
+                    setProductSearchByBarcodeTransferData(
+                        ProductBarcodeSearchTransfer(
+                            error = error
+                        )
+                    )
+
                     useCase.insertErrorDataToFireStoreUseCase(
                         collectionName = FirebaseConst.COLLECTION_NAME_FOR_ERROR,
                         documentName = "searchProductByQrCode,${Date()}",
@@ -686,6 +738,8 @@ open class RootViewModel @Inject constructor(
                         )
                     )
                 }
+
+
             }
 
         }
@@ -1345,7 +1399,7 @@ open class RootViewModel @Inject constructor(
                         val licenseString = Json.encodeToString(licenceInformation)
                         useCase.uniLicenseSaveUseCase(uniLicenseString = licenseString)
 
-                        viewModelScope.launch(Dispatchers.IO) {
+                       /* viewModelScope.launch(Dispatchers.IO) {
                             useCase.insertGeneralDataToFirebaseUseCase(
                                 collectionName = "UserInformation",
                                 firebaseGeneralData = FirebaseGeneralData(
@@ -1354,7 +1408,7 @@ open class RootViewModel @Inject constructor(
                                     uniLicense = licenseKey
                                 )
                             )
-                        }
+                        }*/
                     }
 
                     is GetDataFromRemote.Failed -> {
@@ -1938,6 +1992,21 @@ open class RootViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun saveBasicData(screenSize:String){
+        Log.d(TAG, "saveBasicData: $screenSize")
+        viewModelScope.launch {
+            useCase.insertGeneralDataToFirebaseUseCase(
+                collectionName = FirebaseConst.COLLECTION_NAME_FOR_GENERAL_DATA,
+                firebaseGeneralData = FirebaseGeneralData(
+                    deviceId = "nil",
+                    uniLicense = "",
+                    screenSize = screenSize
+                )
+            )
+        }
+
     }
 
 

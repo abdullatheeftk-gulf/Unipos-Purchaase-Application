@@ -31,6 +31,8 @@ import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.Get
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetAllUnitsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.GetProductGroupsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.add_product.SearchProductGroupsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.barcode_designs.GetBarcodeDesignsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.barcode_designs.SubmitBarcodesToPrintUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.GetClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.client.SearchClientDetailsUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
@@ -136,8 +138,10 @@ object RepositoryModule {
 
             insertLocalPurchaseMasterUseCase = InsertLocalPurchaseMasterUseCase(localDataRepository = localDataRepository),
             getLocalPurchaseMasterUseCase = GetLocalPurchaseMasterUseCase(localDataRepository = localDataRepository),
-            deleteLocalPurchaseMasterUseCase = DeleteLocalPurchaseMasterUseCase(localDataRepository)
+            deleteLocalPurchaseMasterUseCase = DeleteLocalPurchaseMasterUseCase(localDataRepository),
 
+            getBarcodeDesignsUseCase = GetBarcodeDesignsUseCase(remoteRepository = remoteRepository),
+            submitBarcodesToPrintUseCase = SubmitBarcodesToPrintUseCase(remoteRepository = remoteRepository)
         )
     }
 }

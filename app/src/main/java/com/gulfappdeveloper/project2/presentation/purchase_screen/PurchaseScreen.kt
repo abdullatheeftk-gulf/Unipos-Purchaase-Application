@@ -2,14 +2,22 @@ package com.gulfappdeveloper.project2.presentation.purchase_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,12 +30,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,11 +49,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.gulfappdeveloper.project2.R
 import com.gulfappdeveloper.project2.domain.models.product_selected.ProductSelected
 import com.gulfappdeveloper.project2.navigation.root.RootNavScreens
 import com.gulfappdeveloper.project2.navigation.root.RootViewModel
-import com.gulfappdeveloper.project2.presentation.purchase_screen.components.*
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.FirstTwoRows
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.ItemSelectionRows2
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.ListEditAlertDialog
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.ProductButtonRow
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.ProductList
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.ProductListTitle
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.ProductPriceColumn
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.PurchaseScreenCalendarDialog
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.SubmitAlertDialog
+import com.gulfappdeveloper.project2.presentation.purchase_screen.components.TopBar
 import com.gulfappdeveloper.project2.presentation.ui_util.ScanFrom
 import com.gulfappdeveloper.project2.presentation.ui_util.UiEvent
 import com.gulfappdeveloper.project2.presentation.ui_util.screenSize
@@ -103,7 +124,7 @@ fun PurchaseScreen(
     }
 
     var countSelectedForList by remember {
-        mutableStateOf(-1)
+        mutableIntStateOf(-1)
     }
 
     val showAdditionalDiscount by rootViewModel.showAdditionalDiscount
@@ -131,7 +152,10 @@ fun PurchaseScreen(
 
 
 
+
+
     LaunchedEffect(key1 = true) {
+
         rootViewModel.homeScreenEvent.collectLatest { value ->
             when (val event = value.uiEvent) {
                 is UiEvent.ShowProgressBar -> {
@@ -166,7 +190,7 @@ fun PurchaseScreen(
 
 
     if (showCalendar) {
-        CalendarDialog(
+        PurchaseScreenCalendarDialog(
             rootViewModel = rootViewModel,
             onDismissRequest = {
                 showCalendar = false

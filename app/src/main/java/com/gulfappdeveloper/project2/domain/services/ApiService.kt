@@ -1,5 +1,7 @@
 package com.gulfappdeveloper.project2.domain.services
 
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodeDesign
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodePrintSubmit
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
@@ -59,6 +61,12 @@ interface ApiService {
 
     // get ip address
     suspend fun getIp4Address(url: String):Flow<GetDataFromRemote<String>>
+
+
+    // Get Barcode Design
+    suspend fun getBarcodeDesigns(url: String):Flow<GetDataFromRemote<List<BarcodeDesign>>>
+
+    suspend fun submitBarcodesToPrint(url:String,barcodePrintSubmit: BarcodePrintSubmit):Flow<GetDataFromRemote<String>>
 
 
 

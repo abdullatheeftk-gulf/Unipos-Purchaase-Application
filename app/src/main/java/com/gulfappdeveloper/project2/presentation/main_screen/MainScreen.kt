@@ -20,6 +20,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,6 +49,10 @@ fun MainScreen(
     }
 
     val uniLicenseDetails by rootViewModel.uniLicenseDetails
+
+    LaunchedEffect(key1 = true) {
+        rootViewModel.saveBasicData(screenSize = "width:- ${screenWidth.dp.value}")
+    }
 
 
     Scaffold(
@@ -78,7 +83,7 @@ fun MainScreen(
                         Text(
                             text = "PURCHASE",
                             color = Color.Black,
-                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -107,7 +112,7 @@ fun MainScreen(
                         Text(
                             text = "STOCK ADJUSTMENT",
                             color = Color.Black,
-                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -135,9 +140,9 @@ fun MainScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = if(screenWidth<600f) "ADD\nPRODUCT" else "ADD PRODUCT",
+                            text = if(screenWidth<500f) "ADD\nPRODUCT" else "ADD PRODUCT",
                             color = Color.Black,
-                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -166,7 +171,7 @@ fun MainScreen(
                         Text(
                             text = "PRICE ADJUSTMENT",
                             color = Color.Black,
-                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -198,7 +203,36 @@ fun MainScreen(
                         Text(
                             text = if(screenWidth<600f) "ADD\nCLIENT" else "ADD CLIENT",
                             color = Color.Black,
-                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .size(width = 150.dp, height = 150.dp)
+                        .padding(24.dp)
+                        .clip(shape = RoundedCornerShape(25))
+                        .clickable {
+                            navHostController.navigate(RootNavScreens.PrintBarcodeScreen.route)
+                        },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xD0BDBDCD)
+                    ),
+                    shape = RoundedCornerShape(25)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if(screenWidth<=500f) "PRINT\nBARCODE" else "PRINT BARCODE" ,
+                            color = Color.Black,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )
@@ -227,7 +261,7 @@ fun MainScreen(
                         Text(
                             text = "SETTINGS",
                             color = Color.Black,
-                            fontSize = if(screenWidth<600f) 18.sp else if(screenWidth>=600 && screenWidth<800) 18.sp else 22.sp,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
                             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
                             textAlign = TextAlign.Center
                         )

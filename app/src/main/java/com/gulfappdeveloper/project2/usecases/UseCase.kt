@@ -35,6 +35,8 @@ import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_d
 import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.DeleteLocalPurchaseMasterUseCase
 import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.GetLocalPurchaseMasterUseCase
 import com.gulfappdeveloper.project2.usecases.local_database_use_case.purchase_master_use_cases.InsertLocalPurchaseMasterUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.barcode_designs.GetBarcodeDesignsUseCase
+import com.gulfappdeveloper.project2.usecases.remote_usecase.get.barcode_designs.SubmitBarcodesToPrintUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.ip.GetIp4AddressUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.license.UniLicenseActivationUseCase
 import com.gulfappdeveloper.project2.usecases.remote_usecase.get.login.LoginUseCase
@@ -108,5 +110,9 @@ data class UseCase(
 
     val insertLocalPurchaseMasterUseCase: InsertLocalPurchaseMasterUseCase,
     val getLocalPurchaseMasterUseCase: GetLocalPurchaseMasterUseCase,
-    val deleteLocalPurchaseMasterUseCase: DeleteLocalPurchaseMasterUseCase
+    val deleteLocalPurchaseMasterUseCase: DeleteLocalPurchaseMasterUseCase,
+
+    // Barcode Design
+    val getBarcodeDesignsUseCase: GetBarcodeDesignsUseCase,
+    val submitBarcodesToPrintUseCase : SubmitBarcodesToPrintUseCase
 )

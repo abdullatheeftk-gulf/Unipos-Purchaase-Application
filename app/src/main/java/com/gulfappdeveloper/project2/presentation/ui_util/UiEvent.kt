@@ -1,5 +1,6 @@
 package com.gulfappdeveloper.project2.presentation.ui_util
 
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodeDesign
 import com.gulfappdeveloper.project2.domain.models.remote.get.Product
 
 sealed class UiEvent {
@@ -13,4 +14,14 @@ sealed class UiEvent {
     data class AddedProduct(val product: Product) : UiEvent()
     object ShowButton1 : UiEvent()
     object ShowPleaseWaitText:UiEvent()
+    data class GetBarcodeDesigns(val listBarcodeDesigns:List<BarcodeDesign>):UiEvent()
+    data class ShowErrorValue(val errorMessage:String) :UiEvent()
+    object ShowBarcodeDesignNotSelectedError:UiEvent()
+    object ShowBarcodeDesignExpiryDateNotSelectedError:UiEvent()
+    object  ShowBarcodeDesignManufactureDateNotSelectedError:UiEvent()
+    object ShowBarcodeDesignSelectedBarcodeDesignsEmptyError:UiEvent()
+    data class ShowBarcodeDesignShowSelectedProductEditOrDeleteAlertDialog(
+        val pair:Pair<Product,Int>,
+        val count:Int
+    ):UiEvent()
 }

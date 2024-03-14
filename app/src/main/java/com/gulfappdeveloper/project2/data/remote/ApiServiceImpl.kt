@@ -1,6 +1,8 @@
 package com.gulfappdeveloper.project2.data.remote
 
 import android.util.Log
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodeDesign
+import com.gulfappdeveloper.project2.domain.models.barcode_print.BarcodePrintSubmit
 import com.gulfappdeveloper.project2.domain.models.remote.Error
 import com.gulfappdeveloper.project2.domain.models.remote.get.ClientDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -1842,10 +1844,11 @@ class ApiServiceImpl(
     override suspend fun getIp4Address(url: String): Flow<GetDataFromRemote<String>> {
         return flow {
             try {
-                //Log.d(TAG, "getIp4Address: $url")
+                Log.d(TAG, "getIp4Address: $url")
                 val httpResponse = client.get(urlString = url)
                 when (val statusCode = httpResponse.status.value) {
                     in 200..299 -> {
+                        Log.d(TAG, "getIp4Address: ${httpResponse.bodyAsText()}")
                         emit(
                             GetDataFromRemote.Success(httpResponse.bodyAsText())
                         )
@@ -1893,6 +1896,7 @@ class ApiServiceImpl(
                 }
 
             } catch (e: ConnectTimeoutException) {
+                Log.e(TAG, "getIp4Address: ${e.message}", )
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1903,6 +1907,8 @@ class ApiServiceImpl(
                 )
 
             } catch (e: NoTransformationFoundException) {
+                Log.e(TAG, "getIp4Address: ${e.message}", )
+                
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1912,6 +1918,8 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: ConnectException) {
+                Log.e(TAG, "getIp4Address: ${e.message}", )
+                
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -1921,6 +1929,8 @@ class ApiServiceImpl(
                     )
                 )
             } catch (e: JsonConvertException) {
+                Log.e(TAG, "getIp4Address: ${e.message}", )
+                
                 emit(
                     GetDataFromRemote.Failed(
                         error = Error(
@@ -2164,5 +2174,223 @@ class ApiServiceImpl(
         }
     }
 
+
+    override suspend fun getBarcodeDesigns(url: String): Flow<GetDataFromRemote<List<BarcodeDesign>>> {
+        return flow {
+            try {
+                val httpResponse = client.get(urlString = url)
+                when (val statusCode = httpResponse.status.value) {
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(httpResponse.body())
+                        )
+                    }
+                    in 300..399 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 400..499 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 500..599 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    else -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                }
+
+            } catch (e: ConnectTimeoutException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 600,
+                            message = "ConnectTimeoutException Server Down"
+                        )
+                    )
+                )
+
+            } catch (e: NoTransformationFoundException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 601,
+                            message = "NoTransformationFoundException Server ok. Other problem"
+                        )
+                    )
+                )
+            } catch (e: ConnectException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 602,
+                            message = "No internet in Mobile"
+                        )
+                    )
+                )
+            } catch (e: JsonConvertException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 603,
+                            message = "Json convert Exception $e"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 604,
+                            message = "Other Exception $e"
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+
+    override suspend fun submitBarcodesToPrint(
+        url: String,
+        barcodePrintSubmit: BarcodePrintSubmit
+    ): Flow<GetDataFromRemote<String>> {
+        Log.d(TAG, "submitBarcodesToPrint: $url")
+        Log.w(TAG, "submitBarcodesToPrint: $barcodePrintSubmit", )
+        return flow {
+            emit(GetDataFromRemote.Loading)
+            try {
+                val httpResponse = client.post(urlString = url){
+                    contentType(ContentType.Application.Json)
+                    setBody(barcodePrintSubmit)
+                }
+                when (val statusCode = httpResponse.status.value) {
+                    in 200..299 -> {
+                        emit(
+                            GetDataFromRemote.Success(httpResponse.bodyAsText())
+                        )
+                    }
+                    in 300..399 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 400..499 -> {
+                        val data = httpResponse.bodyAsText()
+                        Log.e(TAG, "submitBarcodesToPrint: $data")
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    in 500..599 -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                    else -> {
+                        emit(
+                            GetDataFromRemote.Failed(
+                                error = Error(
+                                    code = statusCode,
+                                    message = httpResponse.status.description
+                                )
+                            )
+                        )
+                    }
+                }
+
+            } catch (e: ConnectTimeoutException) {
+                Log.e(TAG, "submitBarcodesToPrint: $e", )
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 600,
+                            message = "ConnectTimeoutException Server Down"
+                        )
+                    )
+                )
+
+            } catch (e: NoTransformationFoundException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 601,
+                            message = "NoTransformationFoundException Server ok. Other problem"
+                        )
+                    )
+                )
+            } catch (e: ConnectException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 602,
+                            message = "No internet in Mobile"
+                        )
+                    )
+                )
+            } catch (e: JsonConvertException) {
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 603,
+                            message = "Json convert Exception $e"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "submitBarcodesToPrint: ${e.message}", )
+                emit(
+                    GetDataFromRemote.Failed(
+                        error = Error(
+                            code = 604,
+                            message = "Other Exception $e"
+                        )
+                    )
+                )
+            }
+        }
+    }
 
 }
