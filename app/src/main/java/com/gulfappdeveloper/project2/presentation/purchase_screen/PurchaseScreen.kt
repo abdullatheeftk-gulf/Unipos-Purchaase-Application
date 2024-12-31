@@ -149,6 +149,9 @@ fun PurchaseScreen(
         mutableStateOf(false)
     }
 
+    val billNo by rootViewModel.billNo
+    val selectedClient by rootViewModel.selectedClient
+
 
 
 
@@ -248,45 +251,7 @@ fun PurchaseScreen(
                 rootViewModel = rootViewModel
             )
         },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            val billNo by rootViewModel.billNo
-            val selectedClient by rootViewModel.selectedClient
-            Button(
-                onClick = {
-                    if (selectedProductList.isEmpty()) {
-                        scope.launch {
-                            snackBarHostState.showSnackbar("Product List is empty")
-                        }
-                        showProductListIsEmpty = true
-                        return@Button
-                    }
 
-                    if (billNo.isEmpty() || billNo.isBlank()) {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(message = "Bill no is not entered")
-                        }
-                        showBillNoError = true
-                        return@Button
-                    }
-                    if (selectedClient == null) {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(message = "Client is not selected")
-                        }
-                        showClientError = true
-                        return@Button
-                    }
-
-                    rootViewModel.submitFun()
-                },
-                enabled = !showProgressBar
-            ) {
-                Text(
-                    text = "Submit",
-                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
-                )
-            }
-        }
     ) { paddingValues ->
 
 
@@ -565,6 +530,42 @@ fun PurchaseScreen(
             ProductPriceColumn(
                 rootViewModel = rootViewModel
             )
+
+            Spacer(modifier = Modifier.height(30.dp))
+            Button(
+                onClick = {
+                    if (selectedProductList.isEmpty()) {
+                        scope.launch {
+                            snackBarHostState.showSnackbar("Product List is empty")
+                        }
+                        showProductListIsEmpty = true
+                        return@Button
+                    }
+
+                    if (billNo.isEmpty() || billNo.isBlank()) {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(message = "Bill no is not entered")
+                        }
+                        showBillNoError = true
+                        return@Button
+                    }
+                    if (selectedClient == null) {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(message = "Client is not selected")
+                        }
+                        showClientError = true
+                        return@Button
+                    }
+
+                    rootViewModel.submitFun()
+                },
+                enabled = !showProgressBar
+            ) {
+                Text(
+                    text = "Submit",
+                    fontSize = if (screenWidth < 600) 14.sp else if (screenWidth >= 600 && screenWidth < 800) 18.sp else 22.sp
+                )
+            }
 
 
             Spacer(modifier = Modifier.height(300.dp))

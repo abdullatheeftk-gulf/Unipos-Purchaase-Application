@@ -82,6 +82,8 @@ open class RootViewModel @Inject constructor(
 
     private val _splashScreenEvent = Channel<SplashScreenEvent>()
     val splashScreenEvent = _splashScreenEvent.receiveAsFlow()
+
+
     private fun sendSplashScreenEvent(event: UiEvent) {
         viewModelScope.launch {
             _splashScreenEvent.send(SplashScreenEvent(event))

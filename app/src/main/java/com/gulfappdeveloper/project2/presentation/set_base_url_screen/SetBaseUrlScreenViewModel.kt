@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulfappdeveloper.project2.BuildConfig
+import com.gulfappdeveloper.project2.MyApplication
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
 import com.gulfappdeveloper.project2.domain.datastore.UniLicenseDetails
 import com.gulfappdeveloper.project2.domain.models.remote.get.GetDataFromRemote
@@ -23,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SetBaseUrlScreenViewModel @Inject constructor(
-    private val useCase: UseCase
+    private val useCase: UseCase,
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>()

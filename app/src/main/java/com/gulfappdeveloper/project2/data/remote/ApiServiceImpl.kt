@@ -623,6 +623,7 @@ class ApiServiceImpl(
                         )
                     }
                     in 400..499 -> {
+
                         emit(
                             GetDataFromRemote.Failed(
                                 error = Error(
@@ -953,6 +954,12 @@ class ApiServiceImpl(
                         )
                     }
                     in 400..499 -> {
+                        try{
+                            val error = httpResponse.bodyAsText()
+                            Log.e(TAG, "getProductDetailsByName: $error", )
+                        }catch (e:Exception){
+                            Log.e(TAG, "getProductDetailsByName: $e", )
+                        }
                         if (statusCode == 400) {
 
 
@@ -960,16 +967,17 @@ class ApiServiceImpl(
                                 GetDataFromRemote.Failed(
                                     error = Error(
                                         code = statusCode,
-                                        message = httpResponse.status.description
+                                        message = httpResponse.bodyAsText()
                                     )
                                 )
                             )
                         } else {
+
                             emit(
                                 GetDataFromRemote.Failed(
                                     error = Error(
                                         code = statusCode,
-                                        message = httpResponse.status.description
+                                        message = httpResponse.bodyAsText()
                                     )
                                 )
                             )
