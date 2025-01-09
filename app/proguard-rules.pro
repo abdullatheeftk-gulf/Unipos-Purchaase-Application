@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keepclassmembers @kotlinx.serialization.Serializable class com.gulfappdeveloper.project2.** {
+    # lookup for plugin generated serializable classes
+    *** Companion;
+    # lookup for serializable objects
+    *** INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+# lookup for plugin generated serializable classes
+-if @kotlinx.serialization.Serializable class com.gulfappdeveloper.project2.**
+-keepclassmembers class com.gulfappdeveloper.project2.<1>$Companion {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn org.slf4j.impl.StaticLoggerBinder

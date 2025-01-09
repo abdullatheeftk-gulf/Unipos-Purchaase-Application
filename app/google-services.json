@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "376059217548",
+    "project_id": "unipospurchase",
+    "storage_bucket": "unipospurchase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376059217548:android:cc26e8e93ec9018f201da9",
+        "android_client_info": {
+          "package_name": "com.gulfappdeveloper.project2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376059217548-s27brqht7h3u6jibeh22k7fk5flke931.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWT3LO-0JsDTOM9ss7vgPmWRgjks3MlEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376059217548-s27brqht7h3u6jibeh22k7fk5flke931.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
