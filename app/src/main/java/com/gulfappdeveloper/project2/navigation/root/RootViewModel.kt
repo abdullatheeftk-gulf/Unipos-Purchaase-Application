@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gulfappdeveloper.project2.BuildConfig
 import com.gulfappdeveloper.project2.data.comon_memmory.CommonMemory
 import com.gulfappdeveloper.project2.data.firebase.FirebaseConst
 import com.gulfappdeveloper.project2.data.remote.HttpRoutes
@@ -1472,8 +1473,12 @@ open class RootViewModel @Inject constructor(
                         readBaseUrl()
                     }
                 } else {
-                    checkForPublicIpAddressStatus()
-                    sendSplashScreenEvent(UiEvent.ShowAlertDialog(""))
+                    if(BuildConfig.DEBUG){
+                        readBaseUrl()
+                    }else {
+                        checkForPublicIpAddressStatus()
+                        sendSplashScreenEvent(UiEvent.ShowAlertDialog(""))
+                    }
                 }
             }
         }

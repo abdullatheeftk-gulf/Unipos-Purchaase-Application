@@ -79,7 +79,7 @@ dependencies {
 
 
     // KotlinX Serialization
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
 
     //ktor client
     def ktor_version = '2.3.9'
@@ -97,7 +97,7 @@ dependencies {
     implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
 
     //compose navigation
-    def nav_version = "2.8.4"
+    def nav_version = "2.8.5"
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
     //for qr code and barcode
@@ -113,7 +113,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.6.0')
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-firestore'

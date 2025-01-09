@@ -1,7 +1,9 @@
 package com.gulfappdeveloper.project2.di
 
 import com.gulfappdeveloper.project2.data.remote.ApiServiceImpl
+import com.gulfappdeveloper.project2.data.remote.SalesServiceImpl
 import com.gulfappdeveloper.project2.domain.services.ApiService
+import com.gulfappdeveloper.project2.domain.services.SalesService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +46,11 @@ object NetWorkModule {
     @Singleton
     fun provideApiService(client: HttpClient):ApiService{
         return ApiServiceImpl(client)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSalesService(client: HttpClient):SalesService{
+        return SalesServiceImpl(client)
     }
 }

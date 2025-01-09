@@ -16,6 +16,7 @@ import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.adjus
 import com.gulfappdeveloper.project2.presentation.price_adjustment_screens.showProductsForPriceAdjustmentScreens.ShowProductsForPriceAdjustmentScreen
 import com.gulfappdeveloper.project2.presentation.print_barcode.PrintBarcodeScreen
 import com.gulfappdeveloper.project2.presentation.product_list_screen.ProductListScreen
+import com.gulfappdeveloper.project2.presentation.sales_screen.SalesScreen
 import com.gulfappdeveloper.project2.presentation.set_base_url_screen.SetBaseUrlScreen
 import com.gulfappdeveloper.project2.presentation.settings_screen.SettingsScreen
 import com.gulfappdeveloper.project2.presentation.splash_screen.SplashScreen
@@ -173,6 +174,13 @@ fun RootNavGraph(
                 onScanButtonClicked = onScanButtonClicked,
                 rootViewModel = rootViewModel
             )
+        }
+
+        composable(route = RootNavScreens.SalesScreen.route) {
+           SalesScreen(
+               hideKeyboard = hideKeyboard,
+               navHostController = navHostController,
+           )
         }
 
 

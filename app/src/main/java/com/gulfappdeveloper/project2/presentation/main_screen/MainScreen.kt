@@ -90,6 +90,33 @@ fun MainScreen(
                     }
                 }
             }
+            item {
+                Card(
+                    modifier = Modifier
+                        .size(width = 150.dp, height = 150.dp)
+                        .padding(24.dp)
+                        .clip(shape = RoundedCornerShape(25))
+                        .clickable {
+                            navHostController.navigate(route = RootNavScreens.SalesScreen.route)
+                        },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFBBE873)
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "SALES",
+                            color = Color.Black,
+                            fontSize = if(screenWidth<500f) 16.sp else if(screenWidth>=500f && screenWidth<900f) 18.sp else 22.sp,
+                            fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
 
             item {
                 Card(
