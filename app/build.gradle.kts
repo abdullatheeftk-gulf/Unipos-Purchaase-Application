@@ -111,7 +111,7 @@ plugins {
     id("com.android.application")
    // id("org.jetbrains.kotlin.android")
     id("kotlinx-serialization")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.10"
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
@@ -122,7 +122,7 @@ val compose_ui_version: String by rootProject.extra
 
 android {
     namespace = "com.gulfappdeveloper.project2"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.gulfappdeveloper.project2"
@@ -146,6 +146,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -178,15 +179,15 @@ android {
 
 dependencies {
     // Define versions here or use Version Catalog (libs.versions.toml)
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
-    implementation("androidx.activity:activity-compose:1.12.2")
+    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
+    implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.compose.ui:ui:$compose_ui_version")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
     implementation("androidx.compose.material:material:$compose_ui_version")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("androidx.compose.material3:material3:1.4.0")
-    implementation("androidx.compose.ui:ui-viewbinding:1.10.1")
+    implementation("androidx.compose.ui:ui-viewbinding:1.11.4")
 
 
     testImplementation("junit:junit:4.13.2")
@@ -197,40 +198,40 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_ui_version")
 
     // KotlinX Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     
     // Ktor client
-    val ktorVersion = "2.1.2"
+    val ktorVersion = "3.5.1"
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
     // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.58")
-    ksp("com.google.dagger:hilt-android-compiler:2.58")
-    ksp("androidx.hilt:hilt-compiler:1.3.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation("com.google.dagger:hilt-android:2.60.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.60.1")
+    ksp("androidx.hilt:hilt-compiler:1.4.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.4.0")
 
     // Compose navigation
-    val navVersion = "2.9.5"
+    val navVersion = "2.9.8"
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
     // QR Code and Barcode
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") {
         isTransitive = false
     }
-    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.zxing:core:3.5.4")
 
     // To get public ip address
     implementation("com.github.chintan369:Ipify-Android:1.0.1")
 
     // DataStore Preferences
-    implementation("androidx.datastore:datastore-preferences:1.2.0")
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-firestore")
@@ -243,9 +244,9 @@ dependencies {
     ksp("androidx.room:room-compiler:${room_version}")
 
     // Calendar
-    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.1.1")
-    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.1.1")
-    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.1.1")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.3.0")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.3.0")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.3.0")
 }
 
 
